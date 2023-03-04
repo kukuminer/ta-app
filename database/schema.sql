@@ -9,7 +9,8 @@ CREATE TABLE student (
     firstname varchar(50) NOT NULL,
     lastname varchar(50) NOT NULL,
     email varchar(100) UNIQUE NOT NULL,
-
+    availability int NOT NULL,
+    pool varchar(3), -- UTA or GTA
     PRIMARY KEY (id)
 );
 
@@ -38,6 +39,12 @@ CREATE TABLE professor (
 CREATE TABLE application (
     student int NOT NULL,
     course varchar(10) NOT NULL,
+
+    grade int,
+    interest int,
+    qualification int,
+    pref int,
+
     PRIMARY KEY (student, course),
     FOREIGN KEY (student) references student(id)
 );
