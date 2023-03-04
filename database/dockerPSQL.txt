@@ -1,0 +1,16 @@
+TO MAKE IMAGE:
+> cd /database/
+> docker build -t postgres-db ./
+
+TO MAKE DB:
+> docker run -d --name TApsql -p 5432:5432 postgres-db
+
+TO ACCESS DB:
+> docker exec -ti <id> bash
+> psql -U postgres
+> \c testdb
+
+OTHER:
+
+list tables:
+> \dt 
