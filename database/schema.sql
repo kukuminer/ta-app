@@ -44,6 +44,7 @@ CREATE TABLE application (
     interest int,
     qualification int,
     pref int,
+    assigned int,
 
     PRIMARY KEY (student, course),
     FOREIGN KEY (student) references student(id)
