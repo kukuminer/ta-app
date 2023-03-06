@@ -1,4 +1,4 @@
 FROM postgres
 ENV POSTGRES_PASSWORD docker
-ENV POSTGRES_DB testdb
+ENV POSTGRES_DB ta_db
 COPY schema.sql /docker-entrypoint-initdb.d/

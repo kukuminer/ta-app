@@ -10,26 +10,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-var board = Array(9).fill(null);
-var xTurn = true;
-
-// const {Pool, Client} = require("pg");
-// const client = new Client({
-//     user: process.env.DB_USER,
-//     host: process.env.DB_HOST,
-//     database: process.env.DB_NAME,
-//     password: process.env.DB_PASSWORD,
-//     port: PORT,
-// });
-
-// client.connect()
-// .then(() => {
-//     client.query('SELECT now()', (err, res) => {
-//         console.log(res.rows)
-//         client.end()
-//     });
-// });
-
 const pgp = require("pg-promise")();
 const db = pgp("postgres://postgres:docker@host.docker.internal:5432/testdb");
 
@@ -49,7 +29,7 @@ app.get("/db", (req, res) => {
     })
     .catch((error) => {
         console.log('psql err: ', error)
-        res.json({poopoo: 'stinky'});
+        res.json({uhoh: 'stinky'});
     });
 })
 
