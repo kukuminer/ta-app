@@ -22,19 +22,32 @@ db.any('SELECT now()', [])
 });
 
 app.get("/db", (req, res) => {
-    db.any('SELECT now()', [])
+    db.any('SELECT * from application', [])
     .then((data) =>  {
         console.log('psql res: ', data)
         res.json({data: data});
     })
     .catch((error) => {
         console.log('psql err: ', error)
-        res.json({uhoh: 'stinky'});
+        res.json({error: error});
     });
-})
+});
+
+//do via form
+app.post("/db", (req, res) => {
+    db.any('SELECT now()', [])
+    .then((data) => {
+        console.log('posting at: ', data)
+        res.json({response: data});
+    })
+    .catch((error) => {
+        console.log('psql err: ', error)
+        res.json({error: error});
+    })
+});
 
 app.get("/api", (req, res) => {
-    res.json({message: "Hello noodle!"});
+    res.json({message: "Backend connection established"});
 });
 
 app.listen(PORT, () => {

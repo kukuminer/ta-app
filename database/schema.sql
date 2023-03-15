@@ -5,31 +5,37 @@ DROP TABLE IF EXISTS professor CASCADE;
 DROP TABLE IF EXISTS application CASCADE;
 
 CREATE TABLE student (
-    id int NOT NULL,
+    id serial NOT NULL,
+    studentid int NOT NULL,
     firstname varchar(50) NOT NULL,
     lastname varchar(50) NOT NULL,
     email varchar(100) UNIQUE NOT NULL,
-    availability int NOT NULL,
     pool varchar(3), -- UTA or GTA
-    PRIMARY KEY (id)
+
+    PRIMARY KEY (id),
 );
 
 CREATE TABLE course (
-    code varchar(10) NOT NULL,
-    PRIMARY KEY (code)
+    id serial NOT NULL,
+    code varchar(10) UNIQUE NOT NULL,
+    description text,
+
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE section (
     course varchar(10) NOT NULL,
     letter varchar(4) NOT NULL,
+    term varchar(10) NOT NULL,
+    profid varchar()
 
-
-    PRIMARY KEY (course, letter),
-    FOREIGN KEY (course) references course(code)
+    PRIMARY KEY (course, letter, term),
+    FOREIGN KEY (course) references course(code),
+    FOREIGN KEY (profid) references professor(id)
 );
 
 CREATE TABLE professor (
-    id int NOT NULL,
+    id serial NOT NULL,
     firstname varchar(50) NOT NULL,
     lastname varchar(50) NOT NULL,
     email varchar(100) UNIQUE NOT NULL,
@@ -37,15 +43,19 @@ CREATE TABLE professor (
 );
 
 CREATE TABLE application (
+    id serial NOT NULL,
     student int NOT NULL,
     course varchar(10) NOT NULL,
+    term varchar(10) NOT NULL, 
 
     grade int,
     interest int,
     qualification int,
-    pref int,
-    assigned int,
+    pref int, -- instructor provided
+    note text, -- instructor provided
+    assigned int, -- admin provided
 
-    PRIMARY KEY (student, course),
+    PRIMARY KEY (id),
     FOREIGN KEY (student) references student(id)
+    FOREIGN KEY (course) references 
 );
