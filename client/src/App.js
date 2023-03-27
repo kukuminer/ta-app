@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {Outlet, Link} from "react-router-dom";
 
 class DB extends React.Component {
   makeConnection() {
@@ -8,6 +9,8 @@ class DB extends React.Component {
     .then((res) => res.json())
     .then((data) => console.log(data));
   }
+
+
 
   ping() {
     fetch('/api')
@@ -23,6 +26,28 @@ class DB extends React.Component {
       </div>
     );
   }
+}
+
+const Nav = () => {
+  return (
+    <>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Index</Link>
+          </li>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+          <li>
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
+        </ul>
+      </nav>
+      <Outlet/>
+    </>
+
+  )
 }
 
 function App() {
@@ -53,6 +78,7 @@ function App() {
           {!data ? 'Loading...' : data}
         </p>
         <DB />
+        <Nav />
       </header>
     </div>
   );
