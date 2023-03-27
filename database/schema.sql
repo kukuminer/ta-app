@@ -1,18 +1,30 @@
+DROP TABLE IF EXISTS person CASCADE;
 DROP TABLE IF EXISTS student CASCADE;
 DROP TABLE IF EXISTS course CASCADE;
 DROP TABLE IF EXISTS section CASCADE;
 DROP TABLE IF EXISTS professor CASCADE;
 DROP TABLE IF EXISTS application CASCADE;
+DROP TABLE IF EXISTS assignment CASCADE;
 
-CREATE TABLE student (
+CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
+
+CREATE TABLE person ( -- user is reserved :(
     id serial NOT NULL,
-    studentid int NOT NULL,
     firstname varchar(50) NOT NULL,
     lastname varchar(50) NOT NULL,
     email varchar(100) UNIQUE NOT NULL,
+    usertype usertype NOT NULL, -- admin/prof/student
+
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE student (
+    id int NOT NULL,
+    studentid int NOT NULL,
     pool varchar(3), -- UTA or GTA
 
     PRIMARY KEY (id),
+    FOREIGN KEY (id) references person(id)
 );
 
 CREATE TABLE course (
@@ -23,8 +35,15 @@ CREATE TABLE course (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE professor (
+    id int NOT NULL,
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) references person(id)
+);
+
 CREATE TABLE section (
-    id serial UNIQUE NOT NULL,
+    id serial NOT NULL,
     course varchar(10) NOT NULL,
     letter varchar(4) NOT NULL,
     term varchar(10) NOT NULL,
@@ -34,15 +53,6 @@ CREATE TABLE section (
     UNIQUE (course, letter, term),
     FOREIGN KEY (course) references course(code),
     FOREIGN KEY (profid) references professor(id)
-);
-
-CREATE TABLE professor (
-    id serial NOT NULL,
-    firstname varchar(50) NOT NULL,
-    lastname varchar(50) NOT NULL,
-    email varchar(100) UNIQUE NOT NULL,
-
-    PRIMARY KEY (id)
 );
 
 CREATE TABLE application (
@@ -56,7 +66,7 @@ CREATE TABLE application (
     qualification int,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (student) references student(id)
+    FOREIGN KEY (student) references student(id),
     FOREIGN KEY (course) references course(code)
 );
 
@@ -68,11 +78,8 @@ CREATE TABLE assignment (
     pref int, -- instructor provided
     note text, -- instructor provided
     assigned int, -- admin provided
+    FOREIGN KEY (student) references student(id),
+    FOREIGN KEY (section) references section(id)
 );
 
-CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
 
-CREATE TABLE users (
-    id serial NOT NULL,
-    userclass usertype NOT NULL -- admin/prof/student
-);
