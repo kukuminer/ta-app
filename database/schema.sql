@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS person CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS student CASCADE;
 DROP TABLE IF EXISTS course CASCADE;
 DROP TABLE IF EXISTS section CASCADE;
@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS assignment CASCADE;
 
 CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
 
-CREATE TABLE person ( -- user is reserved :(
+CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,
     firstname varchar(50) NOT NULL,
     lastname varchar(50) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE student (
     pool varchar(3), -- UTA or GTA
 
     PRIMARY KEY (id),
-    FOREIGN KEY (id) references person(id)
+    FOREIGN KEY (id) references users(id)
 );
 
 CREATE TABLE course (
@@ -39,7 +39,7 @@ CREATE TABLE professor (
     id int NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (id) references person(id)
+    FOREIGN KEY (id) references users(id)
 );
 
 CREATE TABLE section (
