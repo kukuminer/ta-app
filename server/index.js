@@ -37,21 +37,16 @@ app.get("/api/dashboard/:userid", (req, res) => {
     id = req.params.userid;
     console.log("request received! - ", id)
     // SELECT usertype FROM users WHERE id = $1
-    try {
-        db.any("SELECT id FROM course WHERE code like $1", id)
-        .then((data) => {
-            console.log("response received!");
-            res.json({"usertype": data});
-        })
-        .catch((error) => {
-            console.log('error')
-            res.json({error: error})
-        })
-        
-    } catch (error) {
-        console.log('error')
+    db.any("SELECT usertype FROM person WHERE id = $1", id)
+    .then((data) => {
+        if(data.length > 1) throw new Error("Retrieved more than one user??")
+        res.json({"usertype": data[0]});
+    })
+    .catch((error) => {
+        console.log('error retrieving usertype from db')
         res.json({error: error})
-    }
+    })
+
 })
 
 //do via form

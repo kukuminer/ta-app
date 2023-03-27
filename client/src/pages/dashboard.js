@@ -6,7 +6,7 @@ const Dashboard = () => {
     return (
         <h1>
             DASHBOARD
-            <button onClick={() => console.log(get_user(2030))}>Verify User</button>
+            <button onClick={() => console.log(get_user(1))}>Verify User</button>
         </h1>
     );
 };
