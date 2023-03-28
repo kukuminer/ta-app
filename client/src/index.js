@@ -5,7 +5,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import Login from "./pages/login";
+import LoginForm from "./pages/login/login";
 import Dashboard from "./pages/dashboard";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -13,11 +13,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}>
-          <Route path="login" element={<Login />} />
-          <Route path="dashboard" element={<Dashboard />} />
+        <Route path="/" element={<LoginForm />} />
+        <Route path="dashboard" element={<Dashboard />} />
 
-        </Route>
       </Routes>
       
       {/* <App /> */}
