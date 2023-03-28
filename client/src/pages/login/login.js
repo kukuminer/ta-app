@@ -1,5 +1,6 @@
 import "./login.css"
 import React from "react";
+import axios from 'axios'
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -20,7 +21,21 @@ class LoginForm extends React.Component {
 
     handle_submit(event) {
         console.log('Form submitted: ' + this.state.username + ' / ' + this.state.password);
-        // event.preventDefault();
+        const id = this.state.username
+        const request = {
+            method: 'get',
+            url: '/api/user/'+id,
+        }
+        axios(request)
+        .then((response) => {
+            console.log(response.data.usertype)
+            return response
+        })
+        .catch((error) => {
+            console.log('error retrieving usertype')
+            return error
+        })
+        event.preventDefault();
     }
 
     render() {

@@ -1,4 +1,3 @@
-import get_user from "../DB";
 
 const Dashboard = () => {
     // var user
@@ -6,7 +5,6 @@ const Dashboard = () => {
     return (
         <h1>
             DASHBOARD
-            <button onClick={() => console.log(get_user(1))}>Verify User</button>
         </h1>
     );
 };
