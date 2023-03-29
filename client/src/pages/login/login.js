@@ -8,7 +8,8 @@ class LoginForm extends React.Component {
         this.state = { username: '', password: '', }
 
         // this.handle_user = this.handle_user.bind(this);
-        this.handle_submit = this.handle_submit.bind(this);
+        // this.handle_submit = this.handle_submit.bind(this);
+
     }
 
     // handle_user(event) {
@@ -18,8 +19,9 @@ class LoginForm extends React.Component {
     // handle_pass(event) {
     //     this.setState({ password: event.target.value });
     // }
-
+    
     handle_submit(event) {
+        event.preventDefault();
         console.log('Form submitted: ' + this.state.username + ' / ' + this.state.password);
         const id = this.state.username
         const request = {
@@ -28,21 +30,22 @@ class LoginForm extends React.Component {
         }
         axios(request)
         .then((response) => {
-            console.log(response.data.usertype)
-            return response
+            console.log('response: ', response.data.usertype)
+            console.log('storage before: ', localStorage.getItem('userId'))
+            localStorage.setItem('userId', this.state.username)
+            console.log('storage set to: ', localStorage.getItem('userId'))
         })
         .catch((error) => {
             console.log('error retrieving usertype')
             return error
         })
-        event.preventDefault();
     }
 
     render() {
         return (
             <main>
                 <h1>Login</h1>
-                <form onSubmit={this.handle_submit}>
+                <form onSubmit={(event) => this.handle_submit(event)}>
                     <label>
                         Username:
                         <input 
@@ -67,23 +70,5 @@ class LoginForm extends React.Component {
         )
     }
 }
-
-const handle_login = (form_contents) => {
-    console.log(form_contents)
-}
-
-const Login = () => {
-    return (
-        <>
-            <main>
-                <h1>Login</h1>
-                <form action={() => handle_login()}>
-                    <input type="text"></input>
-                    <input type="submit">Login</input>
-                </form>
-            </main>
-        </>
-    );
-};
 
 export default LoginForm;

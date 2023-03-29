@@ -1,22 +1,22 @@
 import React from 'react';
 import './App.css';
-import {Outlet, Link} from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 
 class DB extends React.Component {
   makeConnection() {
     fetch('/db')
-    .then((res) => res.json())
-    .then((data) => console.log(data));
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   }
 
 
 
   ping() {
     fetch('/api')
-    .then((res) => res.json())
-    .then((data) => console.log(data));
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   }
-  
+
   render() {
     return (
       <div id='db'>
@@ -43,7 +43,7 @@ const Nav = () => {
           </li>
         </ul>
       </nav>
-      <Outlet/>
+      <Outlet />
     </>
 
   )
@@ -54,8 +54,8 @@ function App() {
 
   React.useEffect(() => {
     fetch('/api')
-    .then((res) => res.json())
-    .then((data) => setData(data.message));
+      .then((res) => res.json())
+      .then((data) => setData(data.message));
   }, []);
 
   return (
