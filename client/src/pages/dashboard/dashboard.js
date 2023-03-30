@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import ProfessorDash from "./professor_dash";
 import StudentDash from "./student_dash";
 import AdminDash from "./admin_dash";

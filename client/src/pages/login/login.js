@@ -1,7 +1,7 @@
 import "./login.css"
 import React from "react";
 import axios from 'axios'
-import { Navigate, useNavigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -26,8 +26,7 @@ class LoginForm extends React.Component {
                 localStorage.setItem('userId', this.state.username)
                 console.log(response.data.userType)
                 if(response.data.userType) {
-                    this.state.userId = this.state.username
-                    console.log(this.state.userId)
+                    this.setState({userId: this.state.username})
                     this.forceUpdate()
                 }
             })
