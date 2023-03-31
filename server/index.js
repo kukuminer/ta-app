@@ -51,7 +51,7 @@ app.get("/api/user/:userid", (req, res) => {
 
 app.get("/api/professor/courses/:userid", (req, res) => {
     id = req.params.userid
-    db.any("SELECT course, letter FROM section WHERE profid=$1 and isCurrent=true;", id)
+    db.any("SELECT course, letter FROM section WHERE profid=$1 AND isCurrent=true;", id)
         .then((data) => {
             console.log(data)
             res.json(data)
