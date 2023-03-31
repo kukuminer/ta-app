@@ -1,10 +1,11 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
+import getUser from '../../../getUser'
 import './professor_dash.css'
 
 const ProfessorDash = () => {
-    const id = localStorage.getItem('userId')
+    const id = getUser()
 
     const [tableData, setTableData] = React.useState(null)
 
@@ -29,6 +30,7 @@ const ProfessorDash = () => {
                     <tr>
                         <th>Course</th>
                         <th>Section</th>
+                        <th>Link</th>
                     </tr>
                     {
                         !tableData ? <tr><td>loading...</td></tr> : tableData.map((val, key) => {
@@ -36,6 +38,9 @@ const ProfessorDash = () => {
                                 <tr key={key}>
                                     <td>{val.course}</td>
                                     <td>{val.letter}</td>
+                                    <td>
+                                        <Link to={'/section/'+val.course+val.letter}>View</Link>
+                                    </td>
                                 </tr>
                             )
                         })

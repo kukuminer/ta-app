@@ -4,12 +4,6 @@
     align-items: center;
     /* background-color: blue */
 }
-.header {
-    list-style-type: none;
-    display: flex;
-    justify-content: space-between;
-    width: 90vw;
-}
 .main {
     display: flex;
     flex-direction: column;
