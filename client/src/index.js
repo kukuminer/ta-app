@@ -1,16 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {BrowserRouter} from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import LoginForm from "./pages/login/login";
+import Dashboard from "./pages/dashboard/dashboard";
+import Section from "./pages/section/section";
+import NotFound from './pages/404';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
-    
+      <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/section/:sectionId" element={<Section />} />
+          <Route path="*" element={<NotFound />} />
+      </Routes>
+
+      {/* <App /> */}
+
     </BrowserRouter>
   </React.StrictMode>
 );
