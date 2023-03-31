@@ -23,9 +23,9 @@ class LoginForm extends React.Component {
         }
         axios(request)
             .then((response) => {
-                localStorage.setItem('userId', this.state.username)
                 console.log(response.data.userType)
                 if(response.data.userType) {
+                    localStorage.setItem('userId', this.state.username)
                     this.setState({userId: this.state.username})
                     this.forceUpdate()
                 }

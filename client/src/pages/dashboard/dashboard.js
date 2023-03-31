@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"
-import ProfessorDash from "./professor_dash";
+import ProfessorDash from "./professor/professor_dash";
 import StudentDash from "./student_dash";
 import AdminDash from "./admin_dash";
+import "./dashboard.css"
 
 const components = {
     'professor': <ProfessorDash />,
@@ -32,21 +33,25 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="header">
-            <h1 className="header-left">
-                DASHBOARD
-            </h1>
-            <p className="header-right">
-                userId: {userId}
-                <br />
-                userType: {userType ? userType : 'loading..'}
-                <br />
-                <button onClick={logoutHandler} >Logout</button>
-            </p>
+        <div className="dashboard">
+            <div className="header">
+                <h1 className="header-left">
+                    DASHBOARD
+                </h1>
+                <p className="header-right">
+                    userId: {userId}
+                    <br />
+                    userType: {userType ? userType : 'loading..'}
+                    <br />
+                    <button onClick={logoutHandler} >Logout</button>
+                </p>
+            </div>
             {/* Backend only accepts userId as arg, so even if userType is
             modified, secure content will remain secure since it gets 
             re-checked in the backend */}
-            {components[userType]}
+            <div className="main">
+                {components[userType]}
+            </div>
         </div>
     );
 };
