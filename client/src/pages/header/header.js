@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import getUser from "../../getUser";
 import "./header.css"
 
@@ -25,9 +25,11 @@ const Header = () => {
     return (
         <div className="header-container">
             <div className="header">
-                <h1 className="header-left">
-                    DASHBOARD
-                </h1>
+                <Link to='/dashboard'>
+                    <h1 className="header-left">
+                        DASHBOARD
+                    </h1>
+                </Link>
                 <p className="header-right">
                     userId: {userId}
                     <br />
