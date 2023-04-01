@@ -67,6 +67,7 @@ CREATE TABLE application (
     qualification int,
 
     PRIMARY KEY (id),
+    UNIQUE (student, course, term),
     FOREIGN KEY (student) references student(id),
     FOREIGN KEY (course) references course(code)
 );
