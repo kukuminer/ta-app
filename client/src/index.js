@@ -16,7 +16,7 @@ root.render(
       <Routes>
           <Route path="/" element={<LoginForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/section/:sectionId" element={<Section />} />
+          <Route path="/section/:course/:letter" element={<Section />} />
           <Route path="*" element={<NotFound />} />
       </Routes>
 

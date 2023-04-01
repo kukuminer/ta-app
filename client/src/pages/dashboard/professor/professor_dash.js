@@ -20,7 +20,6 @@ const ProfessorDash = () => {
             })
     }, [id])
 
-    console.log(tableData)
     return (
         <>
             <h1>THIS IS THE PROFESSOR DASH</h1>
@@ -39,7 +38,7 @@ const ProfessorDash = () => {
                                     <td>{val.course}</td>
                                     <td>{val.letter}</td>
                                     <td>
-                                        <Link to={'/section/'+val.course+val.letter}>View</Link>
+                                        <Link to={'/section/'+val.course+'/'+val.letter}>View</Link>
                                     </td>
                                 </tr>
                             )

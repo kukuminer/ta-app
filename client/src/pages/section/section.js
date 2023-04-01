@@ -12,7 +12,7 @@ const components = {
 }
 
 const Section = () => {
-    const { sectionId } = useParams()
+    const { course, letter } = useParams()
     const userId = getUser()
 
     const [userType, setUserType] = React.useState(null);
@@ -30,7 +30,7 @@ const Section = () => {
         <>
             <Header />
             <div className="main">
-                <h1>SECTION {sectionId}</h1>
+                <h1>SECTION {course} {letter}</h1>
                 {components[userType]}
             </div>
         </>

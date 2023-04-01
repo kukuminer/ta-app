@@ -49,15 +49,55 @@ app.get("/api/user/:userid", (req, res) => {
 
 })
 
+/** 
+ * For populating the professor dashboard
+ */
 app.get("/api/professor/courses/:userid", (req, res) => {
     id = req.params.userid
-    db.any("SELECT course, letter FROM section WHERE profid=$1 AND isCurrent=true;", id)
+    db.any("SELECT course, letter FROM section WHERE profid=$1 AND isCurrent=true", id)
         .then((data) => {
             console.log(data)
             res.json(data)
         })
         .catch((error) => {
             console.log('error retrieving prof sections from db')
+            res.json({ error: error })
+        })
+})
+
+/**
+ * For populationg the professor section view
+ * `SELECT student, grade, interest, qualification
+    FROM application INNER JOIN section
+    ON application.course = section.course 
+    AND application.term = section.term
+    WHERE profid = 2
+    AND iscurrent = true
+    AND section.course = '2030'
+    AND section.letter = 'A'
+    `
+ */
+app.get("/api/professor/:course/:letter/:userid", (req, res) => {
+    id = req.params.userid
+    course = req.params.course
+    letter = req.params.letter
+    dbQuery = 
+    `SELECT student, grade, interest, qualification
+    FROM application INNER JOIN section
+    ON application.course = section.course 
+    AND application.term = section.term
+    WHERE profid = $1
+    AND iscurrent = true
+    AND section.course = $2
+    AND section.letter = $3;
+    `
+    db.any(dbQuery, [id, course, letter])
+        .then((data) => {
+            console.log(data)
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving prof section info from db')
             res.json({ error: error })
         })
 })
