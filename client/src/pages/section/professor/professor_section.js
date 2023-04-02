@@ -8,6 +8,10 @@ const ProfessorSection = () => {
     const { course, letter } = useParams()
 
     const [tableData, setTableData] = React.useState(null)
+    const [pref, setPref] = React.useState(null)
+    const [note, setNote] = React.useState(null)
+    const [changesMade, setChangesMade] = React.useState(false)
+
 
     React.useEffect(() => {
         const request = {
@@ -17,9 +21,25 @@ const ProfessorSection = () => {
         axios(request)
             .then((res) => {
                 setTableData(res.data)
+                setPref(res.data.pref)
+                setNote(res.data.note)
             })
-    }, [course, letter, id])
+    }, [course, letter, id, changesMade])
 
+
+    React.useEffect(() => {
+        if(tableData)
+        {
+            if(pref) setChangesMade(!(pref === tableData.pref))
+            if(note) setChangesMade(!(note === tableData.note))
+        }
+    }, [pref, note, tableData])
+
+    const updateAssignment = () => {
+        console.log('updating!')
+
+        setChangesMade(false)
+    }
 
     return (
         <>
@@ -31,15 +51,21 @@ const ProfessorSection = () => {
                         <th>Grade</th>
                         <th>Interest</th>
                         <th>Qualification</th>
+                        <th>Preference</th>
+                        <th>Note</th>
+                        <th></th>
                     </tr>
                     {
                         !tableData ? <tr><td>loading...</td></tr> : tableData.map((val, key) => {
                             return (
                                 <tr key={key}>
-                                    <td>{val.student}</td>
+                                    <td>{val.firstname} {val.lastname}</td>
                                     <td>{val.grade}</td>
                                     <td>{val.interest}</td>
                                     <td>{val.qualification}</td>
+                                    <td><input type={"number"} value={pref ? pref : 0} onChange={(event) => setPref(event.target.value)}/></td>
+                                    <td>{val.note}</td>
+                                    <td><button onClick={updateAssignment} disabled={!changesMade}>Update</button></td>
                                 </tr>
                             )
                         })

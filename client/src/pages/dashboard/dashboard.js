@@ -22,7 +22,6 @@ const Dashboard = () => {
             .then((res) => res.json())
             .then((data) => {
                 setUserType(data.userType)
-                console.log(data)
             })
     }, [userId])
 

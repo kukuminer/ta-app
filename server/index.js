@@ -35,7 +35,6 @@ app.get("/db", (req, res) => {
 
 app.get("/api/user/:userid", (req, res) => {
     id = req.params.userid;
-    console.log("request received! - userid:", id)
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE id = $1", id)
         .then((data) => {
@@ -56,7 +55,6 @@ app.get("/api/professor/courses/:userid", (req, res) => {
     id = req.params.userid
     db.any("SELECT course, letter FROM section WHERE profid=$1 AND isCurrent=true", id)
         .then((data) => {
-            console.log(data)
             res.json(data)
         })
         .catch((error) => {
@@ -67,10 +65,16 @@ app.get("/api/professor/courses/:userid", (req, res) => {
 
 /**
  * For populationg the professor section view
- * `SELECT student, grade, interest, qualification
-    FROM application INNER JOIN section
+ * `
+ * SELECT firstname, lastname, grade, interest, qualification, pref, note
+    FROM application 
+    INNER JOIN section
     ON application.course = section.course 
     AND application.term = section.term
+    INNER JOIN users
+    ON application.student = users.id
+    LEFT OUTER JOIN assignment
+    ON application.student = assignment.student
     WHERE profid = 2
     AND iscurrent = true
     AND section.course = '2030'
@@ -82,24 +86,38 @@ app.get("/api/professor/:course/:letter/:userid", (req, res) => {
     course = req.params.course
     letter = req.params.letter
     dbQuery = 
-    `SELECT student, grade, interest, qualification
-    FROM application INNER JOIN section
+    `
+    SELECT firstname, lastname, grade, interest, qualification, pref, note
+    FROM application 
+    INNER JOIN section
     ON application.course = section.course 
     AND application.term = section.term
+    INNER JOIN users
+    ON application.student = users.id
+    LEFT OUTER JOIN assignment
+    ON application.student = assignment.student
     WHERE profid = $1
     AND iscurrent = true
     AND section.course = $2
-    AND section.letter = $3;
+    AND section.letter = $3
     `
     db.any(dbQuery, [id, course, letter])
         .then((data) => {
-            console.log(data)
             res.json(data)
         })
         .catch((error) => {
             console.log('error retrieving prof section info from db')
             res.json({ error: error })
         })
+})
+
+/**
+ * For updating prof preference and note 
+ */
+app.post("api/professor/:course/:letter/:userid", (req, res) => {
+    id = req.params.userid
+    course = req.params.course
+    letter = req.params.letter
 })
 
 //do via form
