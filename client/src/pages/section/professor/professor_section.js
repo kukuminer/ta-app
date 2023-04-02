@@ -16,28 +16,43 @@ const ProfessorSection = () => {
     React.useEffect(() => {
         const request = {
             method: 'get',
-            url: '/api/professor/' + course + '/' + letter + '/' + id
+            url: '/api/professor/' + course + '/' + letter + '/' + id,
         }
         axios(request)
             .then((res) => {
+                console.log('queried');
                 setTableData(res.data)
-                setPref(res.data.pref)
-                setNote(res.data.note)
+                setPref(res.data.pref ? res.data.pref : 0)
+                setNote(res.data.note ? res.data.note : '')
             })
-    }, [course, letter, id, changesMade])
+    }, [course, letter, id])
 
 
     React.useEffect(() => {
-        if(tableData)
-        {
-            if(pref) setChangesMade(!(pref === tableData.pref))
-            if(note) setChangesMade(!(note === tableData.note))
+        if (tableData) {
+            if (pref) setChangesMade(!(pref === tableData.pref))
+            if (note) setChangesMade(!(note === tableData.note))
         }
     }, [pref, note, tableData])
 
     const updateAssignment = () => {
         console.log('updating!')
+        const url = '/api/professor/' + course + '/' + letter + '/' + id
 
+        // const url = '/api/professor/' + course + '/' + letter + '/' + id;
+        const body = {
+            pref: pref,
+            note: note,
+        }
+        axios.post(url, body)
+            .then((res) => {
+                console.log('done!')
+                console.log(res.data)
+            })
+            .catch((error) => {
+                console.log('error posting pref/note: ', error)
+            })
+        // axios.post(url, {pref: 'bingbong'})
         setChangesMade(false)
     }
 
@@ -63,7 +78,7 @@ const ProfessorSection = () => {
                                     <td>{val.grade}</td>
                                     <td>{val.interest}</td>
                                     <td>{val.qualification}</td>
-                                    <td><input type={"number"} value={pref ? pref : 0} onChange={(event) => setPref(event.target.value)}/></td>
+                                    <td><input type={"number"} value={pref} onChange={(event) => setPref(event.target.value)} /></td>
                                     <td>{val.note}</td>
                                     <td><button onClick={updateAssignment} disabled={!changesMade}>Update</button></td>
                                 </tr>

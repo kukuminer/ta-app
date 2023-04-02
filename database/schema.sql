@@ -80,6 +80,8 @@ CREATE TABLE assignment (
     pref int, -- instructor provided
     note text, -- instructor provided
     assigned int, -- admin provided
+    PRIMARY KEY (id),
+    UNIQUE (student, section),
     FOREIGN KEY (student) references student(id),
     FOREIGN KEY (section) references section(id)
 );

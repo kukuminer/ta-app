@@ -28,3 +28,8 @@ VALUES ('3', '2030', 'F23', 90, 75, 75),
 ('3', '2011', 'F23', 80, 80, 80),
 ('3', '2030', 'W24', 50, 50, 50);
 
+INSERT INTO assignment(student, section)
+VALUES (3, 1)
+ON CONFLICT (student, section)
+DO UPDATE SET pref = 50, note = 'good student'
+WHERE id = 1;

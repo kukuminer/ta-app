@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const pgp = require("pg-promise")();
 const db = pgp("postgres://postgres:docker@host.docker.internal:5432/testdb");
@@ -52,7 +52,7 @@ app.get("/api/user/:userid", (req, res) => {
  * For populating the professor dashboard
  */
 app.get("/api/professor/courses/:userid", (req, res) => {
-    id = req.params.userid
+    const id = req.params.userid
     db.any("SELECT course, letter FROM section WHERE profid=$1 AND isCurrent=true", id)
         .then((data) => {
             res.json(data)
@@ -82,11 +82,11 @@ app.get("/api/professor/courses/:userid", (req, res) => {
     `
  */
 app.get("/api/professor/:course/:letter/:userid", (req, res) => {
-    id = req.params.userid
-    course = req.params.course
-    letter = req.params.letter
-    dbQuery = 
-    `
+    const id = req.params.userid
+    const course = req.params.course
+    const letter = req.params.letter
+    dbQuery =
+        `
     SELECT firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN section
@@ -114,10 +114,29 @@ app.get("/api/professor/:course/:letter/:userid", (req, res) => {
 /**
  * For updating prof preference and note 
  */
-app.post("api/professor/:course/:letter/:userid", (req, res) => {
-    id = req.params.userid
-    course = req.params.course
-    letter = req.params.letter
+app.post("/api/professor/:course/:letter/:userid", (req, res) => {
+    const id = req.params.userid
+    const course = req.params.course
+    const letter = req.params.letter
+    const {pref, note} = req.body
+
+
+    dbQuery = `
+    INSERT INTO assignment(student, section, pref, note)
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (student, section)
+    DO UPDATE SET pref = $3, note = $4
+    WHERE student = $1;
+    `
+    res.json({ status: 200 })
+})
+
+
+//For testing:
+app.post("/api/post/:ding", (req, res) => {
+    console.log(req.params.ding)
+    console.log(req.body)
+    res.json({message: 'received'})
 })
 
 //do via form
