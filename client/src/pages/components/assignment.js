@@ -1,4 +1,6 @@
 import React from "react"
+import axios from "axios"
+import getUser from "../../getUser"
 
 class Assignment extends React.Component {
     constructor(props) {
@@ -9,7 +11,9 @@ class Assignment extends React.Component {
             pref: props.data.pref,
             origPref: props.data.pref,
             note: props.data.note,
-            origNote: props.data.note
+            origNote: props.data.note,
+            studentId: props.data.userid,
+            sectionId: props.data.sectionid,
         }
         for (const key of this.dataKeys) {
             this.columnData.push(props.data[key])
@@ -22,6 +26,7 @@ class Assignment extends React.Component {
         'firstname', 'lastname', 'grade', 'interest', 'qualification',
     ]
     columnData = []
+    url = '/api/professor/assignment'
 
     doChangesExist = () => {
         var prefChanged = (this.state.pref !== this.state.origPref)
@@ -31,21 +36,25 @@ class Assignment extends React.Component {
 
     updateAssignment = () => {
         console.log('updating!')
-        // const url = '/api/professor/' + course + '/' + letter + '/' + id
-        // const body = {
-        //     pref: this.state.pref,
-        //     note: this.state.note,
-        // }
-        // axios.post(url, body)
-        //     .then((res) => {
-        //         console.log('done!')
-        //         console.log(res.data)
-        //     })
-        //     .catch((error) => {
-        //         console.log('error posting pref/note: ', error)
-        //     })
-        //     // axios.post(url, {pref: 'bingbong'})
-        //     setChangesMade(false)
+        const body = {
+            pref: this.state.pref,
+            note: this.state.note,
+            studentId: this.state.studentId,
+            sectionId: this.state.sectionId,
+            userId: getUser()
+        }
+        axios.post(this.url, body)
+            .then((res) => {
+                this.setState({
+                    origNote: res.data[0].note, 
+                    origPref: res.data[0].pref,
+                })
+                this.render()
+            })
+            .catch((error) => {
+                console.log('frontend error posting pref/note: ', error)
+            })
+            // axios.post(url, {pref: 'bingbong'})
 
     }
 

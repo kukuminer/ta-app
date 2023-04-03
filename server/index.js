@@ -87,7 +87,7 @@ app.get("/api/professor/:course/:letter/:userid", (req, res) => {
     const letter = req.params.letter
     dbQuery =
         `
-    SELECT users.id, firstname, lastname, grade, interest, qualification, pref, note
+    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN section
     ON application.course = section.course 
@@ -114,38 +114,36 @@ app.get("/api/professor/:course/:letter/:userid", (req, res) => {
 /**
  * For updating prof preference and note 
  */
-app.post("/api/professor/:course/:letter/:userid", (req, res) => {
-    const id = req.params.userid
-    const course = req.params.course
-    const letter = req.params.letter
-    const { pref, note } = req.body
-    var sectionId = null
-    const verificationQuery = `
-    SELECT id FROM section 
-    WHERE course = $1
-    AND letter = $2
-    AND profid = $3
-    `;
-    db.any(verificationQuery, [course, letter, id])
-        .then((data) => {
-            if (data.length === 1) {
-                sectionId = data[0].id
-            }
-            console.log(sectionId)
-        })
-        .catch((error) => {
-            console.log('post error: ', error)
-        })
-    if (!sectionId) res.json({ status: '400 auth error' })
+app.post("/api/professor/assignment", (req, res) => {
+    /*
+    INSERT INTO assignment(student, section, pref, note)
+    VALUES (3, (SELECT id FROM section WHERE profid=2 AND id=1), 1, 'eebe')
+    ON CONFLICT (student, section)
+    DO UPDATE SET pref = 1, note = 'eeb'
+    WHERE assignment.student = 3 
+    AND assignment.section in (SELECT id FROM section WHERE profid=4 AND id=1)
+    RETURNING assignment.id
+     */
     const dbQuery = `
     INSERT INTO assignment(student, section, pref, note)
-    VALUES ($1, $2, $3, $4)
+    VALUES ($1, (SELECT id FROM section WHERE profid=$5 AND id=$2), $3, $4)
     ON CONFLICT (student, section)
     DO UPDATE SET pref = $3, note = $4
-    WHERE student = $1;
-    `;
-    db.any(dbQuery, [])
-    res.json({ status: 200 })
+    WHERE assignment.student = $1 
+    AND assignment.section in (SELECT id FROM section WHERE profid=$5 AND id=$2)
+    RETURNING assignment.id, assignment.pref, assignment.note
+    `
+    const r = req.body
+    db.any(dbQuery, [r.studentId, r.sectionId, r.pref, r.note, r.userId])
+    .then((data) => {
+        if(data.length !== 1) throw new Error('Bad auth')
+        res.json(data)
+    })
+    .catch((error) => {
+        console.log('db assignment upsert error: ', error)
+        res.json({status: 400})
+    })
+    // res.json({ status: 200 })
 })
 
 
