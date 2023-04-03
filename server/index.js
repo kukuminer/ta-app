@@ -118,16 +118,33 @@ app.post("/api/professor/:course/:letter/:userid", (req, res) => {
     const id = req.params.userid
     const course = req.params.course
     const letter = req.params.letter
-    const {pref, note} = req.body
-
-
-    dbQuery = `
+    const { pref, note } = req.body
+    var sectionId = null
+    const verificationQuery = `
+    SELECT id FROM section 
+    WHERE course = $1
+    AND letter = $2
+    AND profid = $3
+    `;
+    db.any(verificationQuery, [course, letter, id])
+        .then((data) => {
+            if (data.length === 1) {
+                sectionId = data[0].id
+            }
+            console.log(sectionId)
+        })
+        .catch((error) => {
+            console.log('post error: ', error)
+        })
+    if (!sectionId) res.json({ status: '400 auth error' })
+    const dbQuery = `
     INSERT INTO assignment(student, section, pref, note)
     VALUES ($1, $2, $3, $4)
     ON CONFLICT (student, section)
     DO UPDATE SET pref = $3, note = $4
     WHERE student = $1;
-    `
+    `;
+    db.any(dbQuery, [])
     res.json({ status: 200 })
 })
 
@@ -136,7 +153,7 @@ app.post("/api/professor/:course/:letter/:userid", (req, res) => {
 app.post("/api/post/:ding", (req, res) => {
     console.log(req.params.ding)
     console.log(req.body)
-    res.json({message: 'received'})
+    res.json({ message: 'received' })
 })
 
 //do via form

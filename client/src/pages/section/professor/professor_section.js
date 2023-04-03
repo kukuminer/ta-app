@@ -38,8 +38,6 @@ const ProfessorSection = () => {
     const updateAssignment = () => {
         console.log('updating!')
         const url = '/api/professor/' + course + '/' + letter + '/' + id
-
-        // const url = '/api/professor/' + course + '/' + letter + '/' + id;
         const body = {
             pref: pref,
             note: note,
