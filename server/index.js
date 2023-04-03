@@ -87,7 +87,7 @@ app.get("/api/professor/:course/:letter/:userid", (req, res) => {
     const letter = req.params.letter
     dbQuery =
         `
-    SELECT firstname, lastname, grade, interest, qualification, pref, note
+    SELECT users.id, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN section
     ON application.course = section.course 

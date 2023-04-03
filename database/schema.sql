@@ -24,6 +24,7 @@ CREATE TABLE student (
     pool varchar(3), -- UTA or GTA
 
     PRIMARY KEY (id),
+    UNIQUE (studentid),
     FOREIGN KEY (id) references users(id)
 );
 
