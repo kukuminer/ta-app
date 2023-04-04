@@ -19,7 +19,6 @@ const ProfessorSection = () => {
         }
         axios(request)
             .then((res) => {
-                console.log('queried');
                 setTableData(res.data)
             })
     }, [course, letter, id])
