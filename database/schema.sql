@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS section CASCADE;
 DROP TABLE IF EXISTS professor CASCADE;
 DROP TABLE IF EXISTS application CASCADE;
 DROP TABLE IF EXISTS assignment CASCADE;
+DROP TABLE IF EXISTS termApplication CASCADE;
 
 CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
 
@@ -85,4 +86,20 @@ CREATE TABLE assignment (
     UNIQUE (student, section),
     FOREIGN KEY (student) references student(id),
     FOREIGN KEY (section) references section(id)
+);
+
+CREATE TABLE termapplication (
+    id serial NOT NULL,
+    student int NOT NULL,
+
+    term varchar(10),
+    availability int NOT NULL,
+    approval boolean,
+    explanation text,
+    inCanada boolean,
+
+    isCurrent boolean, -- Set by admin, if none are current, student can submit a new submission.
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (student) references student(id)
 );

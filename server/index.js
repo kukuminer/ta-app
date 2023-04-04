@@ -21,18 +21,6 @@ db.any('SELECT now()', [])
         console.log('SQL ERROR:\n', error)
     });
 
-app.get("/db", (req, res) => {
-    db.any('SELECT * from application', [])
-        .then((data) => {
-            console.log('psql res: ', data)
-            res.json({ data: data });
-        })
-        .catch((error) => {
-            console.log('psql err: ', error)
-            res.json({ error: error });
-        });
-});
-
 app.get("/api/user/:userid", (req, res) => {
     id = req.params.userid;
     // SELECT usertype FROM users WHERE id = $1
@@ -135,18 +123,35 @@ app.post("/api/professor/assignment", (req, res) => {
     `
     const r = req.body
     db.any(dbQuery, [r.studentId, r.sectionId, r.pref, r.note, r.userId])
-    .then((data) => {
-        if(data.length !== 1) throw new Error('Bad auth')
-        res.json(data)
-    })
-    .catch((error) => {
-        console.log('db assignment upsert error: ', error)
-        res.json({status: 400})
-    })
+        .then((data) => {
+            if (data.length !== 1) throw new Error('Bad auth')
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('db assignment upsert error: ', error)
+            res.json({ status: 400 })
+        })
     // res.json({ status: 200 })
 })
 
+app.get("/api/student/applications/:userid", (req, res) => {
+    const userId = req.params.userid
+    const dbQuery = "SELECT term, availability, approval, explanation, incanada, iscurrent FROM termapplication WHERE student=$1"
+    db.any(dbQuery, userId)
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving student applications from db')
+            res.json({ error: error })
+        })
+})
 
+
+
+/**
+ * ENDPOINTS BELOW HERE TO BE DELETED
+ */
 //For testing:
 app.post("/api/post/:ding", (req, res) => {
     console.log(req.params.ding)

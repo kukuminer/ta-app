@@ -36,3 +36,6 @@ VALUES ('3', '2030', 'F23', 90, 75, 75),
 -- ON CONFLICT (student, section)
 -- DO UPDATE SET pref = 50, note = 'good student'
 -- WHERE id = 1;
+
+INSERT INTO termapplication(student, term, availability, approval, explanation, incanada, iscurrent)
+VALUES ('3', 'F23', 12, true, 'i want to TA', true, true);
