@@ -15,8 +15,8 @@ const StudentDash = () => {
         }
         axios(request)
             .then((res) => {
-                console.log(res.data)
                 setTableData(res.data)
+                console.log(tableData)
             })
     }, [id])
 
@@ -28,7 +28,23 @@ const StudentDash = () => {
                 This is the student dashboard
             </h1>
             <p>
-                Your TA applications:
+                Available TA applications:
+            </p>
+            <table className="student-table">
+                <tbody>
+                    <tr>
+                        <th>Term</th>
+                        <th>Link</th>
+                    </tr>
+                    <tr>
+                        {
+
+                        }
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Previous TA applications:
             </p>
             <table className="student-table">
                 <tbody>
@@ -46,7 +62,7 @@ const StudentDash = () => {
                                     <td>{val.availability}</td>
                                     <td>{val.incanada?'Yes':'No'}</td>
                                     <td>
-                                        <Link to={'/section/' + val.course + '/' + val.letter}>View</Link>
+                                        <Link to={'/application/' + val.term}>View</Link>
                                     </td>
                                 </tr>
                             )
