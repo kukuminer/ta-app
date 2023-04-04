@@ -35,7 +35,6 @@ class Assignment extends React.Component {
     }
 
     updateAssignment = () => {
-        console.log('updating!')
         const body = {
             pref: this.state.pref,
             note: this.state.note,
@@ -46,7 +45,7 @@ class Assignment extends React.Component {
         axios.post(this.url, body)
             .then((res) => {
                 this.setState({
-                    origNote: res.data[0].note, 
+                    origNote: res.data[0].note,
                     origPref: res.data[0].pref,
                 })
                 this.render()
@@ -54,8 +53,6 @@ class Assignment extends React.Component {
             .catch((error) => {
                 console.log('frontend error posting pref/note: ', error)
             })
-            // axios.post(url, {pref: 'bingbong'})
-
     }
 
     render() {
