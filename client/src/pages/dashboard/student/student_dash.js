@@ -1,5 +1,7 @@
+import getUser from "../../../getUser";
+
 const StudentDash = () => {
-    const userId = localStorage.getItem('userId')
+    const userId = getUser()
     
     
     return (
