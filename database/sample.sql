@@ -38,4 +38,5 @@ VALUES ('3', '2030', 'F23', 90, 75, 75),
 -- WHERE id = 1;
 
 INSERT INTO termapplication(student, term, availability, approval, explanation, incanada, iscurrent)
-VALUES ('3', 'F23', 12, true, 'i want to TA', true, true);
+VALUES ('3', 'F23', 12, true, 'i want to TA', true, true),
+('3', 'F22', 9, true, 'i wanted to TA', true, false);

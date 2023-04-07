@@ -65,10 +65,10 @@ class Assignment extends React.Component {
             <tr key={this.state.key}>
                 {tableCells}
                 <td>
-                    <input type={'number'} value={this.state.pref} onChange={(event) => this.setState({ pref: Number(event.target.value) })} />
+                    <input min={0} max={100} type={'number'} value={this.state.pref} onChange={(event) => this.setState({ pref: Math.max(0, Math.min(Number(event.target.value), 100)) })} />
                 </td>
                 <td>
-                    <input type={'text'} value={this.state.note} onChange={(event) => this.setState({ note: event.target.value })} />
+                    <textarea cols={40} rows={3} type={'text'} value={this.state.note} onChange={(event) => this.setState({ note: event.target.value })} />
                 </td>
                 <td>
                     <button onClick={this.updateAssignment} disabled={!changesMade}>Update</button>

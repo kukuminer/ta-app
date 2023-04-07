@@ -147,6 +147,19 @@ app.get("/api/student/applications/:userid", (req, res) => {
         })
 })
 
+app.get("/api/student/applications/available/:userid", (req, res) => {
+    const userId = req.params.userid
+    const dbQuery = "SELECT code FROM course "
+    db.any(dbQuery, userId)
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving available applications from db')
+            res.json({ error: error })
+        })
+})
+
 
 
 /**

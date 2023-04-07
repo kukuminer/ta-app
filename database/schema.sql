@@ -97,9 +97,11 @@ CREATE TABLE termapplication (
     approval boolean,
     explanation text,
     inCanada boolean,
+    wantsToTeach boolean,
 
     isCurrent boolean, -- Set by admin, if none are current, student can submit a new submission.
 
     PRIMARY KEY (id),
+    UNIQUE (student, term),
     FOREIGN KEY (student) references student(id)
 );

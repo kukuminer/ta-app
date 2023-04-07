@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 const StudentDash = () => {
     const id = getUser()
 
-    const [tableData, setTableData] = React.useState(null)
+    const [pastTable, setPastTable] = React.useState(null)
+    const [availTable, setAvailTable] = React.useState(null)
 
     React.useEffect(() => {
         const request = {
@@ -15,9 +16,17 @@ const StudentDash = () => {
         }
         axios(request)
             .then((res) => {
-                setTableData(res.data)
-                console.log(tableData)
+                setPastTable(res.data)
             })
+    }, [id])
+
+    React.useEffect(() => {
+        const url = '/api/student/applications/available/' + id
+        axios.get(url)
+        .then((res) => {
+            console.log(res.data)
+            setAvailTable(res.data)
+        })
     }, [id])
 
 
@@ -55,7 +64,7 @@ const StudentDash = () => {
                         <th>Link</th>
                     </tr>
                     {
-                        !tableData ? <tr><td>loading...</td></tr> : tableData.map((val, key) => {
+                        !pastTable ? <tr><td>loading...</td></tr> : pastTable.map((val, key) => {
                             return (
                                 <tr key={key}>
                                     <td>{val.term}</td>
