@@ -23,10 +23,9 @@ const StudentDash = () => {
     React.useEffect(() => {
         const url = '/api/student/applications/available/' + id
         axios.get(url)
-        .then((res) => {
-            console.log(res.data)
-            setAvailTable(res.data)
-        })
+            .then((res) => {
+                setAvailTable(res.data)
+            })
     }, [id])
 
 
@@ -37,7 +36,7 @@ const StudentDash = () => {
                 This is the student dashboard
             </h1>
             <p>
-                Available TA applications:
+                Current TA applications:
             </p>
             <table className="student-table">
                 <tbody>
@@ -45,11 +44,18 @@ const StudentDash = () => {
                         <th>Term</th>
                         <th>Link</th>
                     </tr>
-                    <tr>
-                        {
-
-                        }
-                    </tr>
+                    {
+                        !availTable ? <tr><td>loading...</td></tr> : availTable.map((val, key) => {
+                            return (
+                                <tr key={key}>
+                                    <td>{val.term}</td>
+                                    <td>
+                                        <Link state={{courses: availTable}} to={'/application/' + val.term}>View</Link>
+                                    </td>
+                                </tr>
+                            )
+                        })
+                    }
                 </tbody>
             </table>
             <p>
@@ -69,7 +75,7 @@ const StudentDash = () => {
                                 <tr key={key}>
                                     <td>{val.term}</td>
                                     <td>{val.availability}</td>
-                                    <td>{val.incanada?'Yes':'No'}</td>
+                                    <td>{val.incanada ? 'Yes' : 'No'}</td>
                                     <td>
                                         <Link to={'/application/' + val.term}>View</Link>
                                     </td>

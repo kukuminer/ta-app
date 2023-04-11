@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const pgp = require("pg-promise")();
-const db = pgp("postgres://postgres:docker@host.docker.internal:5432/testdb");
+const db = pgp("postgres://postgres:docker@host.docker.internal:5432/ta_db");
 
 db.any('SELECT now()', [])
     .then((data) => {
@@ -149,7 +149,15 @@ app.get("/api/student/applications/:userid", (req, res) => {
 
 app.get("/api/student/applications/available/:userid", (req, res) => {
     const userId = req.params.userid
-    const dbQuery = "SELECT code FROM course "
+    const dbQuery = `
+    SELECT DISTINCT code, term
+    FROM course 
+    INNER JOIN section
+    ON course.code = section.course
+    WHERE course.code = section.course
+    AND section.term NOT IN (SELECT term FROM termapplication)
+    AND iscurrent = true
+    `
     db.any(dbQuery, userId)
         .then((data) => {
             res.json(data)
