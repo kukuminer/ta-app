@@ -10,8 +10,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const DB_USER = process.env.DB_USER || 'postgres'
+const DB_PASS = process.env.DB_PASSWORD || 'docker'
+const DB_HOST = process.env.DB_HOST || 'host.docker.internal'
+const DB_PORT = process.env.DB_PORT || '5432'
+const DB_NAME = process.env.DB_NAME || 'ta_db'
+
 const pgp = require("pg-promise")();
-const db = pgp("postgres://postgres:docker@host.docker.internal:5432/ta_db");
+const db = pgp("postgres://"+DB_USER+":"+DB_PASS+"@"+DB_HOST+":"+DB_PORT+"/"+DB_NAME)
 
 db.any('SELECT now()', [])
     .then((data) => {
