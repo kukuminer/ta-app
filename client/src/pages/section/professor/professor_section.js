@@ -13,10 +13,8 @@ const ProfessorSection = () => {
 
     React.useEffect(() => {
         const url = '/api/professor/' + sectionId + '/' + id
-        console.log(url)
         axios.get(url)
             .then((res) => {
-                console.log(res.data)
                 setTableData(res.data)
             })
     }, [sectionId, id])

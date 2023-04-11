@@ -11,7 +11,6 @@ class Assignment extends React.Component {
         super(props)
         if (!props.data.pref) props.data.pref = 0
         if (!props.data.note) props.data.note = ''
-        console.log(props.data)
         this.state = {
             pref: props.data.pref,
             origPref: props.data.pref,
