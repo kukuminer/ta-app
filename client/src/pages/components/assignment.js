@@ -2,6 +2,10 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../getUser"
 
+/**
+ * A class for the rows of professor dashboard table
+ * Used to modify prof preferences and notes
+ */
 class Assignment extends React.Component {
     constructor(props) {
         super(props)
@@ -65,7 +69,12 @@ class Assignment extends React.Component {
             <tr key={this.state.key}>
                 {tableCells}
                 <td>
-                    <input min={0} max={100} type={'number'} value={this.state.pref} onChange={(event) => this.setState({ pref: Math.max(0, Math.min(Number(event.target.value), 100)) })} />
+                    <select value={this.state.pref} onChange={(event) => this.setState({ pref: Number(event.target.value) })}>
+                        <option value={0}>No preference</option>
+                        <option value={50}>Acceptable</option>
+                        <option value={75}>Requested</option>
+                        <option value={100}>Critical</option>
+                    </select>
                 </td>
                 <td>
                     <textarea cols={40} rows={3} type={'text'} value={this.state.note} onChange={(event) => this.setState({ note: event.target.value })} />
