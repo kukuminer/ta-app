@@ -26,6 +26,7 @@ const ProfessorDash = () => {
             <table className='prof-table'>
                 <tbody>
                     <tr>
+                        <th>Term</th>
                         <th>Course</th>
                         <th>Section</th>
                         <th>Link</th>
@@ -34,10 +35,11 @@ const ProfessorDash = () => {
                         !tableData ? <tr><td>loading...</td></tr> : tableData.map((val, key) => {
                             return (
                                 <tr key={key}>
+                                    <td>{val.term}</td>
                                     <td>{val.course}</td>
                                     <td>{val.letter}</td>
                                     <td>
-                                        <Link to={'/section/'+val.course+'/'+val.letter}>View</Link>
+                                        <Link to={'/section/'+val.id}>View</Link>
                                     </td>
                                 </tr>
                             )

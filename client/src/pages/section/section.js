@@ -12,10 +12,12 @@ const components = {
 }
 
 const Section = () => {
-    const { course, letter } = useParams()
+    const { sectionId } = useParams()
     const userId = getUser()
 
     const [userType, setUserType] = React.useState(null);
+    const [course, setCourse] = React.useState(null);
+    const [letter, setLetter] = React.useState(null);
 
     React.useEffect(() => {
         fetch('/api/user/' + userId)
@@ -25,11 +27,20 @@ const Section = () => {
             })
     }, [userId])
 
+    React.useEffect(() => {
+        fetch('/api/section/' + sectionId)
+            .then((res) => res.json())
+            .then((data) => {
+                setCourse(data[0].course)
+                setLetter(data[0].letter)
+            })
+    }, [sectionId])
+
     return (
         <>
             <Header />
             <div className="main">
-                <h1>SECTION {course} {letter}</h1>
+                <h1>SECTION {course ? course : 'Loading..'} {letter}</h1>
                 {components[userType]}
             </div>
         </>

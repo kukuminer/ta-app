@@ -59,7 +59,7 @@ const StudentDash = () => {
                 </tbody>
             </table>
             <p>
-                Previous TA applications:
+                Submitted TA applications:
             </p>
             <table className="student-table">
                 <tbody>

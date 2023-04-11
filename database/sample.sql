@@ -3,7 +3,7 @@ INSERT INTO users(firstname, lastname, email, usertype) VALUES
 ('Jonatan', 'S', 'jonatan@yorku.ca', 'professor'),
 ('John', 'D', 'john@yorku.ca', 'student'),
 ('Michael', 'B', 'mike@yorku.ca', 'professor'),
-('Jane', 'D', 'jane@yorku.ca', 'student');
+('Jane', 'E', 'jane@yorku.ca', 'student');
 
 INSERT INTO student(id, studentid)
 SELECT id, id FROM users WHERE userType = 'student';

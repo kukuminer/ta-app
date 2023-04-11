@@ -41,7 +41,7 @@ app.get("/api/user/:userid", (req, res) => {
  */
 app.get("/api/professor/courses/:userid", (req, res) => {
     const id = req.params.userid
-    db.any("SELECT course, letter FROM section WHERE profid=$1 AND isCurrent=true", id)
+    db.any("SELECT id, course, letter, term FROM section WHERE profid=$1 AND isCurrent=true", id)
         .then((data) => {
             res.json(data)
         })
@@ -54,7 +54,7 @@ app.get("/api/professor/courses/:userid", (req, res) => {
 /**
  * For populationg the professor section view
  * `
- * SELECT firstname, lastname, grade, interest, qualification, pref, note
+ *  SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN section
     ON application.course = section.course 
@@ -65,31 +65,55 @@ app.get("/api/professor/courses/:userid", (req, res) => {
     ON application.student = assignment.student
     WHERE profid = 2
     AND iscurrent = true
-    AND section.course = '2030'
-    AND section.letter = 'A'
+    AND section.course = '2011'
+    AND section.letter = 'A';
     `
+    SELECT * 
+    FROM application 
+    INNER JOIN section 
+    ON application.course = section.course 
+    AND application.term = section.term
+    INNER JOIN users 
+    ON application.student = users.id
+    LEFT OUTER JOIN assignment 
+    ON application.student = assignment.student
+    AND section.id = assignment.section
+    WHERE profid=2
+    AND section.id = '2030'
+    AND section.letter = 'A'
+    (SELECT id FROM section WHERE course='2011' AND letter='A')
+
+    //
+    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
+    FROM application 
+    INNER JOIN users 
+    ON application.student=users.id
+    INNER JOIN section
+    ON application.course = section.course AND application.term = section.term
+    LEFT JOIN assignment 
+    ON application.student = assignment.student AND section.id = assignment.section
+    WHERE section.id = 1
+    AND profid = 2
  */
-app.get("/api/professor/:course/:letter/:userid", (req, res) => {
-    const id = req.params.userid
-    const course = req.params.course
-    const letter = req.params.letter
+app.get("/api/professor/:sectionId/:userId", (req, res) => {
+    const id = req.params.userId
+    // const course = req.params.course
+    // const letter = req.params.letter
+    const sectionId = req.params.sectionId
     dbQuery =
         `
     SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
+    INNER JOIN users 
+    ON application.student=users.id
     INNER JOIN section
-    ON application.course = section.course 
-    AND application.term = section.term
-    INNER JOIN users
-    ON application.student = users.id
-    LEFT OUTER JOIN assignment
-    ON application.student = assignment.student
-    WHERE profid = $1
-    AND iscurrent = true
-    AND section.course = $2
-    AND section.letter = $3
-    `
-    db.any(dbQuery, [id, course, letter])
+    ON application.course = section.course AND application.term = section.term
+    LEFT JOIN assignment 
+    ON application.student = assignment.student AND section.id = assignment.section
+    WHERE section.id = $1
+    AND profid = $2
+        `
+    db.any(dbQuery, [sectionId, id])
         .then((data) => {
             res.json(data)
         })
@@ -155,9 +179,9 @@ app.get("/api/student/applications/available/:userid", (req, res) => {
     INNER JOIN section
     ON course.code = section.course
     WHERE course.code = section.course
-    AND section.term NOT IN (SELECT term FROM termapplication)
     AND iscurrent = true
     `
+    // AND section.term NOT IN (SELECT term FROM termapplication)
     db.any(dbQuery, userId)
         .then((data) => {
             res.json(data)
@@ -168,7 +192,21 @@ app.get("/api/student/applications/available/:userid", (req, res) => {
         })
 })
 
-
+/**
+ * Gets public section info, insecure endpoint (no id check)
+ */
+app.get("/api/section/:sectionId", (req, res) => {
+    const sectionId = req.params.sectionId
+    const dbQuery = `SELECT course, letter, term, iscurrent FROM section WHERE id = $1`
+    db.any(dbQuery, sectionId)
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving section data from db:', sectionId)
+            res.json({ error: error })
+        })
+})
 
 /**
  * ENDPOINTS BELOW HERE TO BE DELETED

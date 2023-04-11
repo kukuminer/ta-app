@@ -8,20 +8,18 @@ import Assignment from "../../components/assignment"
 
 const ProfessorSection = () => {
     const id = getUser()
-    const { course, letter } = useParams()
-
+    const { sectionId } = useParams()
     const [tableData, setTableData] = React.useState(null)
 
     React.useEffect(() => {
-        const request = {
-            method: 'get',
-            url: '/api/professor/' + course + '/' + letter + '/' + id,
-        }
-        axios(request)
+        const url = '/api/professor/' + sectionId + '/' + id
+        console.log(url)
+        axios.get(url)
             .then((res) => {
+                console.log(res.data)
                 setTableData(res.data)
             })
-    }, [course, letter, id])
+    }, [sectionId, id])
 
     return (
         <>
@@ -40,7 +38,7 @@ const ProfessorSection = () => {
                     {
                         !tableData ? <tr><td>loading...</td></tr> : tableData.map((val, key) => {
                             return (
-                                <Assignment data={val} rowKey={key} key={key}/>
+                                <Assignment data={val} rowKey={key} key={key} />
                             )
                         })
                     }
