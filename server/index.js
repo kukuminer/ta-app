@@ -69,36 +69,6 @@ app.get("/api/professor/courses/:userId", (req, res) => {
 /**
  * For populationg the professor section view
  * `
- *  SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
-    FROM application 
-    INNER JOIN section
-    ON application.course = section.course 
-    AND application.term = section.term
-    INNER JOIN users
-    ON application.student = users.id
-    LEFT OUTER JOIN assignment
-    ON application.student = assignment.student
-    WHERE profid = 2
-    AND iscurrent = true
-    AND section.course = '2011'
-    AND section.letter = 'A';
-    `
-    SELECT * 
-    FROM application 
-    INNER JOIN section 
-    ON application.course = section.course 
-    AND application.term = section.term
-    INNER JOIN users 
-    ON application.student = users.id
-    LEFT OUTER JOIN assignment 
-    ON application.student = assignment.student
-    AND section.id = assignment.section
-    WHERE profid=2
-    AND section.id = '2030'
-    AND section.letter = 'A'
-    (SELECT id FROM section WHERE course='2011' AND letter='A')
-
-    //
     SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN users 
@@ -109,6 +79,7 @@ app.get("/api/professor/courses/:userId", (req, res) => {
     ON application.student = assignment.student AND section.id = assignment.section
     WHERE section.id = 1
     AND profid = 2
+    `
  */
 app.get("/api/professor/:sectionId/:userId", (req, res) => {
     const id = getUser.getUser(req, URL_ID)
@@ -186,6 +157,17 @@ app.get("/api/student/applications/:userId", (req, res) => {
         })
 })
 
+
+/**
+ * Gets all the terms that the student can or has applied to
+ * `
+SELECT * 
+FROM (SELECT DISTINCT term FROM section WHERE iscurrent=true) AS secterm
+LEFT JOIN termapplication
+ON secterm.term=termapplication.term
+
+`
+ */
 app.get("/api/student/applications/available/:userId", (req, res) => {
     const userId = getUser.getUser(req, URL_ID)
     const dbQuery = `
