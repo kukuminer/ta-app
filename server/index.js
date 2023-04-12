@@ -1,8 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+const getUser = require('./getUser.js')
 
-
+/**
+ * TODO: ADD ENV FOR GET USER 
+ * req.get("PYork-User")
+ * TODO: nohup to run (or multi tab)
+ * ps ux to see processes
+ * kill PID to kill processes
+ */
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -16,6 +23,8 @@ const DB_HOST = process.env.DB_HOST || 'host.docker.internal'
 const DB_PORT = process.env.DB_PORT || '5432'
 const DB_NAME = process.env.DB_NAME || 'ta_db'
 
+const URL_ID = process.env.USER_ID_IN_URL || false
+
 const pgp = require("pg-promise")();
 const db = pgp("postgres://"+DB_USER+":"+DB_PASS+"@"+DB_HOST+":"+DB_PORT+"/"+DB_NAME)
 
@@ -27,8 +36,8 @@ db.any('SELECT now()', [])
         console.log('SQL ERROR:\n', error)
     });
 
-app.get("/api/user/:userid", (req, res) => {
-    id = req.params.userid;
+app.get("/api/user/:userId", (req, res) => {
+    id = getUser.getUser(req, URL_ID);
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE id = $1", id)
         .then((data) => {
@@ -45,8 +54,8 @@ app.get("/api/user/:userid", (req, res) => {
 /** 
  * For populating the professor dashboard
  */
-app.get("/api/professor/courses/:userid", (req, res) => {
-    const id = req.params.userid
+app.get("/api/professor/courses/:userId", (req, res) => {
+    const id = getUser.getUser(req, URL_ID)
     db.any("SELECT id, course, letter, term FROM section WHERE profid=$1 AND isCurrent=true", id)
         .then((data) => {
             res.json(data)
@@ -102,7 +111,7 @@ app.get("/api/professor/courses/:userid", (req, res) => {
     AND profid = 2
  */
 app.get("/api/professor/:sectionId/:userId", (req, res) => {
-    const id = req.params.userId
+    const id = getUser.getUser(req, URL_ID)
     // const course = req.params.course
     // const letter = req.params.letter
     const sectionId = req.params.sectionId
@@ -164,8 +173,8 @@ app.post("/api/professor/assignment", (req, res) => {
     // res.json({ status: 200 })
 })
 
-app.get("/api/student/applications/:userid", (req, res) => {
-    const userId = req.params.userid
+app.get("/api/student/applications/:userId", (req, res) => {
+    const userId = getUser.getUser(req, URL_ID)
     const dbQuery = "SELECT term, availability, approval, explanation, incanada, iscurrent FROM termapplication WHERE student=$1"
     db.any(dbQuery, userId)
         .then((data) => {
@@ -177,8 +186,8 @@ app.get("/api/student/applications/:userid", (req, res) => {
         })
 })
 
-app.get("/api/student/applications/available/:userid", (req, res) => {
-    const userId = req.params.userid
+app.get("/api/student/applications/available/:userId", (req, res) => {
+    const userId = getUser.getUser(req, URL_ID)
     const dbQuery = `
     SELECT DISTINCT code, term
     FROM course 
