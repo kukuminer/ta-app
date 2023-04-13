@@ -10,3 +10,8 @@
     align-items: center;
     width: 90vw;
 }
+table {
+    width: 80vw;
+    max-width: 1000px;
+    border-radius: 10px;
+}

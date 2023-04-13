@@ -13,6 +13,7 @@ const StudentDash = () => {
         axios.get(url)
             .then((res) => {
                 console.log(res.data)
+                setPastTable(res.data)
                 // Availability in submitted apps must be NOT NULL
                 // Therefore, if it is null, it is not submitted yet
             })

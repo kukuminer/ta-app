@@ -2,7 +2,7 @@ import getUser from "../../../getUser"
 import React from "react"
 import axios from "axios"
 import { useParams } from 'react-router-dom'
-import Assignment from "../../components/assignment"
+import Assignment from "../../components/assignment_row"
 
 
 
