@@ -161,22 +161,27 @@ app.get("/api/student/applications/:userId", (req, res) => {
 /**
  * Gets all the terms that the student can or has applied to
  * `
-SELECT * 
-FROM (SELECT DISTINCT term FROM section WHERE iscurrent=true) AS secterm
-LEFT JOIN termapplication
-ON secterm.term=termapplication.term
-
+SELECT 
+    COALESCE(secterm.term, termapplication.term) AS term, 
+    COALESCE(secterm.iscurrent, termapplication.iscurrent) AS iscurrent,
+    availability, approval, explanation, wantstoteach
+FROM
+(SELECT DISTINCT term, iscurrent FROM section) AS secterm
+FULL OUTER JOIN (SELECT * FROM termapplication WHERE student=3) AS termapplication
+ON secterm.term = termapplication.term
 `
  */
 app.get("/api/student/applications/available/:userId", (req, res) => {
     const userId = getUser.getUser(req, URL_ID)
     const dbQuery = `
-    SELECT DISTINCT code, term
-    FROM course 
-    INNER JOIN section
-    ON course.code = section.course
-    WHERE course.code = section.course
-    AND iscurrent = true
+    SELECT 
+    COALESCE(secterm.term, termapplication.term) AS term, 
+    COALESCE(secterm.iscurrent, termapplication.iscurrent) AS iscurrent,
+    availability, approval, explanation, incanada, wantstoteach
+    FROM
+    (SELECT DISTINCT term, iscurrent FROM section) AS secterm
+    FULL OUTER JOIN (SELECT * FROM termapplication WHERE student=$1) AS termapplication
+    ON secterm.term = termapplication.term
     `
     // AND section.term NOT IN (SELECT term FROM termapplication)
     db.any(dbQuery, userId)

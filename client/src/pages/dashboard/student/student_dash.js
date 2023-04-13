@@ -7,24 +7,14 @@ const StudentDash = () => {
     const id = getUser()
 
     const [pastTable, setPastTable] = React.useState(null)
-    const [availTable, setAvailTable] = React.useState(null)
-
-    React.useEffect(() => {
-        const request = {
-            method: 'get',
-            url: '/api/student/applications/' + id
-        }
-        axios(request)
-            .then((res) => {
-                setPastTable(res.data)
-            })
-    }, [id])
 
     React.useEffect(() => {
         const url = '/api/student/applications/available/' + id
         axios.get(url)
             .then((res) => {
-                setAvailTable(res.data)
+                console.log(res.data)
+                // Availability in submitted apps must be NOT NULL
+                // Therefore, if it is null, it is not submitted yet
             })
     }, [id])
 
@@ -36,30 +26,7 @@ const StudentDash = () => {
                 This is the student dashboard
             </h1>
             <p>
-                Current TA applications:
-            </p>
-            <table className="student-table">
-                <tbody>
-                    <tr>
-                        <th>Term</th>
-                        <th>Link</th>
-                    </tr>
-                    {
-                        !availTable ? <tr><td>loading...</td></tr> : availTable.map((val, key) => {
-                            return (
-                                <tr key={key}>
-                                    <td>{val.term}</td>
-                                    <td>
-                                        <Link state={{courses: availTable}} to={'/application/' + val.term}>View</Link>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
-            <p>
-                Submitted TA applications:
+                TA applications:
             </p>
             <table className="student-table">
                 <tbody>
@@ -67,6 +34,7 @@ const StudentDash = () => {
                         <th>Term</th>
                         <th>Availability</th>
                         <th>On Site?</th>
+                        <th>Application Status</th>
                         <th>Link</th>
                     </tr>
                     {
@@ -75,7 +43,8 @@ const StudentDash = () => {
                                 <tr key={key}>
                                     <td>{val.term}</td>
                                     <td>{val.availability}</td>
-                                    <td>{val.incanada ? 'Yes' : 'No'}</td>
+                                    <td>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</td>
+                                    <td>{val.availability ? 'Submitted' : 'Available'}</td>
                                     <td>
                                         <Link to={'/application/' + val.term}>View</Link>
                                     </td>
