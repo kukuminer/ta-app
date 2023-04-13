@@ -32,6 +32,7 @@ CREATE TABLE student (
 CREATE TABLE course (
     id serial NOT NULL,
     code varchar(10) UNIQUE NOT NULL,
+    name text,
     description text,
 
     PRIMARY KEY (id)
