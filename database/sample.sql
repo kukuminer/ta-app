@@ -40,7 +40,7 @@ VALUES ('3', '2030', 'F23', 90, 75, 75),
 -- DO UPDATE SET pref = 50, note = 'good student'
 -- WHERE id = 1;
 
-INSERT INTO termapplication(student, term, availability, approval, explanation, incanada, wantstoteach, iscurrent)
-VALUES ('3', 'F23', 12, true, 'i want to TA', true, true, true),
-('3', 'F22', 9, true, 'i wanted to TA', true, true, false),
-('5', 'F23', 11, true, 'jane want teach', true, true, true);
+INSERT INTO termapplication(student, term, availability, approval, explanation, incanada, wantstoteach, iscurrent, submitted)
+VALUES ('3', 'F23', 12, true, 'i want to TA', true, true, true, false),
+('3', 'F22', 9, true, 'i wanted to TA', true, true, false, true),
+('5', 'F23', 11, true, 'jane want teach', true, true, true, true);

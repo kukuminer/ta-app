@@ -93,6 +93,8 @@ CREATE TABLE termapplication (
     id serial NOT NULL,
     student int NOT NULL,
 
+    submitted boolean DEFAULT false,
+
     term varchar(10),
     availability int NOT NULL,
     approval boolean,

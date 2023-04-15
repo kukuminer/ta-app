@@ -177,7 +177,7 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
     SELECT 
     COALESCE(secterm.term, termapplication.term) AS term, 
     COALESCE(secterm.iscurrent, termapplication.iscurrent) AS iscurrent,
-    availability, approval, explanation, incanada, wantstoteach
+    availability, approval, explanation, incanada, wantstoteach, submitted
     FROM
     (SELECT DISTINCT term, iscurrent FROM section) AS secterm
     FULL OUTER JOIN (SELECT * FROM termapplication WHERE student=$1) AS termapplication
