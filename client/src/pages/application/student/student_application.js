@@ -1,7 +1,10 @@
 import { useParams } from "react-router-dom"
+import React from "react"
 
 const StudentApplication = () => {
     const { term } = useParams()
+
+    const [courseTable, setCourseTable] = React.useState(null)
 
     return (
         <>

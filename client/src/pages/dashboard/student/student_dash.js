@@ -47,7 +47,7 @@ const StudentDash = () => {
                                     <td>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</td>
                                     <td>{val.availability ? 'Submitted' : 'Available'}</td>
                                     <td>
-                                        <Link to={'/application/' + val.term}>View</Link>
+                                        <Link to={'/application/' + val.term} state={val}>View</Link>
                                     </td>
                                 </tr>
                             )
