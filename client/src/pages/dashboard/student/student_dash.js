@@ -19,8 +19,6 @@ const StudentDash = () => {
             })
     }, [id])
 
-
-
     return (
         <>
             <h1>
@@ -47,7 +45,10 @@ const StudentDash = () => {
                                     <td>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</td>
                                     <td>{val.submitted ? 'Submitted' : val.submitted===false ? 'Saved' : 'Available'}</td>
                                     <td>
-                                        <Link to={'/application/' + val.term} state={val}>View</Link>
+                                        <Link to={{
+                                            pathname: '/application/' + val.term,
+                                            state: "bing"
+                                        }} state={val}>View</Link>
                                     </td>
                                 </tr>
                             )
