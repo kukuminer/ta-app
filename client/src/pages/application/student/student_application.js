@@ -1,8 +1,16 @@
-import { useParams } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import React from "react"
 
 const StudentApplication = () => {
-    const { term } = useParams()
+    const location = useLocation()
+    const state = location.state
+    const term = state.term
+    console.log(state)
+
+    // termapplication info:
+    const [availability, setAvailability] = React.useState(state.availability)
+    const [approval, setApproval] = React.useState(state.approval)
+    const [explanation, setExplanation] = React.useState(state.explanation)
 
     const [courseTable, setCourseTable] = React.useState(null)
 
@@ -16,7 +24,7 @@ const StudentApplication = () => {
                     <h3>General Info</h3>
                     Hours available (0-20):
                     <br />
-                    <input type="number" min={0} max={20} />
+                    <input type="number" min={0} max={20} value={availability} onChange={(event) => setAvailability(event.target.value)}/>
                     <br />
                     <label>
                         <input type="checkbox" />
