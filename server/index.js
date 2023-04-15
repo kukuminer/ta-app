@@ -26,7 +26,7 @@ const DB_NAME = process.env.DB_NAME || 'ta_db'
 const URL_ID = process.env.USER_ID_IN_URL || false
 
 const pgp = require("pg-promise")();
-const db = pgp("postgres://"+DB_USER+":"+DB_PASS+"@"+DB_HOST+":"+DB_PORT+"/"+DB_NAME)
+const db = pgp("postgres://" + DB_USER + ":" + DB_PASS + "@" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME)
 
 db.any('SELECT now()', [])
     .then((data) => {
@@ -190,6 +190,38 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
         })
         .catch((error) => {
             console.log('error retrieving available applications from db')
+            res.json({ error: error })
+        })
+})
+
+/**
+ * Get the courses that the student has and can apply to 
+ * Gets existing applications if they exist
+`
+SELECT * FROM (SELECT * FROM course WHERE code IN 
+(SELECT course FROM section WHERE term='W24')) AS course
+LEFT JOIN (SELECT * FROM application WHERE student=5 AND term='W24') AS application
+ON application.course = course.code
+`
+ */
+app.get("/api/student/applications/:term/:userId", (req, res) => {
+    const userId = getUser.getUser(req, URL_ID)
+    const term = req.params.term
+    const dbQuery = `
+    SELECT * FROM 
+    (SELECT * FROM course WHERE code IN 
+        (SELECT course FROM section WHERE term=$2)
+    ) AS course
+    LEFT JOIN 
+    (SELECT * FROM application WHERE student=$1 AND term=$2) AS application
+    ON application.course = course.code
+    `
+    db.any(dbQuery, [userId, term])
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving application info on courses from db for term:', term)
             res.json({ error: error })
         })
 })
