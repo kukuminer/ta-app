@@ -199,8 +199,8 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
  * Gets existing applications if they exist
 `
 SELECT * FROM (SELECT * FROM course WHERE code IN 
-(SELECT course FROM section WHERE term='W24')) AS course
-LEFT JOIN (SELECT * FROM application WHERE student=5 AND term='W24') AS application
+(SELECT course FROM section WHERE term='F23')) AS course
+LEFT JOIN (SELECT * FROM application WHERE student=3 AND term='F23') AS application
 ON application.course = course.code
 `
  */
@@ -208,7 +208,8 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
     const userId = getUser.getUser(req, URL_ID)
     const term = req.params.term
     const dbQuery = `
-    SELECT * FROM 
+    SELECT code, name, description, grade, interest, qualification
+    FROM 
     (SELECT * FROM course WHERE code IN 
         (SELECT course FROM section WHERE term=$2)
     ) AS course

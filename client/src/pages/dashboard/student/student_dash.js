@@ -14,8 +14,6 @@ const StudentDash = () => {
             .then((res) => {
                 console.log(res.data)
                 setPastTable(res.data)
-                // Availability in submitted apps must be NOT NULL
-                // Therefore, if it is null, it is not submitted yet
             })
     }, [id])
 
@@ -45,10 +43,7 @@ const StudentDash = () => {
                                     <td>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</td>
                                     <td>{val.submitted ? 'Submitted' : val.submitted===false ? 'Saved' : 'Available'}</td>
                                     <td>
-                                        <Link to={{
-                                            pathname: '/application/' + val.term,
-                                            state: "bing"
-                                        }} state={val}>View</Link>
+                                        <Link to={'/application/' + val.term} state={val}>View</Link>
                                     </td>
                                 </tr>
                             )

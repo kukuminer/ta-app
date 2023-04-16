@@ -1,6 +1,6 @@
 import React from "react"
-import axios from "axios"
-import getUser from "../../getUser"
+// import axios from "axios"
+// import getUser from "../../getUser"
 
 /**
  * A class for the rows of professor dashboard table
@@ -9,28 +9,38 @@ import getUser from "../../getUser"
 class Application extends React.Component {
     constructor(props) {
         super(props)
-        console.log(props)
+        this.state = {}
+        // this.state.columns = []
+        // this.dataKeys.forEach((item) => {
+        //     this.state.columns.push(<p>{this.props.data[item]}</p>)
+        // })
+    }
+    componentDidMount() {
+        this.makeColumns()
     }
 
     dataKeys = [
         'code', 'name', 'description',
     ]
-    columnData = []
-    url = ''
+    makeColumns() {
+        var columns = []
+        for (const key of this.dataKeys) {
+            columns.push(<p>{this.props.data[key]}</p>)
+        }
+        var stateCopy = this.state
+        stateCopy.columns = columns
+        this.setState(stateCopy)
+    }
 
 
     render() {
         return (
-            <tr key={this.state.key}>
-                <td>
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
-            </tr>
+            <>
+                hello
+                {this.state.columns}
+            </>
         )
     }
 }
 
-export default Assignment
+export default Application

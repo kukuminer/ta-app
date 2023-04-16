@@ -10,3 +10,22 @@
 .application h2 {
     text-align: center;
 }
+
+input[type=number] {
+    font-size: larger;
+}
+
+input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+}
+
+.form-row {
+    padding: 5px 0;
+    height: auto;
+    line-height: 50px;
+}
+
+textarea {
+    font-size: larger;
+}
