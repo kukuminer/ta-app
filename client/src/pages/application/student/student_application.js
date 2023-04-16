@@ -25,7 +25,7 @@ class StudentApplicationClass extends React.Component {
 
         this.url = '/api/student/applications/' + this.state.term + '/' + getUser()
         this.courseData = []
-        
+
         // this.fetchTable()
     }
     componentDidMount() {
@@ -59,7 +59,7 @@ class StudentApplicationClass extends React.Component {
             .then((res) => {
                 const table = res.data
                 var courseData = []
-                for(const [key, item] of Object.entries(table)) {
+                for (const [key, item] of Object.entries(table)) {
                     courseData.push(<Application data={item} rowKey={key} key={key} />)
                 }
                 var stateCopy = this.state
@@ -105,18 +105,21 @@ class StudentApplicationClass extends React.Component {
                             </label>
                         </div>
                         <h3>Course Preferences</h3>
-                        {
-                            !this.state.courseData ? <p>loading...</p> : this.state.courseData
-                            // !this.courseData ? <p>loading...</p> : this.courseData.map((val, key) => {
-                            //     console.log('hello')
-                            //     return (
-                            //         <>
-                            //             Hello
-                            //             <Application data={val} rowKey={key} key={key} />
-                            //         </>
-                            //     )
-                            // })
-                        }
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Title</th>
+                                    <th>Grade</th>
+                                    <th>Interest</th>
+                                    <th>Qualification</th>
+                                    <th></th>
+                                </tr>
+                                {!this.state.courseData ? <tr><td>loading...</td></tr> : this.state.courseData}
+
+                            </tbody>
+
+                        </table>
                     </form>
                 </div>
             </>

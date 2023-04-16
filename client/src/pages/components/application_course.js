@@ -25,8 +25,9 @@ class Application extends React.Component {
     makeColumns() {
         var columns = []
         for (const key of this.dataKeys) {
-            columns.push(<p>{this.props.data[key]}</p>)
+            columns.push(<td key={key}>{this.props.data[key]}</td>)
         }
+
         var stateCopy = this.state
         stateCopy.columns = columns
         this.setState(stateCopy)
@@ -36,8 +37,9 @@ class Application extends React.Component {
     render() {
         return (
             <>
-                hello
-                {this.state.columns}
+                <tr key={this.props.rowKey}>
+                    {this.state.columns}
+                </tr>
             </>
         )
     }
