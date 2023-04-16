@@ -27,7 +27,13 @@ class Application extends React.Component {
         for (const key of this.dataKeys) {
             columns.push(<td key={key}>{this.props.data[key]}</td>)
         }
-
+        columns.push(
+            <td>
+                <FormControl>
+                    
+                </FormControl>
+            </td>
+        )
         var stateCopy = this.state
         stateCopy.columns = columns
         this.setState(stateCopy)
