@@ -12,7 +12,6 @@ const StudentDash = () => {
         const url = '/api/student/applications/available/' + id
         axios.get(url)
             .then((res) => {
-                console.log(res.data)
                 setPastTable(res.data)
             })
     }, [id])

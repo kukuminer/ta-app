@@ -26,7 +26,6 @@ class StudentApplicationClass extends React.Component {
 
     constructor(props) {
         super(props)
-        console.log(props)
         this.state = {}
         this.state.term = props.state.term
         this.state.userId = getUser()
@@ -86,10 +85,9 @@ class StudentApplicationClass extends React.Component {
                     return () => clearTimeout(this.TIMER)
                 }
                 .bind(this),
-                1000
+                500
             )
         })
-        console.log('changed', changedKey, '... newval:', this.state[changedKey])
     }
 
     // termapplication info:
