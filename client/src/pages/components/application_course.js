@@ -1,6 +1,6 @@
 import React from "react"
-// import axios from "axios"
-// import getUser from "../../getUser"
+import axios from "axios"
+import getUser from "../../getUser"
 
 /**
  * A class for the rows of professor dashboard table
