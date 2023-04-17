@@ -1,6 +1,6 @@
 import React from "react"
-// import axios from "axios"
-// import getUser from "../../getUser"
+import axios from "axios"
+import getUser from "../../getUser"
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material'
 
 /**
@@ -11,6 +11,8 @@ class Application extends React.Component {
     constructor(props) {
         super(props)
         this.state = props.data
+        this.state.term = props.term
+        this.state.userId = getUser()
         this.state.interest = !this.state.interest ? 0 : this.state.interest
         this.state.qualification = !this.state.qualification ? 0 : this.state.qualification
         // this.state.columns = []
@@ -46,6 +48,8 @@ class Application extends React.Component {
         stateCopy[itemKey] = event.target.value
         this.setState(stateCopy, () => {
             // do POST
+            axios.post()
+            console.log(this.state)
         })
     }
 

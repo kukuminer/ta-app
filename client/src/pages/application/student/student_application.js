@@ -60,7 +60,7 @@ class StudentApplicationClass extends React.Component {
                 const table = res.data
                 var courseData = []
                 for (const [key, item] of Object.entries(table)) {
-                    courseData.push(<Application data={item} rowKey={key} key={key} />)
+                    courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key} />)
                 }
                 var stateCopy = this.state
                 stateCopy.courseData = courseData

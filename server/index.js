@@ -23,7 +23,7 @@ const DB_PORT = process.env.DB_PORT || '5432'
 const DB_NAME = process.env.DB_NAME || 'ta_db'
 
 const URL_ID = process.env.USER_ID_IN_URL || false
-if(URL_ID) console.log("GETTING USER FROM URL")
+if (URL_ID) console.log("GETTING USER FROM URL")
 
 
 const pgp = require("pg-promise")();
@@ -231,8 +231,39 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
         })
 })
 
+/** `
+INSERT INTO application(student, course, term, interest, qualification) 
+VALUES (3, '3214', 'F23', 4, 4)
+ON CONFLICT (student, course, term)
+DO UPDATE SET interest=4, qualification=4
+WHERE application.student=3
+AND application.course='3214'
+AND application.term='F23'
+RETURNING application.interest, application.qualification
+`
+ */
 app.post("/api/student/application", (req, res) => {
-
+    const r = req.body
+    const userId = getUser.getUserFromBody(req, URL_ID)
+    const dbQuery = `
+    INSERT INTO application(student, course, term, interest, qualification) 
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (student, course, term)
+    DO UPDATE SET interest=$4, qualification=$5
+    WHERE application.student=$1
+    AND application.course=$2
+    AND application.term=$3
+    RETURNING application.interest, application.qualification
+    `
+    db.any(dbQuery, [userId, r.code, r.term, r.interest, r.qualification])
+        .then((data) => {
+            if (data.length !== 1) throw new Error('Could not add application to db')
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('db application upsert error: ', error)
+            res.json({ status: 400 })
+        })
 })
 
 app.post("/api/student/term", (req, res) => {
