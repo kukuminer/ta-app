@@ -23,6 +23,8 @@ const DB_PORT = process.env.DB_PORT || '5432'
 const DB_NAME = process.env.DB_NAME || 'ta_db'
 
 const URL_ID = process.env.USER_ID_IN_URL || false
+if(URL_ID) console.log("GETTING USER FROM URL")
+
 
 const pgp = require("pg-promise")();
 const db = pgp("postgres://" + DB_USER + ":" + DB_PASS + "@" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME)
@@ -131,7 +133,8 @@ app.post("/api/professor/assignment", (req, res) => {
     RETURNING assignment.id, assignment.pref, assignment.note
     `
     const r = req.body
-    db.any(dbQuery, [r.studentId, r.sectionId, r.pref, r.note, r.userId])
+    const userId = getUser.getUserFromBody(req, URL_ID)
+    db.any(dbQuery, [r.studentId, r.sectionId, r.pref, r.note, userId])
         .then((data) => {
             if (data.length !== 1) throw new Error('Bad auth')
             res.json(data)
@@ -143,19 +146,21 @@ app.post("/api/professor/assignment", (req, res) => {
     // res.json({ status: 200 })
 })
 
-app.get("/api/student/applications/:userId", (req, res) => {
-    const userId = getUser.getUser(req, URL_ID)
-    const dbQuery = "SELECT term, availability, approval, explanation, incanada, iscurrent FROM termapplication WHERE student=$1"
-    db.any(dbQuery, userId)
-        .then((data) => {
-            res.json(data)
-        })
-        .catch((error) => {
-            console.log('error retrieving student applications from db')
-            res.json({ error: error })
-        })
-})
-
+/**
+ * Gets list of users termapplications
+ */
+// app.get("/api/student/applications/:userId", (req, res) => {
+//     const userId = getUser.getUser(req, URL_ID)
+//     const dbQuery = "SELECT term, availability, approval, explanation, incanada, iscurrent FROM termapplication WHERE student=$1"
+//     db.any(dbQuery, userId)
+//         .then((data) => {
+//             res.json(data)
+//         })
+//         .catch((error) => {
+//             console.log('error retrieving student applications from db')
+//             res.json({ error: error })
+//         })
+// })
 
 /**
  * Gets all the terms that the student can or has applied to
@@ -224,6 +229,14 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
             console.log('error retrieving application info on courses from db for term:', term)
             res.json({ error: error })
         })
+})
+
+app.post("/api/student/application", (req, res) => {
+
+})
+
+app.post("/api/student/term", (req, res) => {
+
 })
 
 /**
