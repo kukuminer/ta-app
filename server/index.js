@@ -198,6 +198,24 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
         })
 })
 
+app.get("/api/student/termapplication/:term/:userId", (req, res) => {
+    const userId = getUser.getUser(req, URL_ID)
+    const term = req.params.term
+    const dbQuery = `
+    SELECT submitted, availability, approval, explanation, incanada, wantstoteach
+    FROM termapplication
+    WHERE student=$1 AND term=$2
+    `
+    db.any(dbQuery, [userId, term])
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving termapplication details from db')
+            res.status(400).json({ error: error })
+        })
+})
+
 /**
  * Get the courses that the student has and can apply to 
  * Gets existing applications if they exist
@@ -267,8 +285,40 @@ app.post("/api/student/application", (req, res) => {
         })
 })
 
+/** `
+    INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    ON CONFLICT (student, term)
+    DO UPDATE SET submitted=$3, availability=$4,
+    approval=$5, explanation=$6, incanada=$7, wantsoteach=$8
+    WHERE termapplication.student=$1
+    AND termapplication.term=$2
+    RETURNING submitted, availability
+`
+ * 
+ */
 app.post("/api/student/term", (req, res) => {
-
+    const r = req.body
+    const userId = getUser.getUserFromBody(req, URL_ID)
+    dbQuery = `
+    INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    ON CONFLICT (student, term)
+    DO UPDATE SET submitted=$3, availability=$4,
+    approval=$5, explanation=$6, incanada=$7, wantstoteach=$8
+    WHERE termapplication.student=$1
+    AND termapplication.term=$2
+    RETURNING submitted, availability, approval, explanation, incanada, wantstoteach
+    `
+    db.any(dbQuery, [userId, r.term, r.submitted, r.availability, r.approval, r.explanation, r.incanada, r.wantstoteach])
+        .then((data) => {
+            if (data.length !== 1) throw new Error('Could not add termapplication to DB')
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('db termapplication upsert error: ', error)
+            res.status(400).json({ error: error })
+        })
 })
 
 /**

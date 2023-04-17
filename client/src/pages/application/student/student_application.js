@@ -14,30 +14,38 @@ const StudentApplication = () => {
 }
 
 class StudentApplicationClass extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = props.state
-
-        // Initialize state to default values if it is null:
-        for (const [k, v] of Object.entries(this.defaultValues)) {
-            if (!this.state[k]) this.state[k] = v
-        }
-
-        this.url = '/api/student/applications/' + this.state.term + '/' + getUser()
-        this.courseData = []
-
-        // this.fetchTable()
-    }
-    componentDidMount() {
-        this.fetchTable()
-    }
-
+    POST_URL = '/api/student/term'
     defaultValues = {
         approval: false,
         availability: 0,
         explanation: '',
         incanada: false,
         wantstoteach: false,
+    }
+    TIMER = null
+
+    constructor(props) {
+        super(props)
+        console.log(props)
+        this.state = {}
+        this.state.term = props.state.term
+        this.state.userId = getUser()
+
+        // Initialize state to default values if it is null:
+        for (const [k, v] of Object.entries(this.defaultValues)) {
+            if (!this.state[k]) this.state[k] = v
+        }
+
+        this.get_courses_url = '/api/student/applications/' + this.state.term + '/' + this.state.userId
+        this.get_term_url = '/api/student/termapplication/' + this.state.term + '/' + this.state.userId
+        this.courseData = []
+    }
+    componentDidMount() {
+        this.fetchApp()
+        this.fetchTable()
+    }
+    componentWillUnmount() {
+        clearTimeout(this.TIMER)
     }
 
     handleChange = (changedKey, event) => {
@@ -49,13 +57,53 @@ class StudentApplicationClass extends React.Component {
         else {
             stateCopy[changedKey] = event.target.value
         }
-        this.setState(stateCopy)
+        this.setState(stateCopy, () => {
+            const body = {
+                userId: this.state.userId,
+                term: this.state.term,
+                submitted: this.state.submitted,
+                availability: this.state.availability,
+                approval: this.state.approval,
+                explanation: this.state.explanation,
+                incanada: this.state.incanada,
+                wantstoteach: this.state.wantstoteach,
+            }
+            clearTimeout(this.TIMER)
+            this.TIMER = setTimeout(
+                function() {
+                    axios.post(this.POST_URL, body)
+                        .then((res) => {
+                            this.setState({
+                                submitted: res.data[0].submitted,
+                                availability: res.data[0].availability,
+                                approval: res.data[0].approval,
+                                explanation: res.data[0].explanation,
+                                incanada: res.data[0].incanada,
+                                wantstoteach: res.data[0].wantstoteach,
+                            })
+                            console.log(this.state)
+                        })
+                    return () => clearTimeout(this.TIMER)
+                }
+                .bind(this),
+                1000
+            )
+        })
         console.log('changed', changedKey, '... newval:', this.state[changedKey])
     }
 
     // termapplication info:
+    fetchApp() {
+        axios.get(this.get_term_url)
+            .then((res) => {
+                const newState = res.data[0]
+                this.setState(newState)
+            })
+    }
+
+    // application info:
     fetchTable() {
-        axios.get(this.url)
+        axios.get(this.get_courses_url)
             .then((res) => {
                 const table = res.data
                 var courseData = []
