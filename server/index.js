@@ -255,14 +255,14 @@ app.post("/api/student/application", (req, res) => {
     AND application.term=$3
     RETURNING application.interest, application.qualification
     `
-    db.any(dbQuery, [userId, r.code, r.term, r.interest, r.qualification])
+    db.any(dbQuery, [userId, r.course, r.term, r.interest, r.qualification])
         .then((data) => {
             if (data.length !== 1) throw new Error('Could not add application to db')
             res.json(data)
         })
         .catch((error) => {
             console.log('db application upsert error: ', error)
-            res.json({ status: 400 })
+            res.status(400).json({ error: error })
         })
 })
 

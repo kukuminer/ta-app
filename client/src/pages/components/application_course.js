@@ -8,6 +8,11 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mu
  * Used to modify prof preferences and notes
  */
 class Application extends React.Component {
+    URL = '/api/student/application'
+    dataKeys = [
+        'code', 'name', 'description',
+    ]
+
     constructor(props) {
         super(props)
         this.state = props.data
@@ -24,9 +29,6 @@ class Application extends React.Component {
         this.makeColumns()
     }
 
-    dataKeys = [
-        'code', 'name', 'description',
-    ]
     makeColumns() {
         var columns = []
         for (const key of this.dataKeys) {
@@ -40,6 +42,7 @@ class Application extends React.Component {
 
     /**
      * Posts the changed fields to the DB
+     * Updates state first, then axios posts in callback
      * @param {string} itemKey 
      * @param {onChange event} event 
      */
@@ -48,7 +51,21 @@ class Application extends React.Component {
         stateCopy[itemKey] = event.target.value
         this.setState(stateCopy, () => {
             // do POST
-            axios.post()
+            const body = {
+                userId: this.state.userId,
+                course: this.state.code,
+                term: this.state.term,
+                interest: this.state.interest,
+                qualification: this.state.qualification,
+            }
+            axios.post(this.URL, body)
+                .then((res) => {
+                    console.log(res.status)
+                    // this.setState({
+                    //     interest: res.data[0].interest,
+                    //     qualification: res.data[0].qualification,
+                    // })
+                })
             console.log(this.state)
         })
     }
