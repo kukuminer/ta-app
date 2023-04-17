@@ -27,9 +27,11 @@ const Application = () => {
     return (
         <>
             <Header />
-            <div className="main">
-                <h1>This is the application page</h1>
-                {components[userType]}
+            <div className="application-page">
+                <div className="main">
+                    <h1>This is the application page</h1>
+                    {components[userType]}
+                </div>
             </div>
         </>
     )

@@ -29,10 +29,10 @@ FROM section
 WHERE profid=2 and isCurrent=true;
 
 INSERT INTO application(student, course, term, grade, interest, qualification) 
-VALUES ('3', '2030', 'F23', 90, 3, 75), 
-('3', '2011', 'F23', 80, 3, 80),
-('5', '2030', 'F23', 100, 4, 100),
-('3', '2030', 'W24', 50, 2, 50);
+VALUES ('3', '2030', 'F23', 90, 3, 3), 
+('3', '2011', 'F23', 80, 3, 2),
+('5', '2030', 'F23', 100, 4, 4),
+('3', '2030', 'W24', 50, 2, 2);
 
 -- INSERT INTO assignment(student, section)
 -- VALUES (3, 1)

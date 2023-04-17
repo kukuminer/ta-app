@@ -1,3 +1,8 @@
+.application-page {
+    display: flex;
+    justify-content: center;
+}
+
 .application {
     width: 80vw;
     max-width: 1000px;
@@ -9,6 +14,11 @@
 
 .application h2 {
     text-align: center;
+}
+
+.td-left-align {
+    text-align: left;
+    padding-left: 0.5em;
 }
 
 input[type=number] {
