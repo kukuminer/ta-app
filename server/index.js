@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 const getUser = require('./getUser.js')
-
 /**
  * TODO: ADD ENV FOR GET USER 
  * req.get("PYork-User")
@@ -39,13 +38,13 @@ db.any('SELECT now()', [])
 app.get("/api/user/:userId", (req, res) => {
     id = getUser.getUser(req, URL_ID);
     // SELECT usertype FROM users WHERE id = $1
-    db.any("SELECT usertype FROM users WHERE id = $1", id)
+    db.any("SELECT usertype FROM users WHERE id = $1", [id])
         .then((data) => {
             if (data.length > 1) throw new Error("Retrieved more than one user??")
             res.json({ userType: data[0].usertype });
         })
         .catch((error) => {
-            console.log('error retrieving usertype from db')
+            console.log('error retrieving usertype from db on login')
             res.json({ userType: error })
         })
 
