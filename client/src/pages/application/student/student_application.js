@@ -3,6 +3,7 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../../getUser"
 import Application from "../../components/application_course"
+import { Button } from "@mui/material"
 
 /**
  * Wraps the StudentApplication component to properly pass in the useLocation hook
@@ -15,12 +16,13 @@ const StudentApplication = () => {
 
 class StudentApplicationClass extends React.Component {
     POST_URL = '/api/student/term'
-    defaultValues = {
+    DEFAULT_VALUES = {
         approval: false,
         availability: 0,
         explanation: '',
         incanada: false,
         wantstoteach: false,
+        submitted: false,
     }
     TIMER = null
 
@@ -31,9 +33,10 @@ class StudentApplicationClass extends React.Component {
         this.state.userId = getUser()
 
         // Initialize state to default values if it is null:
-        for (const [k, v] of Object.entries(this.defaultValues)) {
+        for (const [k, v] of Object.entries(this.DEFAULT_VALUES)) {
             if (!this.state[k]) this.state[k] = v
         }
+        console.log(this.state)
 
         this.get_courses_url = '/api/student/applications/' + this.state.term + '/' + this.state.userId
         this.get_term_url = '/api/student/termapplication/' + this.state.term + '/' + this.state.userId
@@ -53,6 +56,9 @@ class StudentApplicationClass extends React.Component {
         if (event.target.type === "checkbox") {
             stateCopy[changedKey] = event.target.checked
         }
+        else if(changedKey === 'submitted') {
+            stateCopy[changedKey] = !this.state.submitted
+        }
         else {
             stateCopy[changedKey] = event.target.value
         }
@@ -69,7 +75,7 @@ class StudentApplicationClass extends React.Component {
             }
             clearTimeout(this.TIMER)
             this.TIMER = setTimeout(
-                function() {
+                function () {
                     axios.post(this.POST_URL, body)
                         .then((res) => {
                             this.setState({
@@ -84,7 +90,7 @@ class StudentApplicationClass extends React.Component {
                         })
                     return () => clearTimeout(this.TIMER)
                 }
-                .bind(this),
+                    .bind(this),
                 500
             )
         })
@@ -95,6 +101,9 @@ class StudentApplicationClass extends React.Component {
         axios.get(this.get_term_url)
             .then((res) => {
                 const newState = res.data[0]
+                for (const [k, v] of Object.entries(this.DEFAULT_VALUES)) {
+                    if (!newState[k]) newState[k] = v
+                }
                 this.setState(newState)
             })
     }
@@ -164,8 +173,14 @@ class StudentApplicationClass extends React.Component {
                                 {!this.state.courseData ? <tr><td>loading...</td></tr> : this.state.courseData}
 
                             </tbody>
-
                         </table>
+                        <br/>
+                        <Button variant="contained"
+                            size="large"
+                            onClick={(event) => this.handleChange('submitted', event)}
+                        >
+                            {this.state.submitted ? 'Unsubmit' : 'Submit'}
+                        </Button>
                     </form>
                 </div>
             </>
