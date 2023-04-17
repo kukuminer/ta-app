@@ -141,7 +141,7 @@ app.post("/api/professor/assignment", (req, res) => {
         })
         .catch((error) => {
             console.log('db assignment upsert error: ', error)
-            res.json({ status: 400 })
+            res.status(400).json({ error: error })
         })
     // res.json({ status: 200 })
 })
@@ -241,6 +241,7 @@ AND application.course='3214'
 AND application.term='F23'
 RETURNING application.interest, application.qualification
 `
+ * The request is safe because of DB restrictions
  */
 app.post("/api/student/application", (req, res) => {
     const r = req.body

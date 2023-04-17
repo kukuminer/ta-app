@@ -60,13 +60,12 @@ class Application extends React.Component {
             }
             axios.post(this.URL, body)
                 .then((res) => {
-                    console.log(res.status)
-                    // this.setState({
-                    //     interest: res.data[0].interest,
-                    //     qualification: res.data[0].qualification,
-                    // })
+                    // TODO: Add visual response when successful
+                    this.setState({
+                        interest: res.data[0].interest,
+                        qualification: res.data[0].qualification,
+                    })
                 })
-            console.log(this.state)
         })
     }
 
