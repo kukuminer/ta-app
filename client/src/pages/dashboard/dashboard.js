@@ -1,7 +1,7 @@
 import React from "react";
 import ProfessorDash from "./professor/professor_dash";
 import StudentDash from "./student/student_dash";
-import AdminDash from "./admin_dash";
+import AdminDash from "./admin/admin_dash";
 import Header from "../header/header"
 import getUser from "../../getUser";
 import "./dashboard.css"

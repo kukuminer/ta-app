@@ -337,6 +337,24 @@ app.get("/api/section/:sectionId", (req, res) => {
         })
 })
 
+app.get("/api/admin/tables", (req, res) => {
+    const dbQuery = `
+    SELECT * FROM pg_catalog.pg_tables
+    WHERE schemaname != 'pg_catalog'
+    AND schemaname != 'information_schema'
+    `
+    db.any(dbQuery)
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error fetching table list from DB:', error)
+            res.status(400).json({ error: error })
+        })
+})
+
+
+
 /**
  * ENDPOINTS BELOW HERE TO BE DELETED
  */
