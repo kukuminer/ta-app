@@ -26,6 +26,7 @@ class Assignment extends React.Component {
         this.columnData.splice(1, 1)
     }
 
+    TIMER = null
     dataKeys = [
         'firstname', 'lastname', 'grade', 'interest', 'qualification',
     ]
@@ -46,17 +47,25 @@ class Assignment extends React.Component {
             sectionId: this.state.sectionId,
             userId: getUser()
         }
-        axios.post(this.url, body)
-            .then((res) => {
-                this.setState({
-                    origNote: res.data[0].note,
-                    origPref: res.data[0].pref,
-                })
-                this.render()
-            })
-            .catch((error) => {
-                console.log('frontend error posting pref/note: ', error)
-            })
+        clearTimeout(this.TIMER)
+        this.TIMER = setTimeout(
+            function () {
+                axios.post(this.url, body)
+                    .then((res) => {
+                        this.setState({
+                            origNote: res.data[0].note,
+                            origPref: res.data[0].pref,
+                        })
+                        this.render()
+                        console.log(this.state)
+                    })
+                    .catch((error) => {
+                        console.log('frontend error posting pref/note: ', error)
+                    })
+                return () => clearTimeout(this.TIMER)
+            }.bind(this),
+            500
+        )
     }
 
     render() {
@@ -69,7 +78,7 @@ class Assignment extends React.Component {
             <tr key={this.state.key}>
                 {tableCells}
                 <td>
-                    <select value={this.state.pref} onChange={(event) => this.setState({ pref: Number(event.target.value) })}>
+                    <select value={this.state.pref} onChange={(event) => this.setState({ pref: Number(event.target.value) }, () => this.updateAssignment())}>
                         <option value={0}>No preference</option>
                         <option value={50}>Acceptable</option>
                         <option value={75}>Requested</option>
@@ -77,10 +86,10 @@ class Assignment extends React.Component {
                     </select>
                 </td>
                 <td>
-                    <textarea cols={40} rows={3} type={'text'} value={this.state.note} onChange={(event) => this.setState({ note: event.target.value })} />
+                    <textarea cols={40} rows={3} type={'text'} value={this.state.note} onChange={(event) => this.setState({ note: event.target.value }, () => this.updateAssignment())} />
                 </td>
                 <td>
-                    <button onClick={this.updateAssignment} disabled={!changesMade}>Update</button>
+                    <button onClick={this.updateAssignment} disabled={!changesMade}>{changesMade ? 'Saving...' : 'Saved!'}</button>
                 </td>
             </tr>
         )

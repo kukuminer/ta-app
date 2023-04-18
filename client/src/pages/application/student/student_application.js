@@ -92,8 +92,7 @@ class StudentApplicationClass extends React.Component {
                             console.log('frontend error posting interest/qual changes:', error)
                         })
                     return () => clearTimeout(this.TIMER)
-                }
-                    .bind(this),
+                }.bind(this),
                 500
             )
         })
