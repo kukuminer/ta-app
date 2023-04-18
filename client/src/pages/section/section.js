@@ -4,6 +4,7 @@ import Header from "../header/header"
 import getUser from "../../getUser"
 import ProfessorSection from "./professor/professor_section"
 import StudentSection from "./student/student_section"
+import "./section.css"
 
 const components = {
     'student': <StudentSection />,
@@ -39,9 +40,11 @@ const Section = () => {
     return (
         <>
             <Header />
-            <div className="main">
-                <h1>SECTION {course ? course : 'Loading..'} {letter}</h1>
-                {components[userType]}
+            <div className="section">
+                <div className="main">
+                    <h1>SECTION {course ? course : 'Loading..'} {letter}</h1>
+                    {components[userType]}
+                </div>
             </div>
         </>
     )

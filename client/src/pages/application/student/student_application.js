@@ -56,7 +56,7 @@ class StudentApplicationClass extends React.Component {
         if (event.target.type === "checkbox") {
             stateCopy[changedKey] = event.target.checked
         }
-        else if(changedKey === 'submitted') {
+        else if (changedKey === 'submitted') {
             stateCopy[changedKey] = !this.state.submitted
         }
         else {
@@ -174,7 +174,9 @@ class StudentApplicationClass extends React.Component {
 
                             </tbody>
                         </table>
-                        <br/>
+                        <p>
+                            Your changes are saved automatically. You can unsubmit later.
+                        </p>
                         <Button variant="contained"
                             size="large"
                             onClick={(event) => this.handleChange('submitted', event)}
