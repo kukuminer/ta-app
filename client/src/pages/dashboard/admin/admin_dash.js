@@ -1,6 +1,6 @@
 import React from "react"
 import axios from "axios"
-import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 
 const URL = "/api/admin/tables"
 const AdminDash = () => {
@@ -40,7 +40,7 @@ const AdminDash = () => {
                     if (row) {
                         var newRow = []
                         const vals = row.trim().split(',')
-                        for(const [j,item] of Object.entries(vals)) {
+                        for (const [j, item] of Object.entries(vals)) {
                             newRow.push(<TableCell key={j}>{item}</TableCell>)
                         }
                         console.log(newRow)
@@ -70,24 +70,27 @@ const AdminDash = () => {
                 <FormHelperText>{!selectedTable ? 'Please select a table' : ''}</FormHelperText>
             </FormControl>
 
-            <Button variant="contained" component="label">
-                Upload CSV
-                <input hidden
-                    accept=".csv"
-                    type="file"
-                    onChange={(event) => handleFile(event)}
-                />
-            </Button>
-
-            <TableContainer>
-                <Table aria-label="data-table">
-                    <TableHead>
-                    </TableHead>
-                    <TableBody>
-                        {uploadedData}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <div className="admin-buttons">
+                <Button variant="contained" component="label">
+                    Upload CSV
+                    <input hidden
+                        accept=".csv"
+                        type="file"
+                        onChange={(event) => handleFile(event)}
+                    />
+                </Button>
+            </div>
+            <div className="admin-table">
+                <TableContainer component={Paper}>
+                    <Table size="small" aria-label="data-table">
+                        <TableHead>
+                        </TableHead>
+                        <TableBody>
+                            {uploadedData}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
         </>
     )
 }

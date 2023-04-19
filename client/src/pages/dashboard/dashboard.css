@@ -16,3 +16,9 @@
     max-width: 1000px;
     border-radius: 10px;
 }
+
+.admin-table {
+    width: 80vw;
+    margin: 1em;
+    border: 1px solid black;
+}
