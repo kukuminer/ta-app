@@ -1,6 +1,6 @@
 import React from "react"
 import axios from "axios"
-import { Button, Checkbox, FormControl, FormControlLabel, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import getUser from "../../../getUser"
 
 const GET_URL = "/api/admin/tables"
@@ -13,6 +13,7 @@ const AdminDash = () => {
     const [selectedTable, setSelected] = React.useState('')
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
+    const [keyList, setKeyList] = React.useState(null)
 
     React.useEffect(() => {
         axios.get(GET_URL)
@@ -29,6 +30,21 @@ const AdminDash = () => {
     React.useEffect(() => {
         if (tables) setSelected(tables[0].value)
     }, [tables])
+
+    React.useEffect(() => {
+        if (selectedTable) {
+            const url = GET_KEYS_URL + selectedTable
+            axios.get(url)
+                .then((res) => {
+                    const keys = res.data
+                    const row = []
+                    for (const [idx, key] of Object.entries(keys)) {
+                        row.push(<TableCell key={idx}>{key}</TableCell>)
+                    }
+                    setKeyList(row)
+                })
+        }
+    }, [selectedTable])
 
     const handleFile = (event) => {
         const file = event.target.files[0]
@@ -93,6 +109,23 @@ const AdminDash = () => {
                 </Select>
                 <FormHelperText>{!selectedTable ? 'Please select a table' : ''}</FormHelperText>
             </FormControl>
+            <p className="admin-text">
+                Table keys:
+            </p>
+            <div className="admin-table">
+                <TableContainer component={Paper}>
+                    <Table size="small" aria-label="data-table">
+                        <TableHead>
+                            <TableRow>
+                                {keyList}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+
 
             <div className="admin-buttons">
                 <Button variant="contained" component="label">
@@ -117,7 +150,10 @@ const AdminDash = () => {
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
-                        <TableHead>
+                        <TableHead >
+                            <TableRow sx={{ backgroundColor: '#dddddd' }}>
+                                {keyList.slice(1)}
+                            </TableRow>
                         </TableHead>
                         <TableBody>
                             {uploadedData}

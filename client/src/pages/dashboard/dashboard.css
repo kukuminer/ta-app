@@ -22,3 +22,9 @@
     margin: 1em;
     border: 1px solid black;
 }
+
+.admin-text {
+    width: 80vw;
+    display: flex;
+    text-align: left;
+}
