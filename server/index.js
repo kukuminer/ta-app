@@ -337,9 +337,12 @@ app.get("/api/section/:sectionId", (req, res) => {
         })
 })
 
+/**
+ * Get db table names
+ */
 app.get("/api/admin/tables", (req, res) => {
     const dbQuery = `
-    SELECT * FROM pg_catalog.pg_tables
+    SELECT tablename FROM pg_catalog.pg_tables
     WHERE schemaname != 'pg_catalog'
     AND schemaname != 'information_schema'
     `
@@ -353,7 +356,41 @@ app.get("/api/admin/tables", (req, res) => {
         })
 })
 
+app.get("/api/admin/table/:tableName", (req, res) => {
+    const tableName = req.params.tableName
+    const dbQuery = `
+    SELECT * FROM `+tableName+` LIMIT 1
+    `
+    db.any(dbQuery, tableName)
+        .then((data) => {
+            res.json(Object.keys(data[0]))
+        })
+        .catch((error) => {
+            console.log('error fetching table info for table:', tableName)
+            res.status(400).send(error)
+        })
+})
 
+app.post("/api/admin/upsert", (req, res) => {
+    const userId = getUser.getUserFromBody(req, URL_ID)
+    db.any('SELECT usertype FROM users WHERE id=$1', userId)
+        .then((data) => {
+            console.log(data)
+            if (!(data.length === 1 && data[0].usertype === 'admin')) {
+                console.log('unauthorized request!')
+                res.status(403).send('Unauthorized!')
+                return
+            }
+            const tableName = req.body.tableName
+            const rows = req.body.rows
+            for (const [idx, row] of Object.entries(rows)) {
+                if (row) {
+                    console.log(row)
+                }
+            }
+            res.status(200).send()
+        })
+})
 
 /**
  * ENDPOINTS BELOW HERE TO BE DELETED
