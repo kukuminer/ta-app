@@ -1,6 +1,6 @@
 import React from "react"
 import axios from "axios"
-import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import getUser from "../../../getUser"
 
 const GET_URL = "/api/admin/tables"
@@ -14,6 +14,7 @@ const AdminDash = () => {
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
     const [keyList, setKeyList] = React.useState(null)
+    const [constraints, setConstraints] = React.useState('')
 
     React.useEffect(() => {
         axios.get(GET_URL)
@@ -79,6 +80,7 @@ const AdminDash = () => {
             userId: getUser(),
             tableName: selectedTable,
             rows: postableData,
+            keys: constraints,
         }
         axios.post(POST_URL, body)
             .then((res) => {
@@ -127,9 +129,15 @@ const AdminDash = () => {
             </div>
             <h4 className="admin-text">
                 Please input all keys that must be unique, separated by commas (eg. <span className="admin-code">course,letter,term</span> in the 'section' table)
-                <br/>
-                    These keys will be used for upsert conflict resolution
+                <br />
+                These keys will be used for upsert conflict resolution
             </h4>
+            <TextField
+                id="key-text"
+                label="Unique constraints"
+                sx={{ margin: '1em 0', width: '80vw' }}
+                onChange={(event) => setConstraints(event.target.value)}
+            />
             <div className="admin-buttons">
                 <Button variant="contained" component="label">
                     Upload CSV
@@ -155,7 +163,7 @@ const AdminDash = () => {
                     <Table size="small" aria-label="data-table">
                         <TableHead >
                             <TableRow sx={{ backgroundColor: '#dddddd' }}>
-                                {keyList.slice(1)}
+                                {keyList ? keyList.slice(1) : <TableCell></TableCell>}
                             </TableRow>
                         </TableHead>
                         <TableBody>
