@@ -396,28 +396,39 @@ app.post("/api/admin/upsert", (req, res) => {
                     INSERT INTO `+ tableName + `(` + cols + `) 
                     VALUES (`+ joined + `)`
                     if (constr) {
-                        const update = []
+                        var dotConstraint = []
+                        for (const idx in constr) {
+                            dotConstraint.push(tableName + '.' + constr[idx])
+                        }
+                        dotConstraint = dotConstraint.join(',')
                         dbQuery += `
-                        ON CONFLICT DO
+                        ON CONFLICT (`+ constr.join(',') + `) DO
                         UPDATE SET 
                         `
                         var setting = ''
-                        var where = 'WHERE '
-                        for(const idx in split) {
-                            if(!constr.includes(cols[idx])) {
+                        var where = ' WHERE '
+                        for (const idx in split) {
+                            if (!constr.includes(cols[idx])) {
                                 setting += cols[idx] + '=' + split[idx] + ','
                             }
                             else {
-                                where += cols[idx] + '=' + split[idx] + ' AND '
+                                where += tableName + '.' + cols[idx] + '=' + split[idx] + ' AND '
                             }
                         }
-                        setting = setting.slice(0, setting.lastIndexOf("'")+1)
-                        where = where.slice(0, where.lastIndexOf("'")+1)
-                        console.log(setting, where)
+                        setting = setting.slice(0, setting.lastIndexOf("'") + 1)
+                        where = where.slice(0, where.lastIndexOf("'") + 1)
                         dbQuery += setting + where
+                        // console.log(dbQuery)
                     }
 
-                    // db.any()
+                    db.any(dbQuery)
+                        .then((data) => {
+                            console.log('done')
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                            res.status(500).send(error)
+                        })
                 }
             }
             res.status(200).send()
