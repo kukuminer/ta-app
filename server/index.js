@@ -385,6 +385,7 @@ app.post("/api/admin/upsert", (req, res) => {
             const constr = req.body.constraints.split(',')
             const cols = req.body.columns.split(',')
             console.log(req.body)
+            dbQuery = `INSERT INTO ` + tableName + `(` + cols + `) VALUES `
             for (const [idx, row] of Object.entries(rows)) {
                 if (row) {
                     const split = row.trim().split(',')
@@ -392,46 +393,47 @@ app.post("/api/admin/upsert", (req, res) => {
                         split[idx] = "'" + split[idx] + "'"
                     }
                     const joined = split.join(',')
-                    dbQuery = `
-                    INSERT INTO `+ tableName + `(` + cols + `) 
-                    VALUES (`+ joined + `)`
-                    if (constr) {
-                        var dotConstraint = []
-                        for (const idx in constr) {
-                            dotConstraint.push(tableName + '.' + constr[idx])
-                        }
-                        dotConstraint = dotConstraint.join(',')
-                        dbQuery += `
-                        ON CONFLICT (`+ constr.join(',') + `) DO
-                        UPDATE SET 
-                        `
-                        var setting = ''
-                        var where = ' WHERE '
-                        for (const idx in split) {
-                            if (!constr.includes(cols[idx])) {
-                                setting += cols[idx] + '=' + split[idx] + ','
-                            }
-                            else {
-                                where += tableName + '.' + cols[idx] + '=' + split[idx] + ' AND '
-                            }
-                        }
-                        setting = setting.slice(0, setting.lastIndexOf("'") + 1)
-                        where = where.slice(0, where.lastIndexOf("'") + 1)
-                        dbQuery += setting + where
-                        // console.log(dbQuery)
-                    }
-
-                    db.any(dbQuery)
-                        .then((data) => {
-                            console.log('done')
-                        })
-                        .catch((error) => {
-                            console.log(error)
-                            res.status(500).send(error)
-                        })
+                    dbQuery += '(' + joined + '),'
                 }
             }
-            res.status(200).send()
+            dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
+            if (constr) {
+                dbQuery += `
+                ON CONFLICT (`+ constr.join(',') + `) DO
+                UPDATE ` + tableName + ` AS t SET 
+                `
+                for(const col of cols) {
+                    dbQuery += col + '=c.' + col + ',' 
+                }
+                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
+                dbQuery += ' FROM (VALUES '
+                for (const [idx, row] of Object.entries(rows)) {
+                    if(row) {
+                        const split = row.trim().split(',')
+                        for (const idx in split) {
+                            split[idx] = "'" + split[idx] + "'"
+                        }
+                        const joined = split.join(',')
+                        dbQuery += '(' + joined + '),'
+                    }
+                }
+                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
+                dbQuery += ') AS c(' + cols + ') WHERE '
+                for(const constraint of constr) {
+                    dbQuery += 'c.' + constraint + '=t.' + constraint + ' AND '
+                }
+                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf('AND'))
+            }
+            console.log(dbQuery)
+            // db.any(dbQuery)
+            //     .then((data) => {
+            //         console.log('done')
+            //         res.status(200).send()
+            //     })
+            //     .catch((error) => {
+            //         console.log(error)
+            //         res.status(500).send(error)
+            //     })
         })
 })
 
