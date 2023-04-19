@@ -359,7 +359,7 @@ app.get("/api/admin/tables", (req, res) => {
 app.get("/api/admin/table/:tableName", (req, res) => {
     const tableName = req.params.tableName
     const dbQuery = `
-    SELECT * FROM `+tableName+` LIMIT 1
+    SELECT * FROM `+ tableName + ` LIMIT 1
     `
     db.any(dbQuery, tableName)
         .then((data) => {
@@ -375,7 +375,6 @@ app.post("/api/admin/upsert", (req, res) => {
     const userId = getUser.getUserFromBody(req, URL_ID)
     db.any('SELECT usertype FROM users WHERE id=$1', userId)
         .then((data) => {
-            console.log(data)
             if (!(data.length === 1 && data[0].usertype === 'admin')) {
                 console.log('unauthorized request!')
                 res.status(403).send('Unauthorized!')
@@ -383,9 +382,42 @@ app.post("/api/admin/upsert", (req, res) => {
             }
             const tableName = req.body.tableName
             const rows = req.body.rows
+            const constr = req.body.constraints.split(',')
+            const cols = req.body.columns.split(',')
+            console.log(req.body)
             for (const [idx, row] of Object.entries(rows)) {
                 if (row) {
-                    console.log(row)
+                    const split = row.trim().split(',')
+                    for (const idx in split) {
+                        split[idx] = "'" + split[idx] + "'"
+                    }
+                    const joined = split.join(',')
+                    dbQuery = `
+                    INSERT INTO `+ tableName + `(` + cols + `) 
+                    VALUES (`+ joined + `)`
+                    if (constr) {
+                        const update = []
+                        dbQuery += `
+                        ON CONFLICT DO
+                        UPDATE SET 
+                        `
+                        var setting = ''
+                        var where = 'WHERE '
+                        for(const idx in split) {
+                            if(!constr.includes(cols[idx])) {
+                                setting += cols[idx] + '=' + split[idx] + ','
+                            }
+                            else {
+                                where += cols[idx] + '=' + split[idx] + ' AND '
+                            }
+                        }
+                        setting = setting.slice(0, setting.lastIndexOf("'")+1)
+                        where = where.slice(0, where.lastIndexOf("'")+1)
+                        console.log(setting, where)
+                        dbQuery += setting + where
+                    }
+
+                    // db.any()
                 }
             }
             res.status(200).send()

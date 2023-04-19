@@ -13,8 +13,10 @@ const AdminDash = () => {
     const [selectedTable, setSelected] = React.useState('')
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
-    const [keyList, setKeyList] = React.useState(null)
+    // const [keyList, setKeyList] = React.useState(null)
+    const [keyCells, setKeyCells] = React.useState(null)
     const [constraints, setConstraints] = React.useState('')
+    const [keysToUpdate, setKeysToUpdate] = React.useState('')
 
     React.useEffect(() => {
         axios.get(GET_URL)
@@ -38,11 +40,12 @@ const AdminDash = () => {
             axios.get(url)
                 .then((res) => {
                     const keys = res.data
+                    // setKeyList(keys)
                     const row = []
                     for (const [idx, key] of Object.entries(keys)) {
                         row.push(<TableCell key={idx}>{key}</TableCell>)
                     }
-                    setKeyList(row)
+                    setKeyCells(row)
                 })
         }
     }, [selectedTable])
@@ -75,13 +78,14 @@ const AdminDash = () => {
     }
 
     const postFile = () => {
-        console.log(postableData)
         const body = {
             userId: getUser(),
             tableName: selectedTable,
             rows: postableData,
-            keys: constraints,
+            columns: keysToUpdate,
+            constraints: constraints,
         }
+        console.log(body)
         axios.post(POST_URL, body)
             .then((res) => {
                 console.log(res)
@@ -112,14 +116,14 @@ const AdminDash = () => {
                 <FormHelperText>{!selectedTable ? 'Please select a table' : ''}</FormHelperText>
             </FormControl>
             <h4 className="admin-text">
-                {selectedTable + ' table keys:'}
+                {selectedTable + ' table columns:'}
             </h4>
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
                         <TableHead>
                             <TableRow>
-                                {keyList}
+                                {keyCells}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -128,9 +132,18 @@ const AdminDash = () => {
                 </TableContainer>
             </div>
             <h4 className="admin-text">
+                Please input the column names that you wish to update, separated by commas, in the same order that they are present in the uploaded file.
+            </h4>
+            <TextField
+                id="key-text"
+                label="Values to insert"
+                sx={{ margin: '1em 0', width: '80vw' }}
+                onChange={(event) => setKeysToUpdate(event.target.value)}
+            />
+            <h4 className="admin-text">
                 Please input all keys that must be unique, separated by commas (eg. <span className="admin-code">course,letter,term</span> in the 'section' table)
                 <br />
-                These keys will be used for upsert conflict resolution
+                These keys will be used for upsert conflict resolution. Leaving it blank will cause the insert to fail if a value is already present in the DB.
             </h4>
             <TextField
                 id="key-text"
@@ -163,7 +176,7 @@ const AdminDash = () => {
                     <Table size="small" aria-label="data-table">
                         <TableHead >
                             <TableRow sx={{ backgroundColor: '#dddddd' }}>
-                                {keyList ? keyList.slice(1) : <TableCell></TableCell>}
+                                {keyCells ? keyCells.slice(1) : <TableCell></TableCell>}
                             </TableRow>
                         </TableHead>
                         <TableBody>
