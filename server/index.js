@@ -371,6 +371,20 @@ app.get("/api/admin/table/:tableName", (req, res) => {
         })
 })
 
+app.post("/api/admin/overwrite", (req, res) => {
+    const userId = getUser.getUserFromBody(req, URL_ID)
+    db.any('SELECT usertype FROM users WHERE id=$1', userId)
+    .then((data) => {
+        if (!(data.length === 1 && data[0].usertype === 'admin')) {
+            console.log('unauthorized request!')
+            res.status(403).send('Unauthorized!')
+            return
+        }
+        
+    })
+
+})
+
 app.post("/api/admin/upsert", (req, res) => {
     const userId = getUser.getUserFromBody(req, URL_ID)
     db.any('SELECT usertype FROM users WHERE id=$1', userId)
