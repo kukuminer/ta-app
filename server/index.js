@@ -380,7 +380,33 @@ app.post("/api/admin/overwrite", (req, res) => {
             res.status(403).send('Unauthorized!')
             return
         }
-        
+        const tableName = req.body.tableName
+        const rows = req.body.rows
+        const cols = req.body.columns.split(',')
+        dbQuery = "BEGIN; "
+        dbQuery += 'DELETE FROM ' + tableName + '; '
+        dbQuery += 'INSERT INTO ' + tableName + '(' + cols + ') VALUES '
+        for (const [idx, row] of Object.entries(rows)) {
+            if (row) {
+                const split = row.trim().split(',')
+                for (const idx in split) {
+                    split[idx] = "'" + split[idx] + "'"
+                }
+                const joined = split.join(',')
+                dbQuery += '(' + joined + '),'
+            }
+        }
+        dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
+        dbQuery += "; END;"
+        console.log(dbQuery)
+        db.any(dbQuery)
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(500).send(error)
+        })
     })
 
 })
@@ -398,7 +424,6 @@ app.post("/api/admin/upsert", (req, res) => {
             const rows = req.body.rows
             const constr = req.body.constraints.split(',')
             const cols = req.body.columns.split(',')
-            console.log(req.body)
             dbQuery = `INSERT INTO ` + tableName + `(` + cols + `) VALUES `
             for (const [idx, row] of Object.entries(rows)) {
                 if (row) {
@@ -411,43 +436,28 @@ app.post("/api/admin/upsert", (req, res) => {
                 }
             }
             dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-            if (constr) {
+            if (req.body.constraints) {
                 dbQuery += `
                 ON CONFLICT (`+ constr.join(',') + `) DO
-                UPDATE ` + tableName + ` AS t SET 
+                UPDATE SET 
                 `
                 for(const col of cols) {
-                    dbQuery += col + '=c.' + col + ',' 
-                }
-                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-                dbQuery += ' FROM (VALUES '
-                for (const [idx, row] of Object.entries(rows)) {
-                    if(row) {
-                        const split = row.trim().split(',')
-                        for (const idx in split) {
-                            split[idx] = "'" + split[idx] + "'"
-                        }
-                        const joined = split.join(',')
-                        dbQuery += '(' + joined + '),'
+                    if (!constr.includes(col)) {
+                        dbQuery += col + '=EXCLUDED.' + col + ','
                     }
                 }
                 dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-                dbQuery += ') AS c(' + cols + ') WHERE '
-                for(const constraint of constr) {
-                    dbQuery += 'c.' + constraint + '=t.' + constraint + ' AND '
-                }
-                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf('AND'))
             }
             console.log(dbQuery)
-            // db.any(dbQuery)
-            //     .then((data) => {
-            //         console.log('done')
-            //         res.status(200).send()
-            //     })
-            //     .catch((error) => {
-            //         console.log(error)
-            //         res.status(500).send(error)
-            //     })
+            db.any(dbQuery)
+                .then((data) => {
+                    console.log('done')
+                    res.status(200).send()
+                })
+                .catch((error) => {
+                    console.log(error)
+                    res.status(500).send(error)
+                })
         })
 })
 
