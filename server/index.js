@@ -448,11 +448,9 @@ app.post("/api/admin/upsert", (req, res) => {
                 }
                 dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
             }
-            console.log(dbQuery)
             db.any(dbQuery)
                 .then((data) => {
-                    console.log('done')
-                    res.status(200).send()
+                    res.status(200).send(data)
                 })
                 .catch((error) => {
                     console.log(error)
