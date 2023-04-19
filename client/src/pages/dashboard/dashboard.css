@@ -25,6 +25,10 @@
 
 .admin-text {
     width: 80vw;
-    display: flex;
+    margin: 0;
     text-align: left;
+}
+
+.admin-code {
+    font-family: 'Courier New', Courier, monospace;
 }

@@ -109,9 +109,9 @@ const AdminDash = () => {
                 </Select>
                 <FormHelperText>{!selectedTable ? 'Please select a table' : ''}</FormHelperText>
             </FormControl>
-            <p className="admin-text">
-                Table keys:
-            </p>
+            <h4 className="admin-text">
+                {selectedTable + ' table keys:'}
+            </h4>
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
@@ -125,8 +125,11 @@ const AdminDash = () => {
                     </Table>
                 </TableContainer>
             </div>
-
-
+            <h4 className="admin-text">
+                Please input all keys that must be unique, separated by commas (eg. <span className="admin-code">course,letter,term</span> in the 'section' table)
+                <br/>
+                    These keys will be used for upsert conflict resolution
+            </h4>
             <div className="admin-buttons">
                 <Button variant="contained" component="label">
                     Upload CSV
