@@ -1,9 +1,9 @@
-INSERT INTO users(firstname, lastname, email, usertype) VALUES
-('Liran', 'Z', 'liranz@yorku.ca', 'admin'),
-('Jonatan', 'S', 'jonatan@yorku.ca', 'professor'),
-('John', 'D', 'john@yorku.ca', 'student'),
-('Michael', 'B', 'mike@yorku.ca', 'professor'),
-('Jane', 'E', 'jane@yorku.ca', 'student');
+INSERT INTO users(firstname, lastname, email, usertype, username) VALUES
+('Liran', 'Z', 'liranz@yorku.ca', 'admin', 'kuku'),
+('Jonatan', 'S', 'jonatan@yorku.ca', 'professor', 'jonatan'),
+('John', 'D', 'john@yorku.ca', 'student', 'johndoe'),
+('Michael', 'B', 'mike@yorku.ca', 'professor', 'mikeb'),
+('Jane', 'E', 'jane@yorku.ca', 'student', 'jane');
 
 INSERT INTO student(id, studentid)
 SELECT id, id FROM users WHERE userType = 'student';

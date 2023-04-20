@@ -15,7 +15,9 @@ CREATE TABLE users ( -- user is reserved :(
     lastname varchar(50) NOT NULL,
     email varchar(100) UNIQUE NOT NULL,
     usertype usertype NOT NULL, -- admin/professor/student
+    username text NOT NULL,
 
+    UNIQUE (username),
     PRIMARY KEY (id)
 );
 
