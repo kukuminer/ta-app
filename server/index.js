@@ -172,14 +172,16 @@ app.post("/api/professor/assignment", (req, res) => {
 
 /**
  * Gets all the terms that the student can or has applied to
+ * For populating the student dashboard
  * `
 SELECT 
     COALESCE(secterm.term, termapplication.term) AS term, 
     COALESCE(secterm.iscurrent, termapplication.iscurrent) AS iscurrent,
-    availability, approval, explanation, wantstoteach
+    availability, approval, explanation, incanada, wantstoteach, submitted
 FROM
 (SELECT DISTINCT term, iscurrent FROM section) AS secterm
-FULL OUTER JOIN (SELECT * FROM termapplication WHERE student=3) AS termapplication
+FULL OUTER JOIN 
+(SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username='johndoe')) AS termapplication
 ON secterm.term = termapplication.term
 `
  */
@@ -192,7 +194,8 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
     availability, approval, explanation, incanada, wantstoteach, submitted
     FROM
     (SELECT DISTINCT term, iscurrent FROM section) AS secterm
-    FULL OUTER JOIN (SELECT * FROM termapplication WHERE student=$1) AS termapplication
+    FULL OUTER JOIN 
+    (SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username=$1)) AS termapplication
     ON secterm.term = termapplication.term
     `
     // AND section.term NOT IN (SELECT term FROM termapplication)
@@ -202,7 +205,7 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
         })
         .catch((error) => {
             console.log('error retrieving available applications from db')
-            res.json({ error: error })
+            res.status(500).send(error)
         })
 })
 
