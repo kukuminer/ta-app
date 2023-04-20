@@ -36,9 +36,8 @@ db.any('SELECT now()', [])
 app.get("/api/user/:userId", (req, res) => {
     id = getUser.getUser(req);
     // SELECT usertype FROM users WHERE id = $1
-    db.any("SELECT usertype FROM users WHERE id = $1", [id])
+    db.any("SELECT usertype FROM users WHERE username = $1", [id])
         .then((data) => {
-            if (data.length > 1) throw new Error("Retrieved more than one user??")
             res.json({ userType: data[0].usertype });
         })
         .catch((error) => {
@@ -52,13 +51,19 @@ app.get("/api/user/:userId", (req, res) => {
  */
 app.get("/api/professor/courses/:userId", (req, res) => {
     const id = getUser.getUser(req)
-    db.any("SELECT id, course, letter, term FROM section WHERE profid=$1 AND isCurrent=true", id)
+    const dbQuery = `
+    SELECT id, course, letter, term
+    FROM section 
+    WHERE profid IN (SELECT id FROM users WHERE username=$1)
+    AND iscurrent=true
+    `
+    db.any(dbQuery, [id])
         .then((data) => {
             res.json(data)
         })
         .catch((error) => {
             console.log('error retrieving prof sections from db')
-            res.json({ error: error })
+            res.status(500).send(error)
         })
 })
 
@@ -82,7 +87,7 @@ app.get("/api/professor/:sectionId/:userId", (req, res) => {
     // const course = req.params.course
     // const letter = req.params.letter
     const sectionId = req.params.sectionId
-    dbQuery =
+    const dbQuery =
         `
     SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
@@ -93,7 +98,7 @@ app.get("/api/professor/:sectionId/:userId", (req, res) => {
     LEFT JOIN assignment 
     ON application.student = assignment.student AND section.id = assignment.section
     WHERE section.id = $1
-    AND profid = $2
+    AND profid IN (SELECT id FROM users WHERE username = $2)
         `
     db.any(dbQuery, [sectionId, id])
         .then((data) => {
@@ -101,7 +106,7 @@ app.get("/api/professor/:sectionId/:userId", (req, res) => {
         })
         .catch((error) => {
             console.log('error retrieving prof section info from db')
-            res.json({ error: error })
+            res.status(500).send(error)
         })
 })
 
