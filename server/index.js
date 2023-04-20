@@ -303,7 +303,9 @@ app.post("/api/student/application", (req, res) => {
         })
 })
 
-/** `
+/** 
+ * Termapplication changes post endpoint
+ * `
     INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     ON CONFLICT (student, term)
@@ -320,11 +322,12 @@ app.post("/api/student/term", (req, res) => {
     const userId = getUser.getUserFromBody(req)
     dbQuery = `
     INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    VALUES ((SELECT id FROM users WHERE username=$1), 
+        $2, $3, $4, $5, $6, $7, $8)
     ON CONFLICT (student, term)
     DO UPDATE SET submitted=$3, availability=$4,
     approval=$5, explanation=$6, incanada=$7, wantstoteach=$8
-    WHERE termapplication.student=$1
+    WHERE termapplication.student=(SELECT id FROM users WHERE username=$1)
     AND termapplication.term=$2
     RETURNING submitted, availability, approval, explanation, incanada, wantstoteach
     `
@@ -374,13 +377,22 @@ app.get("/api/admin/tables", (req, res) => {
         })
 })
 
+/**
+ * Get table columns
+ */
 app.get("/api/admin/table/:tableName", (req, res) => {
     const tableName = req.params.tableName
     const dbQuery = `
-    SELECT * FROM `+ tableName + ` LIMIT 1
+    SELECT table_name, column_name, is_nullable
+    FROM information_schema.columns 
+    WHERE table_name=$1
     `
+    // const dbQuery = `
+    // SELECT * FROM `+ tableName + ` LIMIT 1
+    // `
     db.any(dbQuery, tableName)
         .then((data) => {
+            console.log(data)
             res.json(Object.keys(data[0]))
         })
         .catch((error) => {
@@ -389,49 +401,53 @@ app.get("/api/admin/table/:tableName", (req, res) => {
         })
 })
 
-app.post("/api/admin/overwrite", (req, res) => {
-    const userId = getUser.getUserFromBody(req)
-    db.any('SELECT usertype FROM users WHERE id=$1', userId)
-        .then((data) => {
-            if (!(data.length === 1 && data[0].usertype === 'admin')) {
-                console.log('unauthorized request!')
-                res.status(403).send('Unauthorized!')
-                return
-            }
-            const tableName = req.body.tableName
-            const rows = req.body.rows
-            const cols = req.body.columns.split(',')
-            dbQuery = "BEGIN; "
-            dbQuery += 'DELETE FROM ' + tableName + '; '
-            dbQuery += 'INSERT INTO ' + tableName + '(' + cols + ') VALUES '
-            for (const [idx, row] of Object.entries(rows)) {
-                if (row) {
-                    const split = row.trim().split(',')
-                    for (const idx in split) {
-                        split[idx] = "'" + split[idx] + "'"
-                    }
-                    const joined = split.join(',')
-                    dbQuery += '(' + joined + '),'
-                }
-            }
-            dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-            dbQuery += "; END;"
-            console.log(dbQuery)
-            db.any(dbQuery)
-                .then((data) => {
-                    res.json(data)
-                })
-                .catch((error) => {
-                    console.log(error)
-                    res.status(500).send(error)
-                })
-        })
+// app.post("/api/admin/overwrite", (req, res) => {
+//     const userId = getUser.getUserFromBody(req)
+//     db.any('SELECT usertype FROM users WHERE username=$1', userId)
+//         .then((data) => {
+//             if (!(data.length === 1 && data[0].usertype === 'admin')) {
+//                 console.log('unauthorized request!')
+//                 res.status(403).send('Unauthorized!')
+//                 return
+//             }
+//             const tableName = req.body.tableName
+//             const rows = req.body.rows
+//             const cols = req.body.columns.split(',')
+//             dbQuery = "BEGIN; "
+//             dbQuery += 'DELETE FROM ' + tableName + '; '
+//             dbQuery += 'INSERT INTO ' + tableName + '(' + cols + ') VALUES '
+//             for (const [idx, row] of Object.entries(rows)) {
+//                 if (row) {
+//                     const split = row.trim().split(',')
+//                     for (const idx in split) {
+//                         split[idx] = "'" + split[idx] + "'"
+//                     }
+//                     const joined = split.join(',')
+//                     dbQuery += '(' + joined + '),'
+//                 }
+//             }
+//             dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
+//             dbQuery += "; END;"
+//             console.log(dbQuery)
+//             db.any(dbQuery)
+//                 .then((data) => {
+//                     res.json(data)
+//                 })
+//                 .catch((error) => {
+//                     console.log(error)
+//                     res.status(500).send(error)
+//                 })
+//         })
+//         .catch((error) => {
+//             console.log(error)
+//             res.status(403).send(error)
+//         })
 
-})
+// })
 
 app.post("/api/admin/upsert", (req, res) => {
     const userId = getUser.getUserFromBody(req)
-    db.any('SELECT usertype FROM users WHERE id=$1', userId)
+    db.any('SELECT usertype FROM users WHERE username=$1', userId)
         .then((data) => {
             if (!(data.length === 1 && data[0].usertype === 'admin')) {
                 console.log('unauthorized request!')
@@ -473,7 +489,11 @@ app.post("/api/admin/upsert", (req, res) => {
                 .catch((error) => {
                     console.log(error)
                     res.status(500).send(error)
+                    return
                 })
+        })
+        .catch((error) => {
+            res.status(403).send(error)
         })
 })
 
