@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import getUser from "../../../getUser";
 import { Link } from "react-router-dom";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 const StudentDash = () => {
     const id = getUser()
@@ -24,32 +25,36 @@ const StudentDash = () => {
             <p>
                 TA applications:
             </p>
-            <table className="student-table">
-                <tbody>
-                    <tr>
-                        <th>Term</th>
-                        <th>Availability</th>
-                        <th>On Site?</th>
-                        <th>Application Status</th>
-                        <th>Link</th>
-                    </tr>
-                    {
-                        !pastTable ? <tr><td>loading...</td></tr> : pastTable.map((val, key) => {
-                            return (
-                                <tr key={key}>
-                                    <td>{val.term}</td>
-                                    <td>{val.availability}</td>
-                                    <td>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</td>
-                                    <td>{val.submitted ? 'Submitted' : val.submitted===false ? 'Saved' : 'Available'}</td>
-                                    <td>
-                                        <Link to={'/application/' + val.term} state={val}>View</Link>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
+            <TableContainer className="student-table">
+                <Table>
+                    <TableHead >
+                        <TableRow sx={{fontWeight: 'bold'}}>
+                            <TableCell>Term</TableCell>
+                            <TableCell>Availability</TableCell>
+                            <TableCell>On Site?</TableCell>
+                            <TableCell>Application Status</TableCell>
+                            <TableCell>Link</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            !pastTable ? <tr><TableCell>loading...</TableCell></tr> : pastTable.map((val, key) => {
+                                return (
+                                    <TableRow key={key}>
+                                        <TableCell>{val.term}</TableCell>
+                                        <TableCell>{val.availability}</TableCell>
+                                        <TableCell>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</TableCell>
+                                        <TableCell>{val.submitted ? 'Submitted' : val.submitted === false ? 'Saved' : 'Available'}</TableCell>
+                                        <TableCell>
+                                            <Link to={'/application/' + val.term} state={val}>View</Link>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </>
     )
 }
