@@ -25,15 +25,15 @@ const StudentDash = () => {
             <p>
                 TA applications:
             </p>
-            <TableContainer className="student-table">
+            <TableContainer className="student-table" sx={{width:'80vw', maxWidth: '1000px'}}>
                 <Table>
                     <TableHead >
-                        <TableRow sx={{fontWeight: 'bold'}}>
-                            <TableCell>Term</TableCell>
-                            <TableCell>Availability</TableCell>
-                            <TableCell>On Site?</TableCell>
-                            <TableCell>Application Status</TableCell>
-                            <TableCell>Link</TableCell>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: '700' }}>Term</TableCell>
+                            <TableCell sx={{ fontWeight: '700' }}>Availability</TableCell>
+                            <TableCell sx={{ fontWeight: '700' }}>On Site?</TableCell>
+                            <TableCell sx={{ fontWeight: '700' }}>Application Status</TableCell>
+                            <TableCell sx={{ fontWeight: '700' }}>Link</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
