@@ -38,7 +38,6 @@ app.get("/api/user/:userId", (req, res) => {
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE id = $1", [id])
         .then((data) => {
-            console.log(data)
             if (data.length > 1) throw new Error("Retrieved more than one user??")
             res.json({ userType: data[0].usertype });
         })
