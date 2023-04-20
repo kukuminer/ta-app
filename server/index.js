@@ -215,7 +215,8 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
     const dbQuery = `
     SELECT submitted, availability, approval, explanation, incanada, wantstoteach
     FROM termapplication
-    WHERE student=$1 AND term=$2
+    WHERE student IN (SELECT id FROM users WHERE username=$1)
+    AND term=$2
     `
     db.any(dbQuery, [userId, term])
         .then((data) => {
@@ -223,7 +224,7 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
         })
         .catch((error) => {
             console.log('error retrieving termapplication details from db')
-            res.status(400).json({ error: error })
+            res.status(500).send(error)
         })
 })
 
@@ -256,7 +257,7 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
         })
         .catch((error) => {
             console.log('error retrieving application info on courses from db for term:', term)
-            res.json({ error: error })
+            res.status(500).send(error)
         })
 })
 
