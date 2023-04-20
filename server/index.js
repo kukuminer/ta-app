@@ -263,12 +263,15 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
         })
 })
 
-/** `
+/** 
+ * Posts student changes to specific course applications
+ * `
 INSERT INTO application(student, course, term, interest, qualification) 
-VALUES (3, '3214', 'F23', 4, 4)
+VALUES ((SELECT id FROM users WHERE username='johndoe'), 
+    '3214', 'F23', 4, 4)
 ON CONFLICT (student, course, term)
 DO UPDATE SET interest=4, qualification=4
-WHERE application.student=3
+WHERE application.student=(SELECT id FROM users WHERE username='johndoe')
 AND application.course='3214'
 AND application.term='F23'
 RETURNING application.interest, application.qualification
@@ -280,10 +283,11 @@ app.post("/api/student/application", (req, res) => {
     const userId = getUser.getUserFromBody(req)
     const dbQuery = `
     INSERT INTO application(student, course, term, interest, qualification) 
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ((SELECT id FROM users WHERE username=$1), 
+        $2, $3, $4, $5)
     ON CONFLICT (student, course, term)
     DO UPDATE SET interest=$4, qualification=$5
-    WHERE application.student=$1
+    WHERE application.student=(SELECT id FROM users WHERE username=$1)
     AND application.course=$2
     AND application.term=$3
     RETURNING application.interest, application.qualification
