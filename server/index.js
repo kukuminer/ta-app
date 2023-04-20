@@ -392,8 +392,7 @@ app.get("/api/admin/table/:tableName", (req, res) => {
     // `
     db.any(dbQuery, tableName)
         .then((data) => {
-            console.log(data)
-            res.json(Object.keys(data[0]))
+            res.json(data)
         })
         .catch((error) => {
             console.log('error fetching table info for table:', tableName)

@@ -39,11 +39,12 @@ const AdminDash = () => {
             const url = GET_KEYS_URL + selectedTable
             axios.get(url)
                 .then((res) => {
+                    console.log(res.data)
                     const keys = res.data
                     // setKeyList(keys)
                     const row = []
                     for (const [idx, key] of Object.entries(keys)) {
-                        row.push(<TableCell key={idx}>{key}</TableCell>)
+                        row.push(<TableCell key={idx} sx={key.is_nullable==='NO' ? {backgroundColor: '#ddddff'} : {}}>{key.column_name}</TableCell>)
                     }
                     setKeyCells(row)
                 })
@@ -116,7 +117,7 @@ const AdminDash = () => {
                 <FormHelperText>{!selectedTable ? 'Please select a table' : ''}</FormHelperText>
             </FormControl>
             <h4 className="admin-text">
-                {selectedTable + ' table columns:'}
+                {selectedTable + ' table columns: (blue cells are non-nullable columns)'}
             </h4>
             <div className="admin-table">
                 <TableContainer component={Paper}>
@@ -176,11 +177,11 @@ const AdminDash = () => {
                     <Table size="small" aria-label="data-table">
                         <TableHead >
                             <TableRow sx={{ backgroundColor: '#dddddd' }}>
-                                {keyCells ? keyCells.slice(1) : <TableCell></TableCell>}
+                                {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {uploadedData}
+                            {uploadedData ? uploadedData : <TableCell>Please upload a file</TableCell>}
                         </TableBody>
                     </Table>
                 </TableContainer>
