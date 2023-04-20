@@ -125,11 +125,20 @@ app.post("/api/professor/assignment", (req, res) => {
      */
     const dbQuery = `
     INSERT INTO assignment(student, section, pref, note)
-    VALUES ($1, (SELECT id FROM section WHERE profid=$5 AND id=$2), $3, $4)
+    VALUES ($1, 
+        (SELECT id 
+        FROM section 
+        WHERE profid IN (SELECT id FROM users WHERE username=$5) 
+        AND id=$2), 
+        $3, 
+        $4)
     ON CONFLICT (student, section)
     DO UPDATE SET pref = $3, note = $4
     WHERE assignment.student = $1 
-    AND assignment.section in (SELECT id FROM section WHERE profid=$5 AND id=$2)
+    AND assignment.section in 
+        (SELECT id FROM section 
+            WHERE profid IN (SELECT id FROM users WHERE username=$5) 
+            AND id=$2)
     RETURNING assignment.id, assignment.pref, assignment.note
     `
     const r = req.body
@@ -141,9 +150,8 @@ app.post("/api/professor/assignment", (req, res) => {
         })
         .catch((error) => {
             console.log('db assignment upsert error: ', error)
-            res.status(400).json({ error: error })
+            res.status(500).send(error)
         })
-    // res.json({ status: 200 })
 })
 
 /**
@@ -374,40 +382,40 @@ app.get("/api/admin/table/:tableName", (req, res) => {
 app.post("/api/admin/overwrite", (req, res) => {
     const userId = getUser.getUserFromBody(req)
     db.any('SELECT usertype FROM users WHERE id=$1', userId)
-    .then((data) => {
-        if (!(data.length === 1 && data[0].usertype === 'admin')) {
-            console.log('unauthorized request!')
-            res.status(403).send('Unauthorized!')
-            return
-        }
-        const tableName = req.body.tableName
-        const rows = req.body.rows
-        const cols = req.body.columns.split(',')
-        dbQuery = "BEGIN; "
-        dbQuery += 'DELETE FROM ' + tableName + '; '
-        dbQuery += 'INSERT INTO ' + tableName + '(' + cols + ') VALUES '
-        for (const [idx, row] of Object.entries(rows)) {
-            if (row) {
-                const split = row.trim().split(',')
-                for (const idx in split) {
-                    split[idx] = "'" + split[idx] + "'"
-                }
-                const joined = split.join(',')
-                dbQuery += '(' + joined + '),'
-            }
-        }
-        dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-        dbQuery += "; END;"
-        console.log(dbQuery)
-        db.any(dbQuery)
         .then((data) => {
-            res.json(data)
+            if (!(data.length === 1 && data[0].usertype === 'admin')) {
+                console.log('unauthorized request!')
+                res.status(403).send('Unauthorized!')
+                return
+            }
+            const tableName = req.body.tableName
+            const rows = req.body.rows
+            const cols = req.body.columns.split(',')
+            dbQuery = "BEGIN; "
+            dbQuery += 'DELETE FROM ' + tableName + '; '
+            dbQuery += 'INSERT INTO ' + tableName + '(' + cols + ') VALUES '
+            for (const [idx, row] of Object.entries(rows)) {
+                if (row) {
+                    const split = row.trim().split(',')
+                    for (const idx in split) {
+                        split[idx] = "'" + split[idx] + "'"
+                    }
+                    const joined = split.join(',')
+                    dbQuery += '(' + joined + '),'
+                }
+            }
+            dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
+            dbQuery += "; END;"
+            console.log(dbQuery)
+            db.any(dbQuery)
+                .then((data) => {
+                    res.json(data)
+                })
+                .catch((error) => {
+                    console.log(error)
+                    res.status(500).send(error)
+                })
         })
-        .catch((error) => {
-            console.log(error)
-            res.status(500).send(error)
-        })
-    })
 
 })
 
@@ -441,7 +449,7 @@ app.post("/api/admin/upsert", (req, res) => {
                 ON CONFLICT (`+ constr.join(',') + `) DO
                 UPDATE SET 
                 `
-                for(const col of cols) {
+                for (const col of cols) {
                     if (!constr.includes(col)) {
                         dbQuery += col + '=EXCLUDED.' + col + ','
                     }
