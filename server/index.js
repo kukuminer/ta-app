@@ -22,10 +22,6 @@ const DB_HOST = process.env.DB_HOST || 'host.docker.internal'
 const DB_PORT = process.env.DB_PORT || '5432'
 const DB_NAME = process.env.DB_NAME || 'ta_db'
 
-const URL_ID = process.env.USER_ID_IN_URL || false
-if (URL_ID) console.log("GETTING USER FROM URL")
-
-
 const pgp = require("pg-promise")();
 const db = pgp("postgres://" + DB_USER + ":" + DB_PASS + "@" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME)
 
@@ -38,25 +34,25 @@ db.any('SELECT now()', [])
     });
 
 app.get("/api/user/:userId", (req, res) => {
-    id = getUser.getUser(req, URL_ID);
+    id = getUser.getUser(req);
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE id = $1", [id])
         .then((data) => {
+            console.log(data)
             if (data.length > 1) throw new Error("Retrieved more than one user??")
             res.json({ userType: data[0].usertype });
         })
         .catch((error) => {
             console.log('error retrieving usertype from db on login')
-            res.json({ userType: error })
+            res.status(500).send(error)
         })
-
 })
 
 /** 
  * For populating the professor dashboard
  */
 app.get("/api/professor/courses/:userId", (req, res) => {
-    const id = getUser.getUser(req, URL_ID)
+    const id = getUser.getUser(req)
     db.any("SELECT id, course, letter, term FROM section WHERE profid=$1 AND isCurrent=true", id)
         .then((data) => {
             res.json(data)
@@ -83,7 +79,7 @@ app.get("/api/professor/courses/:userId", (req, res) => {
     `
  */
 app.get("/api/professor/:sectionId/:userId", (req, res) => {
-    const id = getUser.getUser(req, URL_ID)
+    const id = getUser.getUser(req)
     // const course = req.params.course
     // const letter = req.params.letter
     const sectionId = req.params.sectionId
@@ -133,7 +129,7 @@ app.post("/api/professor/assignment", (req, res) => {
     RETURNING assignment.id, assignment.pref, assignment.note
     `
     const r = req.body
-    const userId = getUser.getUserFromBody(req, URL_ID)
+    const userId = getUser.getUserFromBody(req)
     db.any(dbQuery, [r.studentId, r.sectionId, r.pref, r.note, userId])
         .then((data) => {
             if (data.length !== 1) throw new Error('Bad auth')
@@ -150,7 +146,7 @@ app.post("/api/professor/assignment", (req, res) => {
  * Gets list of users termapplications
  */
 // app.get("/api/student/applications/:userId", (req, res) => {
-//     const userId = getUser.getUser(req, URL_ID)
+//     const userId = getUser.getUser(req)
 //     const dbQuery = "SELECT term, availability, approval, explanation, incanada, iscurrent FROM termapplication WHERE student=$1"
 //     db.any(dbQuery, userId)
 //         .then((data) => {
@@ -176,7 +172,7 @@ ON secterm.term = termapplication.term
 `
  */
 app.get("/api/student/applications/available/:userId", (req, res) => {
-    const userId = getUser.getUser(req, URL_ID)
+    const userId = getUser.getUser(req)
     const dbQuery = `
     SELECT 
     COALESCE(secterm.term, termapplication.term) AS term, 
@@ -199,7 +195,7 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
 })
 
 app.get("/api/student/termapplication/:term/:userId", (req, res) => {
-    const userId = getUser.getUser(req, URL_ID)
+    const userId = getUser.getUser(req)
     const term = req.params.term
     const dbQuery = `
     SELECT submitted, availability, approval, explanation, incanada, wantstoteach
@@ -227,7 +223,7 @@ ON application.course = course.code
 `
  */
 app.get("/api/student/applications/:term/:userId", (req, res) => {
-    const userId = getUser.getUser(req, URL_ID)
+    const userId = getUser.getUser(req)
     const term = req.params.term
     const dbQuery = `
     SELECT code, name, description, grade, interest, qualification
@@ -263,7 +259,7 @@ RETURNING application.interest, application.qualification
  */
 app.post("/api/student/application", (req, res) => {
     const r = req.body
-    const userId = getUser.getUserFromBody(req, URL_ID)
+    const userId = getUser.getUserFromBody(req)
     const dbQuery = `
     INSERT INTO application(student, course, term, interest, qualification) 
     VALUES ($1, $2, $3, $4, $5)
@@ -299,7 +295,7 @@ app.post("/api/student/application", (req, res) => {
  */
 app.post("/api/student/term", (req, res) => {
     const r = req.body
-    const userId = getUser.getUserFromBody(req, URL_ID)
+    const userId = getUser.getUserFromBody(req)
     dbQuery = `
     INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -372,7 +368,7 @@ app.get("/api/admin/table/:tableName", (req, res) => {
 })
 
 app.post("/api/admin/overwrite", (req, res) => {
-    const userId = getUser.getUserFromBody(req, URL_ID)
+    const userId = getUser.getUserFromBody(req)
     db.any('SELECT usertype FROM users WHERE id=$1', userId)
     .then((data) => {
         if (!(data.length === 1 && data[0].usertype === 'admin')) {
@@ -412,7 +408,7 @@ app.post("/api/admin/overwrite", (req, res) => {
 })
 
 app.post("/api/admin/upsert", (req, res) => {
-    const userId = getUser.getUserFromBody(req, URL_ID)
+    const userId = getUser.getUserFromBody(req)
     db.any('SELECT usertype FROM users WHERE id=$1', userId)
         .then((data) => {
             if (!(data.length === 1 && data[0].usertype === 'admin')) {
