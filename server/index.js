@@ -172,7 +172,7 @@ app.post("/api/professor/assignment", (req, res) => {
 
 /**
  * Gets all the terms that the student can or has applied to
- * For populating the student dashboard
+ * For populating the student dashboard from termapplication table
  * `
 SELECT 
     COALESCE(secterm.term, termapplication.term) AS term, 
@@ -231,6 +231,7 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
 /**
  * Get the courses that the student has and can apply to 
  * Gets existing applications if they exist
+ * For populating the application page with courses
 `
 SELECT * FROM (SELECT * FROM course WHERE code IN 
 (SELECT course FROM section WHERE term='F23')) AS course
@@ -248,7 +249,8 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
         (SELECT course FROM section WHERE term=$2)
     ) AS course
     LEFT JOIN 
-    (SELECT * FROM application WHERE student=$1 AND term=$2) AS application
+    (SELECT * FROM application WHERE student IN (SELECT id FROM users WHERE username=$1) 
+        AND term=$2) AS application
     ON application.course = course.code
     `
     db.any(dbQuery, [userId, term])
