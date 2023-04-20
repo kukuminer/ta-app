@@ -13,10 +13,12 @@ CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,
     firstname varchar(50) NOT NULL,
     lastname varchar(50) NOT NULL,
-    email varchar(100) UNIQUE NOT NULL,
+    email varchar(100) NOT NULL,
     usertype usertype NOT NULL, -- admin/professor/student
     username text NOT NULL,
 
+    -- UNIQUE (email,username),
+    -- UNIQUE (email),
     UNIQUE (username),
     PRIMARY KEY (id)
 );
