@@ -462,7 +462,12 @@ app.post("/api/admin/upsert", (req, res) => {
                 if (row) {
                     const split = row.trim().split(',')
                     for (const idx in split) {
-                        split[idx] = "'" + split[idx] + "'"
+                        if(split[idx] == '') {
+                            split.splice(idx, 1)
+                        }
+                        else {
+                            split[idx] = "'" + split[idx] + "'"
+                        }
                     }
                     const joined = split.join(',')
                     dbQuery += '(' + joined + '),'

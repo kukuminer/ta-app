@@ -17,6 +17,7 @@ const AdminDash = () => {
     const [keyCells, setKeyCells] = React.useState(null)
     const [constraints, setConstraints] = React.useState('')
     const [keysToUpdate, setKeysToUpdate] = React.useState('')
+    const [lastPostStatus, setLastPostStatus] = React.useState('')
 
     React.useEffect(() => {
         axios.get(GET_URL)
@@ -39,7 +40,6 @@ const AdminDash = () => {
             const url = GET_KEYS_URL + selectedTable
             axios.get(url)
                 .then((res) => {
-                    console.log(res.data)
                     const keys = res.data
                     // setKeyList(keys)
                     const row = []
@@ -53,7 +53,6 @@ const AdminDash = () => {
 
     const handleFile = (event) => {
         const file = event.target.files[0]
-        console.log(file)
 
         if (file) {
             const reader = new FileReader()
@@ -86,12 +85,12 @@ const AdminDash = () => {
             columns: keysToUpdate,
             constraints: constraints,
         }
-        console.log(body)
         axios.post(POST_URL, body)
             .then((res) => {
-                console.log(res)
+                setLastPostStatus(res.status + ' OK')
             })
             .catch((error) => {
+                setLastPostStatus('Error, see console log')
                 console.log('error posting:', error)
             })
     }
@@ -158,6 +157,7 @@ const AdminDash = () => {
                     <input hidden
                         accept=".csv"
                         type="file"
+                        onClick={(event) => event.target.value = null}
                         onChange={(event) => handleFile(event)}
                     />
                 </Button>
@@ -171,15 +171,18 @@ const AdminDash = () => {
                 >
                     POST to DB
                 </Button>
+                <p>
+                    {lastPostStatus}
+                </p>
             </div>
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
-                        <TableHead >
+                        {/* <TableHead >
                             <TableRow sx={{ backgroundColor: '#dddddd' }}>
                                 {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
                             </TableRow>
-                        </TableHead>
+                        </TableHead> */}
                         <TableBody>
                             {uploadedData ? uploadedData : <TableCell>Please upload a file</TableCell>}
                         </TableBody>
