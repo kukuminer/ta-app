@@ -29,6 +29,9 @@ const Header = () => {
                         DASHBOARD
                     </h1>
                 </Link>
+                <p>
+                    This app is currently in testing. No user actions are officially submitted
+                </p>
                 <p className="header-right">
                     userId: {userId}
                     <br />
