@@ -2,16 +2,23 @@ import React from "react"
 import getUser from "../../getUser"
 import axios from "axios"
 import { Button, FormControl, TextField } from "@mui/material"
+import StudentProfile from "./student/student_profile"
+import './profile.css'
 
 const GET_URL = "/api/user/" // /userId
 const BASE_PROFILE_URL = "/api/user/update"
+const COMPONENTS = {
+    'student': <StudentProfile />,
+    'professor': null,
+    'admin': null,
+}
 
 const Profile = () => {
     const [state, setState] = React.useState({
         firstname: '',
         lastname: '',
         email: '',
-        usertype: '',
+        usertype: 'student',
         username: '',
     })
 
@@ -63,7 +70,7 @@ const Profile = () => {
     return (
         <>
             <div className="profile">
-                <main>
+                <div className="main">
                     <h1>
                         TA Application System Profile
                     </h1>
@@ -96,10 +103,11 @@ const Profile = () => {
                                 label="Email"
                                 margin="normal"
                             />
+                            {COMPONENTS[state.usertype]}
                             <Button variant="contained" type="submit">Save and exit</Button>
                         </FormControl>
                     </form>
-                </main>
+                </div>
             </div>
         </>
     )
