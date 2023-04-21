@@ -163,7 +163,7 @@ app.post("/api/user/student/update", (req, res) => {
             const uid = data[0].id
             db.any(postQuery, [uid, r.studentid, r.pool])
                 .then((data) => {
-                    res.status(200)
+                    res.status(200).send()
                 })
                 .catch((error) => {
                     console.log("error posting to student table:", error)

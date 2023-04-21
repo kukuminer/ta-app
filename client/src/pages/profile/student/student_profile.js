@@ -57,7 +57,7 @@ const StudentProfile = ({ setParentState }) => {
                 value={state.studentid}
                 error={!state.studentid}
                 onChange={handleChange}
-                label="Student Number"
+                label="Student Number (9 digits)"
                 margin="normal"
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]{9}' }}
 

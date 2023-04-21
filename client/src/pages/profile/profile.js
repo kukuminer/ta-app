@@ -1,7 +1,8 @@
 import React from "react"
+import { Navigate } from "react-router-dom"
 import getUser from "../../getUser"
 import axios from "axios"
-import { Button, FormControl, TextField } from "@mui/material"
+import { Alert, Button, FormControl, TextField } from "@mui/material"
 import StudentProfile from "./student/student_profile"
 import './profile.css'
 
@@ -20,6 +21,11 @@ const Profile = () => {
         email: '',
         usertype: 'student',
         username: '',
+    })
+
+    const [alert, setAlert] = React.useState({
+        visible: false,
+        html: <Alert severity="error">Failed to update. Please try again</Alert>
     })
 
     const setStateFromChild = React.useCallback((newState) => {
@@ -58,26 +64,57 @@ const Profile = () => {
         })
     }
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
-        console.log('form submitted')
-        console.log(state)
+        setAlert(old => {
+            return {
+                ...old,
+                visible: false,
+            }
+        })
         const body = {
             userId: getUser(),
             state: state,
         }
-        axios.post(POST_URL, body)
-            .then((res) => {
-                console.log(res.data)
-                const url2 = POST_AUX_URL[res.data[0].usertype]
-                console.log(url2)
-                if (url2) {
-                    axios.post(url2, body)
-                        .then((res) => {
-                            console.log(res.status)
-                        })
+
+        var res
+
+        try {
+            res = await axios.post(POST_URL, body)
+        }
+        catch (error) {
+            res = error.response
+        }
+        console.log(res)
+        var res2 = { status: 200 }
+        if (res.status === 200) {
+            const url2 = POST_AUX_URL[res.data[0].usertype]
+            if (url2) {
+                try {
+                    res2 = await axios.post(url2, body)
+                }
+                catch (error) {
+                    res2 = error.response
+                }
+                console.log(res, res2)
+            }
+        }
+        if (res2.status === 200 && res.status === 200) {
+            setAlert(old => {
+                return {
+                    ...old,
+                    html: <Navigate to="/dashboard" />,
+                    visible: true,
                 }
             })
+        } else {
+            setAlert(old => {
+                return {
+                    ...old,
+                    visible: true,
+                }
+            })
+        }
     }
 
     function chooseComponent(usertype) {
@@ -126,8 +163,10 @@ const Profile = () => {
                                 onChange={handleChange}
                                 label="Email"
                                 margin="normal"
+                                type="email"
                             />
                             {chooseComponent(state.usertype)}
+                            {alert.visible ? alert.html : null}
                             <Button variant="contained" type="submit">Save and exit</Button>
                         </FormControl>
                     </form>
