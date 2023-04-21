@@ -19,7 +19,7 @@ const Application = () => {
         fetch('/api/usertype/' + userId)
             .then((res) => res.json())
             .then((data) => {
-                setUserType(data.userType)
+                setUserType(data.usertype)
             })
     }, [userId])
 

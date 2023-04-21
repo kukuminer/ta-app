@@ -165,7 +165,7 @@ const Profile = () => {
                             />
                             {chooseComponent(state.usertype)}
                             {alert.visible ? alert.html : null}
-                            <Button variant="contained" type="submit">Save and exit</Button>
+                            <Button variant="contained" type="submit">Save</Button>
                         </FormControl>
                     </form>
                 </div>
