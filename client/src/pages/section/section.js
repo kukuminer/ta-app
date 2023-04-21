@@ -3,11 +3,10 @@ import { useParams } from 'react-router-dom'
 import Header from "../header/header"
 import getUser from "../../getUser"
 import ProfessorSection from "./professor/professor_section"
-import StudentSection from "./student/student_section"
 import "./section.css"
 
 const components = {
-    'student': <StudentSection />,
+    'student': null,
     'professor': <ProfessorSection />,
     'admin': null,
 }
@@ -24,7 +23,7 @@ const Section = () => {
         fetch('/api/usertype/' + userId)
             .then((res) => res.json())
             .then((data) => {
-                setUserType(data.userType)
+                setUserType(data.usertype)
             })
     }, [userId])
 

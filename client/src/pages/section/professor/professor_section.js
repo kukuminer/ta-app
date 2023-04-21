@@ -4,8 +4,6 @@ import axios from "axios"
 import { useParams } from 'react-router-dom'
 import Assignment from "../../components/assignment_row"
 
-
-
 const ProfessorSection = () => {
     const id = getUser()
     const { sectionId } = useParams()
