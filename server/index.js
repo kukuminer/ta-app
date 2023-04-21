@@ -4,10 +4,12 @@ require("dotenv").config();
 const getUser = require('./getUser.js')
 /**
  * TODO: ADD ENV FOR GET USER 
- * req.get("PYork-User")
+ * req.get("PYork-User") COMPLETE
  * TODO: nohup to run (or multi tab)
  * ps ux to see processes
- * kill PID to kill processes
+ * kill PID to kill processes COMPLETE
+ * 
+ * NOTE: In most of the endpoints, "id" actually refers to the username
  */
 const PORT = process.env.PORT || 3001;
 
@@ -49,6 +51,48 @@ app.get("/api/user/:userId", (req, res) => {
         })
         .catch((error) => {
             console.log("error fetching user info from db:", error)
+            res.status(500).send(error)
+        })
+})
+
+/**
+ * Posts user info to DB
+ *     
+    INSERT INTO users (username, firstname, lastname, email, usertype)
+    VALUES ('kuku', 'liran', 'zheku', 'liranz@yorku.ca', 'admin')
+    ON CONFLICT (username) DO UPDATE 
+    SET firstname='liran', lastname='zheku', 
+    email='liranz@yorku.ca', usertype='admin'
+    WHERE users.username='kuku'
+ */
+app.post("/api/user/update", (req, res) => {
+    const id = getUser.getUserFromBody(req)
+    const r = req.body.state
+    const usertypeQuery = 'SELECT usertype FROM users WHERE username=$1'
+    const postQuery = `
+    INSERT INTO users (username, firstname, lastname, email, usertype)
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (username) DO UPDATE 
+    SET firstname=$2, lastname=$3, email=$4, usertype=$5
+    WHERE users.username=$1
+    `
+    db.any(usertypeQuery, [id])
+        .then((data) => {
+            var usertype = 'student'
+            if (data.length === 1) {
+                usertype = data[0].usertype
+            }
+            db.any(postQuery, [id, r.firstname, r.lastname, r.email, usertype])
+                .then((data) => {
+                    res.status(200)
+                })
+                .catch((error) => {
+                    console.log(error)
+                    res.status(500).send(error)
+                })
+        })
+        .catch((error) => {
+            console.log(error)
             res.status(500).send(error)
         })
 })

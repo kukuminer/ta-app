@@ -4,6 +4,7 @@ import axios from "axios"
 import { Button, FormControl, TextField } from "@mui/material"
 
 const GET_URL = "/api/user/" // /userId
+const BASE_PROFILE_URL = "/api/user/update"
 
 const Profile = () => {
     const [state, setState] = React.useState({
@@ -23,7 +24,7 @@ const Profile = () => {
         axios.get(url)
             .then((res) => {
                 const r = res.data[0]
-                if (res.data) {
+                if (r) {
                     setState(old => {
                         return {
                             ...old,
@@ -37,10 +38,8 @@ const Profile = () => {
                 }
             })
     }
-    console.log(state)
 
     function handleChange(event) {
-        console.log(event.target.id, event.target.value)
         setState((old) => {
             var news = structuredClone(old)
             news[event.target.id] = event.target.value
@@ -51,6 +50,14 @@ const Profile = () => {
     function handleSubmit(event) {
         event.preventDefault()
         console.log('form submitted')
+        const body = {
+            userId: getUser(),
+            state: state,
+        }
+        axios.post(BASE_PROFILE_URL, body)
+            .then((res) => {
+                console.log(res.status)
+            })
     }
 
     return (
@@ -58,7 +65,7 @@ const Profile = () => {
             <div className="profile">
                 <main>
                     <h1>
-                        Profile
+                        TA Application System Profile
                     </h1>
                     <form onSubmit={handleSubmit}>
                         <FormControl margin="normal">
