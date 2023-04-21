@@ -38,7 +38,15 @@ app.get("/api/user/:userId", (req, res) => {
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE username = $1", [id])
         .then((data) => {
-            res.json({ userType: data[0].usertype });
+            if(data.length > 1) {
+                throw new Error("DB returned more than one user")
+            }
+            else if(data.length === 1) {
+                res.json(data[0]);
+            }
+            else {
+                res.json({usertype: null})
+            }
         })
         .catch((error) => {
             console.log('error retrieving usertype from db on login')

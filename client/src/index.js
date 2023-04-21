@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-import LoginForm from "./pages/login/login";
+import Login from "./pages/login/login";
+import Profile from './pages/profile/profile';
 import Dashboard from "./pages/dashboard/dashboard";
 import Section from "./pages/section/section";
 import Application from './pages/application/application';
@@ -15,8 +16,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route index path="/" element={<LoginForm />} />
+        <Route path="/" element={<Login/>} /> 
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/section/:sectionId" element={<Section />} />
         <Route path="/application/:term" element={<Application />} />
         <Route path="*" element={<NotFound />} />
