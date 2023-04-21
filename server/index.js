@@ -75,6 +75,7 @@ app.post("/api/user/update", (req, res) => {
     ON CONFLICT (username) DO UPDATE 
     SET firstname=$2, lastname=$3, email=$4, usertype=$5
     WHERE users.username=$1
+    RETURNING usertype
     `
     db.any(usertypeQuery, [id])
         .then((data) => {
@@ -84,7 +85,7 @@ app.post("/api/user/update", (req, res) => {
             }
             db.any(postQuery, [id, r.firstname, r.lastname, r.email, usertype])
                 .then((data) => {
-                    res.status(200)
+                    res.status(200).json(data)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -139,6 +140,35 @@ app.get("/api/user/student/:userId", (req, res) => {
         .catch((error) => {
             console.log("Error fetching student info from DB:", error)
             res.status(500).send(error)
+        })
+})
+
+/**
+ * Posts student info to DB
+ */
+app.post("/api/user/student/update", (req, res) => {
+    const id = getUser.getUserFromBody(req)
+    const r = req.body.state
+    const idQuery = 'SELECT id FROM users WHERE username=$1'
+    const postQuery = `
+        INSERT INTO student(id, studentid, pool) 
+        VALUES ($1, $2, $3)
+        ON CONFLICT (id) DO UPDATE
+        SET studentid=$2, pool=$3
+        WHERE student.id=$1
+    `
+    db.any(idQuery, id)
+        .then((data) => {
+            if (data.length !== 1) throw new Error("Not 1 user found in DB!")
+            const uid = data[0].id
+            db.any(postQuery, [uid, r.studentid, r.pool])
+                .then((data) => {
+                    res.status(200)
+                })
+                .catch((error) => {
+                    console.log("error posting to student table:", error)
+                    res.status(500).send(error)
+                })
         })
 })
 

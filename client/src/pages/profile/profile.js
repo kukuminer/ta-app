@@ -7,11 +7,11 @@ import './profile.css'
 
 const GET_URL = "/api/user/" // /userId
 const POST_URL = "/api/user/update"
-// const COMPONENTS = {
-//     'student': <StudentProfile />,
-//     'professor': null,
-//     'admin': null,
-// }
+const POST_AUX_URL = {
+    'student': "/api/user/student/update",
+    'professor': null,
+    'admin': null,
+}
 
 const Profile = () => {
     const [state, setState] = React.useState({
@@ -68,12 +68,20 @@ const Profile = () => {
         }
         axios.post(POST_URL, body)
             .then((res) => {
-                console.log(res.status)
+                console.log(res.data)
+                const url2 = POST_AUX_URL[res.data[0].usertype]
+                console.log(url2)
+                if (url2) {
+                    axios.post(url2, body)
+                        .then((res) => {
+                            console.log(res.status)
+                        })
+                }
             })
     }
 
     function chooseComponent(usertype) {
-        switch(usertype) {
+        switch (usertype) {
             case 'student': return <StudentProfile setParentState={setStateFromChild} />
             case 'admin': return null
             case 'professor': return null
@@ -98,6 +106,7 @@ const Profile = () => {
                                     error={!state.firstname}
                                     onChange={handleChange}
                                     label="First Name"
+                                    margin="normal"
                                 />
                                 <TextField
                                     required
@@ -106,6 +115,7 @@ const Profile = () => {
                                     error={!state.lastname}
                                     onChange={handleChange}
                                     label="Surname"
+                                    margin="normal"
                                 />
                             </div>
                             <TextField
