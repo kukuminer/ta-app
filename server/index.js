@@ -33,19 +33,42 @@ db.any('SELECT now()', [])
         console.log('SQL ERROR:\n', error)
     });
 
+/**
+ * Gets all user info for profile page
+ */
 app.get("/api/user/:userId", (req, res) => {
+    id = getUser.getUser(req)
+    dbQuery = `
+    SELECT firstname, lastname, email, usertype, username
+    FROM users
+    WHERE username = $1
+    `
+    db.any(dbQuery, [id])
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log("error fetching user info from db:", error)
+            res.status(500).send(error)
+        })
+})
+
+/**
+ * Gets usertype from userId
+ */
+app.get("/api/usertype/:userId", (req, res) => {
     id = getUser.getUser(req);
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE username = $1", [id])
         .then((data) => {
-            if(data.length > 1) {
+            if (data.length > 1) {
                 throw new Error("DB returned more than one user")
             }
-            else if(data.length === 1) {
+            else if (data.length === 1) {
                 res.json(data[0]);
             }
             else {
-                res.json({usertype: null})
+                res.json({ usertype: null })
             }
         })
         .catch((error) => {
@@ -470,7 +493,7 @@ app.post("/api/admin/upsert", (req, res) => {
                 if (row) {
                     const split = row.trim().split(',')
                     for (const idx in split) {
-                        if(split[idx] == '') {
+                        if (split[idx] == '') {
                             split.splice(idx, 1)
                         }
                         else {

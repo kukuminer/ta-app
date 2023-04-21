@@ -6,7 +6,7 @@ import getUser from "../../getUser";
 
 const NO_USER_NAVIGATE = '/profile'
 const DEFAULT_NAVIGATE = '/dashboard'
-const USER_URL = '/api/user/'
+const USER_URL = '/api/usertype/'
 
 const Login = (props) => {
     const [target, setTarget] = React.useState(props.target ? props.target : DEFAULT_NAVIGATE)

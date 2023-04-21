@@ -9,7 +9,7 @@ const Header = () => {
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/api/user/' + userId)
+        fetch('/api/usertype/' + userId)
             .then((res) => res.json())
             .then((data) => {
                 setUserType(data.userType)
