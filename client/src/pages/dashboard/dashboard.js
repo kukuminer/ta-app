@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import ProfessorDash from "./professor/professor_dash";
 import StudentDash from "./student/student_dash";
 import AdminDash from "./admin/admin_dash";
@@ -18,12 +19,12 @@ const Dashboard = () => {
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/api/usertype/' + userId)
-            .then((res) => res.json())
-            .then((data) => {
-                setUserType(data.userType)
+        axios.get('/api/usertype/' + userId)
+            .then((res) => {
+                setUserType(res.data.usertype)
             })
     }, [userId])
+
 
     return (
         <>

@@ -85,7 +85,6 @@ const Profile = () => {
         catch (error) {
             res = error.response
         }
-        console.log(res)
         var res2 = { status: 200 }
         if (res.status === 200) {
             const url2 = POST_AUX_URL[res.data[0].usertype]
@@ -96,7 +95,6 @@ const Profile = () => {
                 catch (error) {
                     res2 = error.response
                 }
-                console.log(res, res2)
             }
         }
         if (res2.status === 200 && res.status === 200) {

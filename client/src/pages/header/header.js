@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { useNavigate, Link } from "react-router-dom"
 import getUser from "../../getUser";
 import "./header.css"
@@ -9,16 +10,15 @@ const Header = () => {
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/api/usertype/' + userId)
-            .then((res) => res.json())
-            .then((data) => {
-                setUserType(data.userType)
+        axios.get('/api/usertype/' + userId)
+            .then((res) => {
+                setUserType(res.data.usertype)
             })
     }, [userId])
 
     const logoutHandler = () => {
         localStorage.removeItem('userId')
-        navigate('/')
+        navigate('https://passportyork.yorku.ca/ppylogin/ppylogout')
     }
 
     return (
