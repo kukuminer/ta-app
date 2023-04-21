@@ -14,3 +14,6 @@ OTHER:
 
 list tables:
 > \dt 
+
+DEPLOYED PSQL:
+~/pg/bin/psql -h localhost -U taapp taapp
