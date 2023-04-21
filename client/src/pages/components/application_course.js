@@ -1,7 +1,7 @@
 import React from "react"
 import axios from "axios"
 import getUser from "../../getUser"
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material'
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell, TableRow } from '@mui/material'
 
 /**
  * A class for the rows of professor dashboard table
@@ -32,7 +32,7 @@ class Application extends React.Component {
     makeColumns() {
         var columns = []
         for (const key of this.dataKeys) {
-            columns.push(<td key={key} className="td-left-align">{this.props.data[key]}</td>)
+            columns.push(<TableCell key={key} >{this.props.data[key]}</TableCell>)
         }
 
         var stateCopy = this.state
@@ -72,9 +72,9 @@ class Application extends React.Component {
     render() {
         return (
             <>
-                <tr key={this.props.rowKey}>
+                <TableRow key={this.props.rowKey} sx={{margin: '0'}}>
                     {this.state.columns}
-                    <td>
+                    <TableCell>
                         <FormControl>
                             <FormLabel id="interest-radio" />
                             <RadioGroup
@@ -92,8 +92,8 @@ class Application extends React.Component {
                                 <FormControlLabel value={4} control={<Radio />} sx={{ margin: 0, }} labelPlacement="top" label={4} />
                             </RadioGroup>
                         </FormControl>
-                    </td>
-                    <td>
+                    </TableCell>
+                    <TableCell>
                         <FormControl>
                             <FormLabel id="interest-radio" />
                             <RadioGroup
@@ -111,8 +111,8 @@ class Application extends React.Component {
                                 <FormControlLabel value={4} control={<Radio color="secondary" />} labelPlacement="top" sx={{ margin: 0, }} label={4} />
                             </RadioGroup>
                         </FormControl>
-                    </td>
-                </tr>
+                    </TableCell>
+                </TableRow>
             </>
         )
     }

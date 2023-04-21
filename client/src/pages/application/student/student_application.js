@@ -3,7 +3,7 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../../getUser"
 import Application from "../../components/application_course"
-import { Button } from "@mui/material"
+import { Button, Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material"
 
 /**
  * Wraps the StudentApplication component to properly pass in the useLocation hook
@@ -162,20 +162,24 @@ class StudentApplicationClass extends React.Component {
                             </label>
                         </div>
                         <h3>Course Preferences</h3>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <th>Course</th>
-                                    <th>Title</th>
-                                    <th>Grade</th>
-                                    <th>Interest</th>
-                                    <th>Qualification</th>
-                                    <th></th>
-                                </tr>
-                                {!this.state.courseData ? <tr><td>loading...</td></tr> : this.state.courseData}
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <th>Course</th>
+                                        <th>Title</th>
+                                        <th>Grade</th>
+                                        <th>Interest</th>
+                                        <th>Qualification</th>
+                                        <th></th>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {!this.state.courseData ? <tr><td>loading...</td></tr> : this.state.courseData}
+                                </TableBody>
 
-                            </tbody>
-                        </table>
+                            </Table>
+                        </TableContainer>
                         <p>
                             Your changes are saved automatically. You can unsubmit later.
                         </p>
