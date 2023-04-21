@@ -1,11 +1,11 @@
 import React from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import getUser from "../../getUser";
 import "./header.css"
 
 const Header = () => {
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     const userId = getUser()
     const [userType, setUserType] = React.useState(null);
 
@@ -19,6 +19,9 @@ const Header = () => {
     const logoutHandler = () => {
         localStorage.removeItem('userId')
         // navigate('/https://passportyork.yorku.ca/ppylogin/ppylogout')
+    }
+    const profileHandler = () => {
+        navigate('/profile')
     }
 
     return (
@@ -37,6 +40,7 @@ const Header = () => {
                     <br />
                     userType: {userType ? userType : 'loading..'}
                     <br />
+                    <button onClick={profileHandler} >Profile</button>
                     <a href="https://passportyork.yorku.ca/ppylogin/ppylogout">
                         <button onClick={logoutHandler} >Logout</button>
                     </a>
