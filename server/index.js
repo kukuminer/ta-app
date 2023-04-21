@@ -121,6 +121,28 @@ app.get("/api/usertype/:userId", (req, res) => {
         })
 })
 
+app.get("/api/user/student/:userId", (req, res) => {
+    const id = getUser.getUser(req)
+    const dbQuery = `
+    SELECT studentid, pool FROM student 
+    WHERE id IN (SELECT id FROM users WHERE username=$1)
+    `
+    db.any(dbQuery, [id])
+        .then((data) => {
+            if (data.length === 1) {
+                res.json(data[0])
+            }
+            else {
+                res.json([{ studentid: null, pool: null }])
+            }
+        })
+        .catch((error) => {
+            console.log("Error fetching student info from DB:", error)
+            res.status(500).send(error)
+        })
+})
+
+
 /** 
  * For populating the professor dashboard
  */

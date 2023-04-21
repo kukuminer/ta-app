@@ -6,12 +6,12 @@ import StudentProfile from "./student/student_profile"
 import './profile.css'
 
 const GET_URL = "/api/user/" // /userId
-const BASE_PROFILE_URL = "/api/user/update"
-const COMPONENTS = {
-    'student': <StudentProfile />,
-    'professor': null,
-    'admin': null,
-}
+const POST_URL = "/api/user/update"
+// const COMPONENTS = {
+//     'student': <StudentProfile />,
+//     'professor': null,
+//     'admin': null,
+// }
 
 const Profile = () => {
     const [state, setState] = React.useState({
@@ -21,6 +21,10 @@ const Profile = () => {
         usertype: 'student',
         username: '',
     })
+
+    const setStateFromChild = React.useCallback((newState) => {
+        setState(newState)
+    }, [])
 
     React.useEffect(() => {
         getUserInfo()
@@ -57,14 +61,24 @@ const Profile = () => {
     function handleSubmit(event) {
         event.preventDefault()
         console.log('form submitted')
+        console.log(state)
         const body = {
             userId: getUser(),
             state: state,
         }
-        axios.post(BASE_PROFILE_URL, body)
+        axios.post(POST_URL, body)
             .then((res) => {
                 console.log(res.status)
             })
+    }
+
+    function chooseComponent(usertype) {
+        switch(usertype) {
+            case 'student': return <StudentProfile setParentState={setStateFromChild} />
+            case 'admin': return null
+            case 'professor': return null
+            default: throw new Error("Unknown usertype!")
+        }
     }
 
     return (
@@ -103,7 +117,7 @@ const Profile = () => {
                                 label="Email"
                                 margin="normal"
                             />
-                            {COMPONENTS[state.usertype]}
+                            {chooseComponent(state.usertype)}
                             <Button variant="contained" type="submit">Save and exit</Button>
                         </FormControl>
                     </form>
