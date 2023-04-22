@@ -162,8 +162,8 @@ class StudentApplicationClass extends React.Component {
                             </label>
                         </div>
                         <h3>Course Preferences</h3>
-                        <TableContainer>
-                            <Table>
+                        <TableContainer >
+                            <Table size="small" >
                                 <TableHead>
                                     <TableRow>
                                         <th>Course</th>
@@ -177,7 +177,6 @@ class StudentApplicationClass extends React.Component {
                                 <TableBody>
                                     {!this.state.courseData ? <tr><td>loading...</td></tr> : this.state.courseData}
                                 </TableBody>
-
                             </Table>
                         </TableContainer>
                         <p>

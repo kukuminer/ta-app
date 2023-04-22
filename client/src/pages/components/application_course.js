@@ -20,10 +20,6 @@ class Application extends React.Component {
         this.state.userId = getUser()
         this.state.interest = !this.state.interest ? 0 : this.state.interest
         this.state.qualification = !this.state.qualification ? 0 : this.state.qualification
-        // this.state.columns = []
-        // this.dataKeys.forEach((item) => {
-        //     this.state.columns.push(<p>{this.props.data[item]}</p>)
-        // })
     }
     componentDidMount() {
         this.makeColumns()
@@ -32,7 +28,7 @@ class Application extends React.Component {
     makeColumns() {
         var columns = []
         for (const key of this.dataKeys) {
-            columns.push(<TableCell key={key} >{this.props.data[key]}</TableCell>)
+            columns.push(<TableCell key={key} sx={{ fontSize: 'large' }}>{this.props.data[key]}</TableCell>)
         }
 
         var stateCopy = this.state
@@ -72,10 +68,10 @@ class Application extends React.Component {
     render() {
         return (
             <>
-                <TableRow key={this.props.rowKey} sx={{margin: '0'}}>
+                <TableRow key={this.props.rowKey} sx={{ fontSize: '40pt' }}>
                     {this.state.columns}
                     <TableCell>
-                        <FormControl>
+                        <FormControl fullWidth>
                             <FormLabel id="interest-radio" />
                             <RadioGroup
                                 aria-labelledby="interest-radio"
@@ -94,7 +90,7 @@ class Application extends React.Component {
                         </FormControl>
                     </TableCell>
                     <TableCell>
-                        <FormControl>
+                        <FormControl fullWidth>
                             <FormLabel id="interest-radio" />
                             <RadioGroup
                                 aria-labelledby="interest-radio"
