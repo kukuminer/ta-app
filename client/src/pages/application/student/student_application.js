@@ -3,7 +3,7 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../../getUser"
 import Application from "../../components/application_course"
-import { Button, Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material"
+import { Button, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 
 /**
  * Wraps the StudentApplication component to properly pass in the useLocation hook
@@ -25,6 +25,8 @@ class StudentApplicationClass extends React.Component {
         submitted: false,
     }
     TIMER = null
+    MAX_AVAILABILITY = 20
+    MIN_AVAILABILITY = 0
 
     constructor(props) {
         super(props)
@@ -58,6 +60,10 @@ class StudentApplicationClass extends React.Component {
         }
         else if (changedKey === 'submitted') {
             stateCopy[changedKey] = !this.state.submitted
+        }
+        else if (changedKey === 'availability') {
+            var val = event.target.value ? parseInt(event.target.value) : 0
+            stateCopy[changedKey] = Math.max(this.MIN_AVAILABILITY, Math.min(this.MAX_AVAILABILITY, val))
         }
         else {
             stateCopy[changedKey] = event.target.value
@@ -136,7 +142,15 @@ class StudentApplicationClass extends React.Component {
                         <h3>General Info</h3>
                         <div className="form-row">
                             Availability in hours per week (0-20):
-                            <input type="number" min={0} max={20} value={this.state.availability} onChange={(event) => this.handleChange('availability', event)} />
+                            <TextField
+                                type="number"
+                                value={this.state.availability}
+                                onChange={event => this.handleChange('availability', event)}
+                                InputProps={{inputProps: {
+                                    max: 20, min: 0
+                                }}}
+                            />
+                            {/* <input type="number" min={0} max={20} value={this.state.availability} onChange={(event) => this.handleChange('availability', event)} /> */}
                         </div>
                         <div className="form-row">
                             Provide a brief explanation of which courses you want to TA for, and your relevant experience

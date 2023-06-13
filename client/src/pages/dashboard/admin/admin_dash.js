@@ -148,7 +148,7 @@ const AdminDash = () => {
             <TextField
                 id="key-text"
                 label="Unique constraints"
-                sx={{ margin: '1em 0', width: '80vw' }}
+                sx={{ margin: '1em 0', width: '80vw'}}
                 onChange={(event) => setConstraints(event.target.value)}
             />
             <div className="admin-buttons">
