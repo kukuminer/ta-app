@@ -121,9 +121,11 @@ class StudentApplicationClass extends React.Component {
         axios.get(this.get_courses_url)
             .then((res) => {
                 const table = res.data
+                table[0].seniority = 1
+                console.log(table)
                 var courseData = []
                 for (const [key, item] of Object.entries(table)) {
-                    courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key} />)
+                    courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key}/>)
                 }
                 var stateCopy = this.state
                 stateCopy.courseData = courseData

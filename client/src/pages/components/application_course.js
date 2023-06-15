@@ -1,7 +1,8 @@
 import React from "react"
 import axios from "axios"
 import getUser from "../../getUser"
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell, TableRow } from '@mui/material'
+import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell, TableRow } from '@mui/material'
+import HtmlTooltip from "./tooltip"
 
 /**
  * A class for the rows of professor dashboard table
@@ -20,6 +21,7 @@ class Application extends React.Component {
         this.state.userId = getUser()
         this.state.interest = !this.state.interest ? 0 : this.state.interest
         this.state.qualification = !this.state.qualification ? 0 : this.state.qualification
+        console.log(this.state)
     }
     componentDidMount() {
         this.makeColumns()
@@ -68,7 +70,7 @@ class Application extends React.Component {
     render() {
         return (
             <>
-                <TableRow key={this.props.rowKey} sx={{ fontSize: '40pt' }}>
+                <TableRow key={this.props.rowKey} sx={{ fontSize: '40pt', backgroundColor: this.state.seniority ? '#ccffcc' : 'default' }}>
                     {this.state.columns}
                     <TableCell>
                         <FormControl fullWidth>
@@ -107,6 +109,17 @@ class Application extends React.Component {
                                 <FormControlLabel value={4} control={<Radio color="secondary" />} labelPlacement="top" sx={{ margin: 0, }} label={4} />
                             </RadioGroup>
                         </FormControl>
+                    </TableCell>
+                    <TableCell sx={{visibility: this.state.seniority ? 'default' : 'hidden'}}>
+                        <HtmlTooltip title={
+                            <>
+                                {"You have priority for this course because you were a TA for it in the previous term."}
+                            </>
+                        }>
+                            <Button>
+                                ?
+                            </Button>
+                        </HtmlTooltip>
                     </TableCell>
                 </TableRow>
             </>
