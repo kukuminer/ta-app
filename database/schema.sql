@@ -26,7 +26,8 @@ CREATE TABLE users ( -- user is reserved :(
 CREATE TABLE student (
     id int NOT NULL,
     studentid int NOT NULL,
-    pool varchar(3), -- UTA or GTA
+    pool varchar(3), -- UTA or GTA or EXT
+    seniority float,
 
     PRIMARY KEY (id),
     UNIQUE (studentid),
