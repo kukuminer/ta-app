@@ -33,4 +33,24 @@ If you have any questions, please let me know
 - PPY applicants should have a student ID and/or employee ID
 - 
 
+- Remove supervisor approval checkmark from student application form
+- "I want to be a TA" moved to top
+- Move "in person" check and "brief explanation" text to under the course preference table
+- replace grade with "hover for description"
+- "unsubmit" with "withdraw"
 
+- ROFR in new table
+-- student, course, term
+- pool in termapplication, remove from student
+
+
+- makefile or script to start up 
+
+- SENIORITY:
+-- employee ID | seniority number
+
+- profile:
+-- show profile contents in header
+
+- Eclass aesthetics
+-- font
