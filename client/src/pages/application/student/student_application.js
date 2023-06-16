@@ -123,6 +123,7 @@ class StudentApplicationClass extends React.Component {
                 const table = res.data
                 table[0].seniority = 1
                 console.log(table)
+                //TODO: Sort array
                 var courseData = []
                 for (const [key, item] of Object.entries(table)) {
                     courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key}/>)
