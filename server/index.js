@@ -471,22 +471,31 @@ app.post("/api/student/term", (req, res) => {
 
 /**
  * Gets public section info, insecure endpoint (no id check)
+ * Gets:
+ *  course (2030)
+ *  letter (A)
+ *  term (W23)
  */
 app.get("/api/section/:sectionId", (req, res) => {
     const sectionId = req.params.sectionId
-    const dbQuery = `SELECT course, letter, term, iscurrent FROM section WHERE id = $1`
+    const dbQuery = `
+        SELECT code AS course, letter, term FROM section 
+        INNER JOIN course ON course=course.id
+        WHERE id = $1
+    `
     db.any(dbQuery, sectionId)
         .then((data) => {
             res.json(data)
         })
         .catch((error) => {
             console.log('error retrieving section data from db:', sectionId)
-            res.json({ error: error })
+            res.status(400).json({ error: error })
         })
 })
 
 /**
- * Get db table names
+ * ADMIN ENDPOINT
+ * Get all db table names
  */
 app.get("/api/admin/tables", (req, res) => {
     const dbQuery = `
@@ -505,7 +514,8 @@ app.get("/api/admin/tables", (req, res) => {
 })
 
 /**
- * Get table columns
+ * ADMIN ENDPOINT
+ * Get all column names of a particular table
  */
 app.get("/api/admin/table/:tableName", (req, res) => {
     const tableName = req.params.tableName
@@ -571,6 +581,11 @@ app.get("/api/admin/table/:tableName", (req, res) => {
 
 // })
 
+
+/**
+ * ADMIN ENDPOINT
+ * This endpoint is for admin to upsert to DB via csv. 
+ */
 app.post("/api/admin/upsert", (req, res) => {
     const userId = getUser.getUserFromBody(req)
     db.any('SELECT usertype FROM users WHERE username=$1', userId)
