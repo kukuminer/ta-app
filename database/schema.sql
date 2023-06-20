@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS professor CASCADE;
 DROP TABLE IF EXISTS application CASCADE;
 DROP TABLE IF EXISTS assignment CASCADE;
 DROP TABLE IF EXISTS termApplication CASCADE;
+DROP TABLE IF EXISTS rightofrefusal CASCADE;
+DROP TABLE IF EXISTS term CASCADE;
 
 CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
 
@@ -35,8 +37,15 @@ CREATE TABLE student (
     FOREIGN KEY (id) references users(id)
 );
 
+CREATE TABLE professor (
+    id int NOT NULL,
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) references users(id)
+);
+
 CREATE TABLE course (
-    id serial NOT NULL,
+    id serial UNIQUE NOT NULL,
     code varchar(10) UNIQUE NOT NULL,
     name text,
     description text,
@@ -44,11 +53,11 @@ CREATE TABLE course (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE professor (
-    id int NOT NULL,
-
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) references users(id)
+CREATE TABLE term(
+    term varchar(10) UNIQUE NOT NULL,
+    visible bool NOT NULL,
+    
+    PRIMARY KEY (term)
 );
 
 CREATE TABLE section (
@@ -116,17 +125,12 @@ CREATE TABLE termapplication (
 );
 
 CREATE TABLE rightofrefusal (
-    student int UNIQUE NOT NULL,
+    student int NOT NULL,
     course int NOT NULL,
 
     PRIMARY KEY (student),
-    FOREIGN KEY course references course(id),
-    FOREIGN KEY student references student(id)
-)
+    UNIQUE (student, course),
+    FOREIGN KEY (student) references student(id),
+    FOREIGN KEY (course) references course(id)
+);
 
-CREATE TABLE term(
-    term varchar(10) UNIQUE NOT NULL,
-    visible bool NOT NULL,
-    
-    PRIMARY KEY (term)
-)
