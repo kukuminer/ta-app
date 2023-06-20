@@ -17,22 +17,22 @@ INSERT INTO professor(id)
 SELECT (id) FROM users WHERE userType = 'professor';
 
 INSERT INTO section(course, letter, term, isCurrent, profid)
-VALUES ('2030', 'A', 'F23', true, '2'), 
-('2030', 'B', 'F23', true, '4'),
-('2030', 'Z', 'W24', false, '2'), 
-('2011', 'A', 'F23', true, '2'),
-('2011', 'B', 'F23', true, '4'),
-('3214', 'C', 'F23', true, '4');
+VALUES ('1', 'A', 'F23', true, '2'), 
+('1', 'B', 'F23', true, '4'),
+('1', 'Z', 'W24', false, '2'), 
+('2', 'A', 'F23', true, '2'),
+('2', 'B', 'F23', true, '4'),
+('3', 'C', 'F23', true, '4');
 
 SELECT (course, letter) 
 FROM section 
 WHERE profid=2 and isCurrent=true;
 
 INSERT INTO application(student, course, term, grade, interest, qualification) 
-VALUES ('3', '2030', 'F23', 90, 3, 3), 
-('3', '2011', 'F23', 80, 3, 2),
-('5', '2030', 'F23', 100, 4, 4),
-('3', '2030', 'W24', 50, 2, 2);
+VALUES ('3', '1', 'F23', 90, 3, 3), 
+('3', '2', 'F23', 80, 3, 2),
+('5', '1', 'F23', 100, 4, 4),
+('3', '1', 'W24', 50, 2, 2);
 
 -- INSERT INTO assignment(student, section)
 -- VALUES (3, 1)

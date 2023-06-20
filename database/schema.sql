@@ -11,9 +11,9 @@ CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
 
 CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,
-    firstname varchar(50) NOT NULL,
-    lastname varchar(50) NOT NULL,
-    email varchar(100) NOT NULL,
+    firstname varchar(100) NOT NULL,
+    lastname varchar(100) NOT NULL,
+    email varchar(200) NOT NULL,
     usertype usertype NOT NULL, -- admin/professor/student
     username text NOT NULL,
 
@@ -23,11 +23,12 @@ CREATE TABLE users ( -- user is reserved :(
     PRIMARY KEY (id)
 );
 
+CREATE TYPE pool AS ENUM ('unit 1', 'unit 2');
+
 CREATE TABLE student (
     id int NOT NULL,
     studentid int NOT NULL,
-    pool varchar(3), -- UTA or GTA or EXT
-    seniority float,
+    pool pool,
 
     PRIMARY KEY (id),
     UNIQUE (studentid),
@@ -52,22 +53,22 @@ CREATE TABLE professor (
 
 CREATE TABLE section (
     id serial NOT NULL,
-    course varchar(20) NOT NULL,
+    course int NOT NULL,
     letter varchar(4) NOT NULL,
     term varchar(10) NOT NULL,
-    isCurrent boolean NOT NULL,
     profid int NOT NULL,
 
     PRIMARY KEY (id),
     UNIQUE (course, letter, term),
-    FOREIGN KEY (course) references course(code),
-    FOREIGN KEY (profid) references professor(id)
+    FOREIGN KEY (course) references course(id),
+    FOREIGN KEY (profid) references professor(id),
+    FOREIGN KEY (term) references term(term)
 );
 
 CREATE TABLE application (
     id serial NOT NULL,
     student int NOT NULL,
-    course varchar(10) NOT NULL,
+    course int NOT NULL,
     term varchar(10) NOT NULL, 
 
     grade int,
@@ -77,7 +78,8 @@ CREATE TABLE application (
     PRIMARY KEY (id),
     UNIQUE (student, course, term),
     FOREIGN KEY (student) references student(id),
-    FOREIGN KEY (course) references course(code)
+    FOREIGN KEY (course) references course(id),
+    FOREIGN KEY (term) references term(term)
 );
 
 CREATE TABLE assignment (
@@ -107,9 +109,24 @@ CREATE TABLE termapplication (
     inCanada boolean,
     wantsToTeach boolean,
 
-    isCurrent boolean, -- Set by admin, if none are current, student can submit a new submission.
-
     PRIMARY KEY (id),
     UNIQUE (student, term),
-    FOREIGN KEY (student) references student(id)
+    FOREIGN KEY (student) references student(id),
+    FOREIGN KEY (term) references term(term)
 );
+
+CREATE TABLE rightofrefusal (
+    student int UNIQUE NOT NULL,
+    course int NOT NULL,
+
+    PRIMARY KEY (student),
+    FOREIGN KEY course references course(id),
+    FOREIGN KEY student references student(id)
+)
+
+CREATE TABLE term(
+    term varchar(10) UNIQUE NOT NULL,
+    visible bool NOT NULL,
+    
+    PRIMARY KEY (term)
+)
