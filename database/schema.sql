@@ -65,21 +65,21 @@ CREATE TABLE section (
     id serial UNIQUE NOT NULL,
     course int NOT NULL,
     letter varchar(4) NOT NULL,
-    term varchar(10) NOT NULL,
+    term int NOT NULL,
     profid int NOT NULL,
 
     PRIMARY KEY (id),
     UNIQUE (course, letter, term),
     FOREIGN KEY (course) references course(id) ON UPDATE cascade,
     FOREIGN KEY (profid) references professor(id) ON UPDATE cascade,
-    FOREIGN KEY (term) references term(term) ON UPDATE cascade
+    FOREIGN KEY (term) references term(id) ON UPDATE cascade
 );
 
 CREATE TABLE application (
     id serial NOT NULL,
     student int NOT NULL,
     course int NOT NULL,
-    term varchar(10) NOT NULL, 
+    term int NOT NULL, 
 
     grade int,
     interest int,
@@ -89,7 +89,7 @@ CREATE TABLE application (
     UNIQUE (student, course, term),
     FOREIGN KEY (student) references student(id) ON UPDATE cascade,
     FOREIGN KEY (course) references course(id) ON UPDATE cascade,
-    FOREIGN KEY (term) references term(term) ON UPDATE cascade
+    FOREIGN KEY (term) references term(id) ON UPDATE cascade
 );
 
 CREATE TABLE assignment (
@@ -122,7 +122,7 @@ CREATE TABLE termapplication (
     PRIMARY KEY (id),
     UNIQUE (student, term),
     FOREIGN KEY (student) references student(id) ON UPDATE cascade, 
-    FOREIGN KEY (term) references term(term) ON UPDATE cascade
+    FOREIGN KEY (term) references term(id) ON UPDATE cascade
 );
 
 CREATE TABLE rightofrefusal (
