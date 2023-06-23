@@ -34,14 +34,14 @@ CREATE TABLE student (
 
     PRIMARY KEY (id),
     UNIQUE (studentid),
-    FOREIGN KEY (id) references users(id)
+    FOREIGN KEY (id) references users(id) ON UPDATE cascade
 );
 
 CREATE TABLE professor (
     id int NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (id) references users(id)
+    FOREIGN KEY (id) references users(id) ON UPDATE cascade
 );
 
 CREATE TABLE course (
@@ -54,14 +54,15 @@ CREATE TABLE course (
 );
 
 CREATE TABLE term(
+    id serial UNIQUE NOT NULL,
     term varchar(10) UNIQUE NOT NULL,
     visible bool NOT NULL,
     
-    PRIMARY KEY (term)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE section (
-    id serial NOT NULL,
+    id serial UNIQUE NOT NULL,
     course int NOT NULL,
     letter varchar(4) NOT NULL,
     term varchar(10) NOT NULL,
@@ -69,9 +70,9 @@ CREATE TABLE section (
 
     PRIMARY KEY (id),
     UNIQUE (course, letter, term),
-    FOREIGN KEY (course) references course(id),
-    FOREIGN KEY (profid) references professor(id),
-    FOREIGN KEY (term) references term(term)
+    FOREIGN KEY (course) references course(id) ON UPDATE cascade,
+    FOREIGN KEY (profid) references professor(id) ON UPDATE cascade,
+    FOREIGN KEY (term) references term(term) ON UPDATE cascade
 );
 
 CREATE TABLE application (
@@ -86,9 +87,9 @@ CREATE TABLE application (
 
     PRIMARY KEY (id),
     UNIQUE (student, course, term),
-    FOREIGN KEY (student) references student(id),
-    FOREIGN KEY (course) references course(id),
-    FOREIGN KEY (term) references term(term)
+    FOREIGN KEY (student) references student(id) ON UPDATE cascade,
+    FOREIGN KEY (course) references course(id) ON UPDATE cascade,
+    FOREIGN KEY (term) references term(term) ON UPDATE cascade
 );
 
 CREATE TABLE assignment (
@@ -101,8 +102,8 @@ CREATE TABLE assignment (
     assigned int, -- admin provided
     PRIMARY KEY (id),
     UNIQUE (student, section),
-    FOREIGN KEY (student) references student(id),
-    FOREIGN KEY (section) references section(id)
+    FOREIGN KEY (student) references student(id) ON UPDATE cascade,
+    FOREIGN KEY (section) references section(id) ON UPDATE cascade
 );
 
 CREATE TABLE termapplication (
@@ -120,8 +121,8 @@ CREATE TABLE termapplication (
 
     PRIMARY KEY (id),
     UNIQUE (student, term),
-    FOREIGN KEY (student) references student(id),
-    FOREIGN KEY (term) references term(term)
+    FOREIGN KEY (student) references student(id) ON UPDATE cascade, 
+    FOREIGN KEY (term) references term(term) ON UPDATE cascade
 );
 
 CREATE TABLE rightofrefusal (
@@ -130,7 +131,7 @@ CREATE TABLE rightofrefusal (
 
     PRIMARY KEY (student),
     UNIQUE (student, course),
-    FOREIGN KEY (student) references student(id),
-    FOREIGN KEY (course) references course(id)
+    FOREIGN KEY (student) references student(id) ON UPDATE cascade,
+    FOREIGN KEY (course) references course(id) ON UPDATE cascade
 );
 
