@@ -356,14 +356,20 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
 })
 
 /**
- * Get the courses that the student has and can apply to 
+ * Get the courses that the student has and can apply to for a specific term
  * Gets existing applications if they exist
  * For populating the application page with courses
 `
-SELECT * FROM (SELECT * FROM course WHERE code IN 
-(SELECT course FROM section WHERE term='F23')) AS course
-LEFT JOIN (SELECT * FROM application WHERE student=3 AND term='F23') AS application
-ON application.course = course.code
+
+SELECT code, name, description, grade, interest, qualification
+FROM 
+(SELECT * FROM course WHERE id IN 
+    (SELECT course FROM section WHERE term=3)
+) AS course
+LEFT JOIN 
+(SELECT * FROM application WHERE student IN (SELECT id FROM users WHERE username='jane') 
+    AND term=3) AS application
+ON application.course = course.id
 `
  */
 app.get("/api/student/applications/:term/:userId", (req, res) => {
@@ -378,7 +384,7 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
     LEFT JOIN 
     (SELECT * FROM application WHERE student IN (SELECT id FROM users WHERE username=$1) 
         AND term=$2) AS application
-    ON application.course = course.code
+    ON application.course = course.id
     `
     db.any(dbQuery, [userId, term])
         .then((data) => {
