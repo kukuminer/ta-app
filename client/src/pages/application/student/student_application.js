@@ -108,7 +108,8 @@ class StudentApplicationClass extends React.Component {
     fetchApp() {
         axios.get(this.get_term_url)
             .then((res) => {
-                const newState = res.data[0]
+                var newState = res.data[0]
+                if (!newState) newState = {}
                 for (const [k, v] of Object.entries(this.DEFAULT_VALUES)) {
                     if (!newState[k]) newState[k] = v
                 }
