@@ -300,30 +300,21 @@ app.post("/api/professor/assignment", (req, res) => {
 /**
  * Gets all the terms that the student can or has applied to
  * For populating the student dashboard from termapplication table
- * `
-SELECT 
-    COALESCE(secterm.term, termapplication.term) AS term, 
-    COALESCE(secterm.iscurrent, termapplication.iscurrent) AS iscurrent,
-    availability, approval, explanation, incanada, wantstoteach, submitted
-FROM
-(SELECT DISTINCT term, iscurrent FROM section) AS secterm
-FULL OUTER JOIN 
-(SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username='johndoe')) AS termapplication
-ON secterm.term = termapplication.term
-`
+ * 
+SELECT term.id as seq, term.term, student, submitted, availability, approval, explanation, incanada, wantstoteach
+FROM term LEFT JOIN 
+(SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username='jane')) AS termapplication
+ON term.id = termapplication.term
+WHERE term.visible = true
  */
 app.get("/api/student/applications/available/:userId", (req, res) => {
     const userId = getUser.getUser(req)
     const dbQuery = `
-    SELECT 
-    COALESCE(secterm.term, termapplication.term) AS term, 
-    COALESCE(secterm.iscurrent, termapplication.iscurrent) AS iscurrent,
-    availability, approval, explanation, incanada, wantstoteach, submitted
-    FROM
-    (SELECT DISTINCT term, iscurrent FROM section) AS secterm
-    FULL OUTER JOIN 
+    SELECT term.id AS term, term.term AS termname, student, submitted, availability, approval, explanation, incanada, wantstoteach
+    FROM term LEFT JOIN 
     (SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username=$1)) AS termapplication
-    ON secterm.term = termapplication.term
+    ON term.id = termapplication.term
+    WHERE term.visible = true    
     `
     // AND section.term NOT IN (SELECT term FROM termapplication)
     db.any(dbQuery, userId)
