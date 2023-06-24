@@ -47,5 +47,5 @@ VALUES ('3', '1', 2, 90, 3, 3),
 
 INSERT INTO termapplication(student, term, availability, approval, explanation, incanada, wantstoteach, submitted)
 VALUES ('3', 2, 12, true, 'i want to TA', true, true, false),
-('3', 'F22', 9, true, 'i wanted to TA', true, true, true),
+('3', 1, 9, true, 'i wanted to TA', true, true, true),
 ('5', 2, 11, true, 'jane want teach', true, true, true);
