@@ -282,22 +282,6 @@ app.post("/api/professor/assignment", (req, res) => {
 })
 
 /**
- * Gets list of users termapplications
- */
-// app.get("/api/student/applications/:userId", (req, res) => {
-//     const userId = getUser.getUser(req)
-//     const dbQuery = "SELECT term, availability, approval, explanation, incanada, iscurrent FROM termapplication WHERE student=$1"
-//     db.any(dbQuery, userId)
-//         .then((data) => {
-//             res.json(data)
-//         })
-//         .catch((error) => {
-//             console.log('error retrieving student applications from db')
-//             res.json({ error: error })
-//         })
-// })
-
-/**
  * Gets all the terms that the student can or has applied to
  * For populating the student dashboard from termapplication table
  * 
@@ -347,11 +331,10 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
 })
 
 /**
- * Get the courses that the student has and can apply to for a specific term
+ * Get the courses within a term that the student has and can apply to
  * Gets existing applications if they exist
  * For populating the application page with courses
 `
-
 SELECT code, name, description, grade, interest, qualification
 FROM 
 (SELECT * FROM course WHERE id IN 
@@ -362,6 +345,15 @@ LEFT JOIN
     AND term=3) AS application
 ON application.course = course.id
 `
+
+SELECT code, name, description, grade, interest, qualification
+FROM 
+(SELECT * FROM course 
+    WHERE course.id IN (SELECT course FROM section WHERE term=2)) AS course
+LEFT JOIN
+(SELECT * FROM application 
+    WHERE student IN (SELECT id FROM users WHERE username='jane') AND term=2) AS application
+ON application.course = course.id
  */
 app.get("/api/student/applications/:term/:userId", (req, res) => {
     const userId = getUser.getUser(req)
@@ -369,12 +361,11 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
     const dbQuery = `
     SELECT code, name, description, grade, interest, qualification
     FROM 
-    (SELECT * FROM course WHERE code IN 
-        (SELECT course FROM section WHERE term=$2)
-    ) AS course
+    (SELECT * FROM course 
+        WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
     LEFT JOIN 
-    (SELECT * FROM application WHERE student IN (SELECT id FROM users WHERE username=$1) 
-        AND term=$2) AS application
+    (SELECT * FROM application 
+        WHERE student IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
     ON application.course = course.id
     `
     db.any(dbQuery, [userId, term])
