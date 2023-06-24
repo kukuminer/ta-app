@@ -54,3 +54,8 @@ If you have any questions, please let me know
 
 - Eclass aesthetics
 -- font
+
+- rename student to applicant - system wide
+- rename professor to instructor - system wide
+
+- admin import to use csv headers instead of manually typed fields
