@@ -359,7 +359,7 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
     const userId = getUser.getUser(req)
     const term = req.params.term
     const dbQuery = `
-    SELECT code, name, description, grade, interest, qualification
+    SELECT course.id as code, code as codename, name, description, grade, interest, qualification
     FROM 
     (SELECT * FROM course 
         WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
@@ -414,7 +414,7 @@ app.post("/api/student/application", (req, res) => {
         })
         .catch((error) => {
             console.log('db application upsert error: ', error)
-            res.status(400).json({ error: error })
+            res.status(400).send(error)
         })
 })
 
@@ -453,7 +453,7 @@ app.post("/api/student/term", (req, res) => {
         })
         .catch((error) => {
             console.log('db termapplication upsert error: ', error)
-            res.status(400).json({ error: error })
+            res.status(400).send(error)
         })
 })
 
