@@ -14,9 +14,9 @@ INSERT INTO student(id, studentid)
 SELECT id, id FROM users WHERE userType = 'student';
 
 INSERT INTO course (code, name, description) 
-VALUES ('2030', 'intro to OOP', 'oop intro'), 
-('2011', 'algorithms', 'algo text'), 
-('3214', 'networks', 'network hover text');
+VALUES ('EECS2030', 'intro to OOP', 'oop intro'), 
+('EECS2011', 'algorithms', 'algo text'), 
+('EECS3214', 'networks', 'network hover text');
 
 INSERT INTO professor(id) 
 SELECT (id) FROM users WHERE userType = 'professor';
