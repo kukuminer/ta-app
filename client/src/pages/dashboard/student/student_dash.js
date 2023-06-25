@@ -41,7 +41,7 @@ const StudentDash = () => {
                             !pastTable ? <tr><TableCell>loading...</TableCell></tr> : pastTable.map((val, key) => {
                                 return (
                                     <TableRow key={key}>
-                                        <TableCell>{val.term}</TableCell>
+                                        <TableCell>{val.termname}</TableCell>
                                         <TableCell>{val.availability}</TableCell>
                                         <TableCell>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</TableCell>
                                         <TableCell>{val.submitted ? 'Submitted' : val.submitted === false ? 'Saved' : 'Available'}</TableCell>

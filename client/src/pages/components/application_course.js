@@ -10,8 +10,8 @@ import HtmlTooltip from "./tooltip"
  */
 class Application extends React.Component {
     URL = '/api/student/application'
-    dataKeys = [
-        'code', 'name', 'description',
+    dataKeys = [ // These are the keys that get displayed in the columns
+        'codename', 'name', 'description',
     ]
 
     constructor(props) {
@@ -21,7 +21,6 @@ class Application extends React.Component {
         this.state.userId = getUser()
         this.state.interest = !this.state.interest ? 0 : this.state.interest
         this.state.qualification = !this.state.qualification ? 0 : this.state.qualification
-        console.log(this.state)
     }
     componentDidMount() {
         this.makeColumns()
