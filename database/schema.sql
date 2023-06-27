@@ -130,8 +130,7 @@ CREATE TABLE rightofrefusal (
     course int NOT NULL,
     term int NOT NULL,
 
-    PRIMARY KEY (student),
-    UNIQUE (student, course),
+    PRIMARY KEY (student, course, term),
     FOREIGN KEY (student) references student(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade

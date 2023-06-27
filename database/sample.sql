@@ -49,3 +49,10 @@ INSERT INTO termapplication(student, term, availability, approval, explanation, 
 VALUES ('3', 2, 12, true, 'i want to TA', true, true, false),
 ('3', 1, 9, true, 'i wanted to TA', true, true, true),
 ('5', 2, 11, true, 'jane want teach', true, true, true);
+
+
+INSERT INTO rightofrefusal(student, course, term) VALUES
+(3, 8, 3),
+(3, 7, 3),
+(5, 2, 3),
+(3, 3, 2);
