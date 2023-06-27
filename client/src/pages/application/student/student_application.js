@@ -32,6 +32,7 @@ class StudentApplicationClass extends React.Component {
         super(props)
         this.state = {}
         this.state.term = props.state.term
+        this.state.termname = props.state.termname
         this.state.userId = getUser()
 
         // Initialize state to default values if it is null:
@@ -140,7 +141,7 @@ class StudentApplicationClass extends React.Component {
             <>
                 <div className="application">
                     <h2>
-                        TA Application for {this.state ? this.state.term : 'Loading...'}
+                        TA Application for {this.state ? this.state.termname : 'Loading...'}
                     </h2>
                     <form className="form">
                         <h3>General Info</h3>
