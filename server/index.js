@@ -282,6 +282,28 @@ app.post("/api/professor/assignment", (req, res) => {
 })
 
 /**
+ * Gets right of first refusal table info 
+ */
+app.get("/api/student/refusal/:term/:userId", (req, res) => {
+    const userId = getUser.getUser(req)
+    const term = req.params.term
+    const dbQuery = `
+    SELECT student, course, term FROM rightofrefusal
+    WHERE student IN (SELECT id FROM users WHERE username=$1)
+    AND term=$2
+    `
+    db.any(dbQuery, [userId, term])
+    .then((data) => {
+        res.json(data)
+    })
+    .catch((error) => {
+        console.log('error retrieving rightofrefusal details from db')
+        res.status(500).send(error)
+    })
+
+})
+
+/**
  * Gets all the terms that the student can or has applied to
  * For populating the student dashboard from termapplication table
  * 
