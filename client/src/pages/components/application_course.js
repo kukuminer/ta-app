@@ -69,7 +69,7 @@ class Application extends React.Component {
     render() {
         return (
             <>
-                <TableRow key={this.props.rowKey} sx={{ fontSize: '40pt', backgroundColor: this.state.seniority ? '#ccffcc' : 'default' }}>
+                <TableRow key={this.props.rowKey} sx={{ fontSize: '40pt', backgroundColor: this.state.rightOfRefusal ? '#ccffcc' : 'default' }}>
                     {this.state.columns}
                     <TableCell>
                         <FormControl fullWidth>
@@ -109,7 +109,7 @@ class Application extends React.Component {
                             </RadioGroup>
                         </FormControl>
                     </TableCell>
-                    <TableCell sx={{visibility: this.state.seniority ? 'default' : 'hidden'}}>
+                    <TableCell sx={{visibility: this.state.rightOfRefusal ? 'default' : 'hidden'}}>
                         <HtmlTooltip title={
                             <>
                                 {"You have priority for this course because you were a TA for it in the previous term."}

@@ -43,14 +43,18 @@ class StudentApplicationClass extends React.Component {
 
         this.get_courses_url = '/api/student/applications/' + this.state.term + '/' + this.state.userId
         this.get_term_url = '/api/student/termapplication/' + this.state.term + '/' + this.state.userId
+        this.get_refusal_url = '/api/student/refusal/' + this.state.term + '/' + this.state.userId
         this.courseData = []
     }
     componentDidMount() {
         this.fetchApp()
-        this.fetchTable()
+        this.fetchTable().then(this.fetchRefusal())
     }
     componentWillUnmount() {
         clearTimeout(this.TIMER)
+    }
+    foo() {
+        console.log('foo')
     }
 
     handleChange = (changedKey, event) => {
@@ -106,7 +110,7 @@ class StudentApplicationClass extends React.Component {
     }
 
     // termapplication info:
-    fetchApp() {
+    async fetchApp() {
         axios.get(this.get_term_url)
             .then((res) => {
                 var newState = res.data[0]
@@ -119,21 +123,42 @@ class StudentApplicationClass extends React.Component {
     }
 
     // application info:
-    fetchTable() {
+    async fetchTable() {
         axios.get(this.get_courses_url)
             .then((res) => {
                 const table = res.data
-                table[0].seniority = 1
                 console.log(table)
                 //TODO: Sort array
                 var courseData = []
                 for (const [key, item] of Object.entries(table)) {
-                    courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key}/>)
+                    courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key} />)
                 }
                 var stateCopy = this.state
                 stateCopy.courseData = courseData
                 this.setState(stateCopy)
             })
+    }
+    async fetchRefusal() {
+        axios.get(this.get_refusal_url)
+            .then((res) => {
+                const refusal = res.data
+                this.matchRightOfRefusal(refusal)
+            })
+    }
+    matchRightOfRefusal(refusalInfo) {
+        console.log(refusalInfo)
+        console.log(this.state)
+        var newState = this.state
+        for (const [key, course] of Object.entries(this.state.courseData)) {
+            const courseId = course.props.data.code
+            for (const right of refusalInfo) {
+                if (right.course === courseId) {
+                    console.log(key, course)
+                    newState.courseData[key].props.data.rightOfRefusal = 1
+                    console.log(newState)
+                }
+            }
+        }
     }
 
     render() {
@@ -151,9 +176,11 @@ class StudentApplicationClass extends React.Component {
                                 type="number"
                                 value={this.state.availability}
                                 onChange={event => this.handleChange('availability', event)}
-                                InputProps={{inputProps: {
-                                    max: 20, min: 0
-                                }}}
+                                InputProps={{
+                                    inputProps: {
+                                        max: 20, min: 0
+                                    }
+                                }}
                             />
                             {/* <input type="number" min={0} max={20} value={this.state.availability} onChange={(event) => this.handleChange('availability', event)} /> */}
                         </div>

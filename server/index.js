@@ -300,7 +300,6 @@ app.get("/api/student/refusal/:term/:userId", (req, res) => {
         console.log('error retrieving rightofrefusal details from db')
         res.status(500).send(error)
     })
-
 })
 
 /**
