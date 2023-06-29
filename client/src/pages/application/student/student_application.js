@@ -166,9 +166,6 @@ class StudentApplicationClass extends React.Component {
         newState.refusalTable = refusalTable
         newState.courseTable = courseTable
         this.setState(newState)
-        console.log(this.state)
-
-        console.log(this.state.refusalTable.length ? 'yes' : 'no')
     }
 
     render() {
