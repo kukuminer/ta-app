@@ -11,7 +11,7 @@ import HtmlTooltip from "./tooltip"
 class Application extends React.Component {
     URL = '/api/student/application'
     dataKeys = [ // These are the keys that get displayed in the columns
-        'codename', 'name', 'description',
+        'codename', 'name', //description
     ]
 
     constructor(props) {
@@ -81,6 +81,7 @@ class Application extends React.Component {
                                 value={this.state.interest}
                                 onChange={(event) => { this.handleChange('interest', event) }}
                                 row
+                                sx={{justifyContent: 'center'}}
                             >
                                 <FormControlLabel value={0} control={<Radio />} sx={{ margin: 0, }} labelPlacement="top" label={0} />
                                 <FormControlLabel value={1} control={<Radio />} sx={{ margin: 0, }} labelPlacement="top" />
@@ -90,8 +91,8 @@ class Application extends React.Component {
                             </RadioGroup>
                         </FormControl>
                     </TableCell>
-                    <TableCell>
-                        <FormControl fullWidth>
+                    <TableCell >
+                        <FormControl fullWidth >
                             <FormLabel id="interest-radio" />
                             <RadioGroup
                                 aria-labelledby="interest-radio"
@@ -100,6 +101,7 @@ class Application extends React.Component {
                                 value={this.state.qualification}
                                 onChange={(event) => { this.handleChange('qualification', event) }}
                                 row
+                                sx={{justifyContent: 'center'}}
                             >
                                 <FormControlLabel value={0} control={<Radio color="secondary" />} labelPlacement="top" sx={{ margin: 0, }} label={0} />
                                 <FormControlLabel value={1} control={<Radio color="secondary" />} labelPlacement="top" sx={{ margin: 0, }} />
@@ -109,7 +111,7 @@ class Application extends React.Component {
                             </RadioGroup>
                         </FormControl>
                     </TableCell>
-                    <TableCell sx={{visibility: this.state.rightOfRefusal ? 'default' : 'hidden'}}>
+                    {/* <TableCell sx={{visibility: this.state.rightOfRefusal ? 'default' : 'hidden'}}>
                         <HtmlTooltip title={
                             <>
                                 {"You have priority for this course because you were a TA for it in the previous term."}
@@ -119,7 +121,7 @@ class Application extends React.Component {
                                 ?
                             </Button>
                         </HtmlTooltip>
-                    </TableCell>
+                    </TableCell> */}
                 </TableRow>
             </>
         )

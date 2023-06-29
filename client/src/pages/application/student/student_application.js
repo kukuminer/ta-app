@@ -176,44 +176,45 @@ class StudentApplicationClass extends React.Component {
                         TA Application for {this.state ? this.state.termname : 'Loading...'}
                     </h2>
                     <form className="form">
+                        <p>
+                            Your changes are saved automatically. You can unsubmit later.
+                        </p>
+
                         <h3>General Info</h3>
-                        <div className="form-row">
-                            Availability in hours per week (0-20):
-                            <TextField
-                                type="number"
-                                value={this.state.availability}
-                                onChange={event => this.handleChange('availability', event)}
-                                InputProps={{
-                                    inputProps: {
-                                        max: 20, min: 0
-                                    }
-                                }}
-                            />
-                            {/* <input type="number" min={0} max={20} value={this.state.availability} onChange={(event) => this.handleChange('availability', event)} /> */}
-                        </div>
-                        <div className="form-row">
-                            Provide a brief explanation of which courses you want to TA for, and your relevant experience
-                            <br />
-                            <textarea value={this.state.explanation} onChange={(event) => this.handleChange('explanation', event)} />
-                        </div>
-                        <div className="form-row">
-                            <label>
-                                <input type="checkbox" checked={this.state.approval} onChange={(event) => this.handleChange('approval', event)} />
-                                I have my advisor's / supervisor's approval (Leave blank if not a grad student)
-                            </label>
-                        </div>
-                        <div className="form-row">
-                            <label>
-                                <input type="checkbox" checked={this.state.incanada} onChange={(event) => this.handleChange('incanada', event)} />
-                                I will be able to attend the required lab sessions in person this semester
-                            </label>
-                        </div>
                         <div className="form-row">
                             <label>
                                 <input type="checkbox" checked={this.state.wantstoteach} onChange={(event) => this.handleChange('wantstoteach', event)} />
                                 I want to be a teaching assistant this semester
                             </label>
                         </div>
+                        <div className="form-row">
+                            Load availability in quarter-loads (1-4) (Tooltip here):
+                            <TextField
+                                type="number"
+                                value={this.state.availability}
+                                onChange={event => this.handleChange('availability', event)}
+                                InputProps={{
+                                    inputProps: {
+                                        max: 4, min: 1
+                                    }
+                                }}
+                            />
+                            {/* <input type="number" min={0} max={20} value={this.state.availability} onChange={(event) => this.handleChange('availability', event)} /> */}
+                        </div>
+
+                        {/* <div className="form-row">
+                            <label>
+                                <input type="checkbox" checked={this.state.approval} onChange={(event) => this.handleChange('approval', event)} />
+                                I have my advisor's / supervisor's approval (Leave blank if not a grad student)
+                            </label>
+                        </div> */}
+                        {/* <div className="form-row">
+                            <label>
+                                <input type="checkbox" checked={this.state.incanada} onChange={(event) => this.handleChange('incanada', event)} />
+                                I will be able to attend the required lab sessions in person this semester
+                            </label>
+                        </div> */}
+
                         <div>
                             {this.state.refusalTable && this.state.refusalTable.length ?
                                 <>
@@ -239,7 +240,7 @@ class StudentApplicationClass extends React.Component {
                                                 <TableRow>
                                                     <th>Course</th>
                                                     <th>Title</th>
-                                                    <th>Grade</th>
+                                                    {/* <th>Grade</th> */}
                                                     <th>Interest</th>
                                                     <th>Qualification</th>
                                                     <th></th>
@@ -264,7 +265,7 @@ class StudentApplicationClass extends React.Component {
                                         <TableRow>
                                             <th>Course</th>
                                             <th>Title</th>
-                                            <th>Grade</th>
+                                            {/* <th>Grade</th> */}
                                             <th>Interest</th>
                                             <th>Qualification</th>
                                             <th></th>
@@ -276,9 +277,11 @@ class StudentApplicationClass extends React.Component {
                                 </Table>
                             </TableContainer>
                         </div>
-                        <p>
-                            Your changes are saved automatically. You can unsubmit later.
-                        </p>
+                        <div className="form-row">
+                            Provide a brief explanation of which courses you want to TA for, and your relevant experience
+                            <br />
+                            <textarea value={this.state.explanation} onChange={(event) => this.handleChange('explanation', event)} />
+                        </div>
                         <Button variant="contained"
                             size="large"
                             onClick={(event) => this.handleChange('submitted', event)}
