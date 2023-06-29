@@ -59,3 +59,5 @@ If you have any questions, please let me know
 - rename professor to instructor - system wide
 
 - admin import to use csv headers instead of manually typed fields
+
+- crontab + pg_dump to auto backup
