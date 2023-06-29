@@ -36,6 +36,11 @@ input[type=checkbox] {
     line-height: 50px;
 }
 
+.priority-course-div {
+    display: flex;
+    align-items: center;
+}
+
 textarea {
     font-size: larger;
 }

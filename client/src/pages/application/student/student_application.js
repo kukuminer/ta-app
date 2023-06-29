@@ -3,7 +3,8 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../../getUser"
 import Application from "../../components/application_course"
-import { Button, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import HtmlTooltip from "../../components/tooltip"
+import { Button, IconButton, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 
 /**
  * Wraps the StudentApplication component to properly pass in the useLocation hook
@@ -48,13 +49,20 @@ class StudentApplicationClass extends React.Component {
     }
     componentDidMount() {
         this.fetchApp()
-        this.fetchTable().then(this.fetchRefusal())
+        this.fetchCourses().then(this.fetchRefusal())
+        Promise.all([this.fetchCourses(), this.fetchRefusal()]).then((vals) =>
+            this.makeTable(vals[0], vals[1])
+        )
+
     }
     componentWillUnmount() {
         clearTimeout(this.TIMER)
     }
-    foo() {
-        console.log('foo')
+    async foo() {
+        return 'foo'
+    }
+    async bar() {
+        return 'bar'
     }
 
     handleChange = (changedKey, event) => {
@@ -123,42 +131,44 @@ class StudentApplicationClass extends React.Component {
     }
 
     // application info:
-    async fetchTable() {
-        axios.get(this.get_courses_url)
+    async fetchCourses() {
+        return axios.get(this.get_courses_url)
             .then((res) => {
-                const table = res.data
-                console.log(table)
-                //TODO: Sort array
-                var courseData = []
-                for (const [key, item] of Object.entries(table)) {
-                    courseData.push(<Application data={item} term={this.state.term} rowKey={key} key={key} />)
-                }
-                var stateCopy = this.state
-                stateCopy.courseData = courseData
-                this.setState(stateCopy)
+                return res.data
             })
     }
     async fetchRefusal() {
-        axios.get(this.get_refusal_url)
+        return axios.get(this.get_refusal_url)
             .then((res) => {
-                const refusal = res.data
-                this.matchRightOfRefusal(refusal)
+                return res.data
             })
     }
-    matchRightOfRefusal(refusalInfo) {
-        console.log(refusalInfo)
-        console.log(this.state)
-        var newState = this.state
-        for (const [key, course] of Object.entries(this.state.courseData)) {
-            const courseId = course.props.data.code
+    makeTable(courseData, refusalInfo) {
+        for (const [key, course] of Object.entries(courseData)) {
+            const courseId = course.code
             for (const right of refusalInfo) {
                 if (right.course === courseId) {
-                    console.log(key, course)
-                    newState.courseData[key].props.data.rightOfRefusal = 1
-                    console.log(newState)
+                    courseData[key].rightOfRefusal = 1
                 }
             }
         }
+        var courseTable = []
+        var refusalTable = []
+        for (const [key, item] of Object.entries(courseData)) {
+            const appItem = <Application data={item} term={this.state.term} rowKey={key} key={key} />
+            if (item.rightOfRefusal) {
+                refusalTable.push(appItem)
+            } else {
+                courseTable.push(appItem)
+            }
+        }
+        var newState = this.state
+        newState.refusalTable = refusalTable
+        newState.courseTable = courseTable
+        this.setState(newState)
+        console.log(this.state)
+
+        console.log(this.state.refusalTable.length ? 'yes' : 'no')
     }
 
     render() {
@@ -207,24 +217,68 @@ class StudentApplicationClass extends React.Component {
                                 I want to be a teaching assistant this semester
                             </label>
                         </div>
-                        <h3>Course Preferences</h3>
-                        <TableContainer >
-                            <Table size="small" >
-                                <TableHead>
-                                    <TableRow>
-                                        <th>Course</th>
-                                        <th>Title</th>
-                                        <th>Grade</th>
-                                        <th>Interest</th>
-                                        <th>Qualification</th>
-                                        <th></th>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {!this.state.courseData ? <tr><td>loading...</td></tr> : this.state.courseData}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <div>
+                            {this.state.refusalTable && this.state.refusalTable.length ?
+                                <>
+                                    <div className="priority-course-div">
+                                        <h3>Priority Courses</h3>
+                                        <HtmlTooltip title={
+                                            <>
+                                                {"You have priority for these courses because you were a TA for them in the previous term."}
+                                            </>
+                                        }>
+                                            <IconButton
+                                                variant="contained"
+                                                size="small"
+                                                sx={{ height: 30, width: 30 }}
+                                            >
+                                                ?
+                                            </IconButton>
+                                        </HtmlTooltip>
+                                    </div>
+                                    <TableContainer>
+                                        <Table size="small" >
+                                            <TableHead>
+                                                <TableRow>
+                                                    <th>Course</th>
+                                                    <th>Title</th>
+                                                    <th>Grade</th>
+                                                    <th>Interest</th>
+                                                    <th>Qualification</th>
+                                                    <th></th>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {!this.state.refusalTable ? <tr><td>loading...</td></tr> : this.state.refusalTable}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </>
+                                :
+                                <></>
+                            }
+
+                        </div>
+                        <div>
+                            <h3>Course Preferences</h3>
+                            <TableContainer >
+                                <Table size="small" >
+                                    <TableHead>
+                                        <TableRow>
+                                            <th>Course</th>
+                                            <th>Title</th>
+                                            <th>Grade</th>
+                                            <th>Interest</th>
+                                            <th>Qualification</th>
+                                            <th></th>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {!this.state.courseTable ? <tr><td>loading...</td></tr> : this.state.courseTable}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
                         <p>
                             Your changes are saved automatically. You can unsubmit later.
                         </p>
