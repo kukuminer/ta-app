@@ -1,8 +1,7 @@
 import React from "react"
 import axios from "axios"
 import getUser from "../../getUser"
-import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell, TableRow } from '@mui/material'
-import HtmlTooltip from "./tooltip"
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell, TableRow } from '@mui/material'
 
 /**
  * A class for the rows of professor dashboard table
