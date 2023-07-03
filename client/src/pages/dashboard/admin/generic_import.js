@@ -183,7 +183,7 @@ const GenericImportTab = () => {
                             </TableRow>
                         </TableHead> */}
                         <TableBody>
-                            {uploadedData ? uploadedData : <TableCell>Please upload a file</TableCell>}
+                            {uploadedData ? uploadedData : <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </TableContainer>
