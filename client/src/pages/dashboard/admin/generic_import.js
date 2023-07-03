@@ -97,7 +97,6 @@ const GenericImportTab = () => {
 
     return (
         <>
-            <h1>ADMIN DASHBOARD</h1>
             <FormControl
                 fullWidth
                 error={!selectedTable}
