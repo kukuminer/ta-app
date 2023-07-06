@@ -498,7 +498,7 @@ app.get("/api/section/:sectionId", (req, res) => {
         })
         .catch((error) => {
             console.log('error retrieving section data from db:', sectionId)
-            res.status(400).json({ error: error })
+            res.status(400).send(error)
         })
 })
 
@@ -518,7 +518,7 @@ app.get("/api/admin/tables", (req, res) => {
         })
         .catch((error) => {
             console.log('error fetching table list from DB:', error)
-            res.status(400).json({ error: error })
+            res.status(400).send(error)
         })
 })
 
@@ -596,25 +596,34 @@ app.get("/api/admin/table/:tableName", (req, res) => {
  * For updating the ROFT table using 
 `
 INSERT INTO rightofrefusal (student, course, term)
-
 SELECT u.id, c.id, t.id FROM 
 (SELECT 1 AS n, id FROM users WHERE username='jane') AS u JOIN 
 (SELECT 1 AS n, id FROM course WHERE code='2030') AS c ON u.n = c.n JOIN
 (SELECT 1 AS n, id FROM term WHERE term='F23') AS t ON t.n = c.n
-,
-SELECT u.id, c.id, t.id FROM 
-(SELECT 1 AS n, id FROM users WHERE username='jane') AS u JOIN 
-(SELECT 1 AS n, id FROM course WHERE code='2030') AS c ON u.n = c.n JOIN
-(SELECT 1 AS n, id FROM term WHERE term='W24') AS t ON t.n = c.n
+ON CONFLICT DO NOTHING
+RETURNING u.id AS username, c.id AS course, t.id AS term
+;
 
 INSERT INTO rightofrefusal (student, course, term)
+SELECT u.id, c.id, t.id FROM 
+(SELECT id FROM users WHERE username='jane') AS u JOIN 
+(SELECT id FROM course WHERE code='2030') AS c ON TRUE JOIN
+(SELECT 1 AS n, id FROM term WHERE term='W22') AS t ON t.n = c.n
+ON CONFLICT DO NOTHING;
 
-(SELECT id FROM users WHERE username='jane', 
-SELECT id FROM course WHERE code='2030',
-SELECT id FROM term WHERE term='F23')
+INSERT INTO rightofrefusal (student, course, term)
+SELECT student.id, course.id, term.id 
+FROM users, course, term
+WHERE student.studentid=5
+AND course.code='2030'
+AND term.term='F23'
+ON CONFLICT DO NOTHING
+RETURNING student, course, term;
 ;
 
  */
+
+
 app.post("/api/admin/rofr", (req, res) => {
     const userId = getUser.getUserFromBody(req)
     db.any('SELECT usertype FROM users WHERE username=$1', userId)
@@ -624,6 +633,30 @@ app.post("/api/admin/rofr", (req, res) => {
                 res.status(403).send('Unauthorized!')
                 return
             }
+
+            const rows = req.body.rows
+
+            db.tx(t => {
+                return async.map(rows, (item) => {
+                    const dbQuery = `
+                    INSERT INTO rightofrefusal (student, course, term)
+                    SELECT student.id, course.id, term.id 
+                    FROM users, course, term
+                    WHERE student.studentid=5
+                    AND course.code='2030'
+                    AND term.term='F23'
+                    ON CONFLICT DO NOTHING
+                    RETURNING student, course, term;
+                    `
+                    return t.any(dbQuery)
+                })
+            })
+            .then(data => {
+                console.log(data)
+            })
+            .catch(error => {
+                res.status(500).send(error)
+            })
 
             // Verified logic
         })
