@@ -55,4 +55,12 @@ INSERT INTO rightofrefusal(student, course, term) VALUES
 (3, 8, 3),
 (3, 7, 3),
 (5, 2, 3),
-(3, 3, 2);
+(3, 3, 2),
+(3, 7, 2);
+
+CREATE VIEW ApplicationView AS 
+SELECT student, username, course, code, application.term as termid, 
+term.term, interest, qualification
+FROM application JOIN users ON student=users.id 
+JOIN course ON application.course=course.id 
+JOIN term ON application.term=term.id;
