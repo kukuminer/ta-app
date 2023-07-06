@@ -145,7 +145,7 @@ const GenericImportTab = () => {
                 These keys will be used for upsert conflict resolution. Leaving it blank will cause the insert to fail if a value is already present in the DB.
             </h4>
             <TextField
-                id="key-text"
+                id="ukey-text"
                 label="Unique constraints"
                 sx={{ margin: '1em 0', width: '80vw'}}
                 onChange={(event) => setConstraints(event.target.value)}
