@@ -5,11 +5,12 @@ import React from 'react';
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import GenericImportTab from './generic_import';
+import ROFRImportTab from './rofr_import';
 // import TabPanel from '@mui/material/TabPanel'
 
 const PANELS = {
     '1': <GenericImportTab/>,
-    '2': <p>hello</p>,
+    '2': <ROFRImportTab/>,
 }
 
 const AdminDash = () => {
