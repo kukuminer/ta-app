@@ -29,9 +29,9 @@ const AdminDash = () => {
                 indicatorColor="secondary"
                 aria-label="secondary tabs example"
             >
-                <Tab value="1" label="Item One" />
-                <Tab value="2" label="Item Two" />
-                <Tab value="3" label="Item Three" />
+                <Tab value="1" label="Generic Import" />
+                <Tab value="2" label="ROFR Import" />
+                <Tab value="3" label="Export" />
             </Tabs>
             {PANELS[value]}
         </>

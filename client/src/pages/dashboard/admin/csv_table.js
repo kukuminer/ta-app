@@ -1,5 +1,6 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button } from '@mui/material'
 import React from 'react'
+import axios from 'axios'
 
 const CSVTable = (props) => {
 
@@ -8,7 +9,17 @@ const CSVTable = (props) => {
     const [lastPostStatus, setLastPostStatus] = React.useState(null)
 
     const postFile = () => {
-        props.postFile()
+        const body = props.postBody
+
+        axios.post(props.postURL, body)
+            .then((res) => {
+                setLastPostStatus(res.status + ' OK')
+            })
+            .catch((error) => {
+                setLastPostStatus('Error, see console log')
+                console.log('error posting:', error)
+            })
+
     }
 
     const handleFile = (event) => {
@@ -25,7 +36,10 @@ const CSVTable = (props) => {
             reader.onload = (e) => {
                 const raw = e.target.result
                 const split = raw.split('\n')
-                // setPostableData(split)
+                for (var item of split) {
+                    item = item.trim()
+                }
+                setPostableData(split)
                 var newData = []
                 for (const [idx, row] of Object.entries(split)) {
                     if (row) {
