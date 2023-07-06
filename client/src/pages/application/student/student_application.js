@@ -26,8 +26,8 @@ class StudentApplicationClass extends React.Component {
         submitted: false,
     }
     TIMER = null
-    MAX_AVAILABILITY = 20
-    MIN_AVAILABILITY = 0
+    MAX_AVAILABILITY = 4
+    MIN_AVAILABILITY = 1
 
     constructor(props) {
         super(props)
