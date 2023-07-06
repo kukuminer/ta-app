@@ -3,7 +3,7 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../../getUser"
 
-const POST_URL = ''
+const POST_URL = '/api/admin/rofr'
 
 const ROFRImportTab = () => {
     // Send a function to child componenet (csvreader) and have it run when

@@ -10,7 +10,8 @@ const CSVTable = (props) => {
 
     const postFile = () => {
         const body = props.postBody
-
+        body.rows = postableData
+        console.log(body)
         axios.post(props.postURL, body)
             .then((res) => {
                 setLastPostStatus(res.status + ' OK')
