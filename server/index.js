@@ -293,13 +293,13 @@ app.get("/api/student/refusal/:term/:userId", (req, res) => {
     AND term=$2
     `
     db.any(dbQuery, [userId, term])
-    .then((data) => {
-        res.json(data)
-    })
-    .catch((error) => {
-        console.log('error retrieving rightofrefusal details from db')
-        res.status(500).send(error)
-    })
+        .then((data) => {
+            res.json(data)
+        })
+        .catch((error) => {
+            console.log('error retrieving rightofrefusal details from db')
+            res.status(500).send(error)
+        })
 })
 
 /**
@@ -590,6 +590,44 @@ app.get("/api/admin/table/:tableName", (req, res) => {
 
 // })
 
+
+/**
+ * ADMIN ENDPOINT
+ * For updating the ROFT table using 
+`
+INSERT INTO rightofrefusal (student, course, term)
+
+SELECT u.id, c.id, t.id FROM 
+(SELECT 1 AS n, id FROM users WHERE username='jane') AS u JOIN 
+(SELECT 1 AS n, id FROM course WHERE code='2030') AS c ON u.n = c.n JOIN
+(SELECT 1 AS n, id FROM term WHERE term='F23') AS t ON t.n = c.n
+,
+SELECT u.id, c.id, t.id FROM 
+(SELECT 1 AS n, id FROM users WHERE username='jane') AS u JOIN 
+(SELECT 1 AS n, id FROM course WHERE code='2030') AS c ON u.n = c.n JOIN
+(SELECT 1 AS n, id FROM term WHERE term='W24') AS t ON t.n = c.n
+
+INSERT INTO rightofrefusal (student, course, term)
+
+(SELECT id FROM users WHERE username='jane', 
+SELECT id FROM course WHERE code='2030',
+SELECT id FROM term WHERE term='F23')
+;
+
+ */
+app.post("/api/admin/rofr", (req, res) => {
+    const userId = getUser.getUserFromBody(req)
+    db.any('SELECT usertype FROM users WHERE username=$1', userId)
+        .then((data) => {
+            if (!(data.length === 1 && data[0].usertype === 'admin')) {
+                console.log('unauthorized request!')
+                res.status(403).send('Unauthorized!')
+                return
+            }
+
+            // Verified logic
+        })
+})
 
 /**
  * ADMIN ENDPOINT
