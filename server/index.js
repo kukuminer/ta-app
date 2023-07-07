@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-const getUser = require('./getUser.js')
+const getUser = require('./getUser.js');
+const Async = require("async");
 /**
  * TODO: ADD ENV FOR GET USER 
  * req.get("PYork-User") COMPLETE
@@ -612,10 +613,10 @@ SELECT u.id, c.id, t.id FROM
 ON CONFLICT DO NOTHING;
 
 INSERT INTO rightofrefusal (student, course, term)
-SELECT student.id, course.id, term.id 
-FROM users, course, term
-WHERE student.studentid=5
-AND course.code='2030'
+SELECT student.studentnum, course.id, term.id 
+FROM student, course, term
+WHERE student.studentnum='3'
+AND course.code='EECS2011'
 AND term.term='F23'
 ON CONFLICT DO NOTHING
 RETURNING student, course, term;
@@ -637,26 +638,40 @@ app.post("/api/admin/rofr", (req, res) => {
             const rows = req.body.rows
 
             db.tx(t => {
-                return async.map(rows, (item) => {
+                let arr = []
+                for (const item of rows) {
+                    list = item.split('\t')
+                    if (list.length != 3) return
+                    for (var idx in list) {
+                        list[idx] = list[idx].trim()
+                    }
                     const dbQuery = `
-                    INSERT INTO rightofrefusal (student, course, term)
-                    SELECT student.id, course.id, term.id 
-                    FROM users, course, term
-                    WHERE student.studentid=5
-                    AND course.code='2030'
-                    AND term.term='F23'
-                    ON CONFLICT DO NOTHING
-                    RETURNING student, course, term;
+INSERT INTO rightofrefusal (student, course, term)
+SELECT student.studentnum, course.id, term.id 
+FROM student, course, term
+WHERE student.studentnum=$1
+AND course.code=$2
+AND term.term=$3
+ON CONFLICT DO NOTHING
+RETURNING student, course, term;
                     `
-                    return t.any(dbQuery)
+                    console.log(list)
+                    arr.push(t.one(dbQuery, list)
+                        .catch(error => {
+                            console.log(error)
+                        }))
+                    console.log('pushed')
+                }
+                console.log('batch', arr)
+                return t.batch(arr)
+            })
+                .then(data => {
+                    console.log(3, data)
                 })
-            })
-            .then(data => {
-                console.log(data)
-            })
-            .catch(error => {
-                res.status(500).send(error)
-            })
+                .catch(error => {
+                    console.log(error)
+                    res.status(500).send(error)
+                })
 
             // Verified logic
         })
