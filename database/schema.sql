@@ -29,11 +29,11 @@ CREATE TYPE pool AS ENUM ('unit 1', 'unit 2');
 
 CREATE TABLE student (
     id int NOT NULL,
-    studentid int NOT NULL,
+    studentnum varchar(9) NOT NULL,
     pool pool,
 
     PRIMARY KEY (id),
-    UNIQUE (studentid),
+    UNIQUE (studentnum),
     FOREIGN KEY (id) references users(id) ON UPDATE cascade ON DELETE cascade
 );
 
@@ -126,12 +126,12 @@ CREATE TABLE termapplication (
 );
 
 CREATE TABLE rightofrefusal (
-    student int NOT NULL,
+    student varchar(9) NOT NULL,
     course int NOT NULL,
     term int NOT NULL,
 
     PRIMARY KEY (student, course, term),
-    FOREIGN KEY (student) references student(id) ON UPDATE cascade ON DELETE cascade,
+    -- FOREIGN KEY (student) references student(studentnum) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );

@@ -10,7 +10,7 @@ INSERT INTO term(id, term, visible) VALUES
 (3, 'W24', true),
 (1, 'S23', false);
 
-INSERT INTO student(id, studentid)
+INSERT INTO student(id, studentnum)
 SELECT id, id FROM users WHERE userType = 'student';
 
 INSERT INTO course (code, name, description) 
@@ -33,11 +33,11 @@ SELECT (course, letter)
 FROM section 
 WHERE profid=2 and isCurrent=true;
 
-INSERT INTO application(student, course, term, grade, interest, qualification) 
-VALUES ('3', '1', 2, 90, 3, 3), 
-('3', '2', 2, 80, 3, 2),
-('5', '1', 2, 100, 4, 4),
-('3', '1', 3, 50, 2, 2);
+INSERT INTO application(student, course, term, interest, qualification) 
+VALUES ('3', '1', 2, 3, 3), 
+('3', '2', 2, 3, 2),
+('5', '1', 2, 4, 4),
+('3', '1', 3, 2, 2);
 
 -- INSERT INTO assignment(student, section)
 -- VALUES (3, 1)
@@ -52,11 +52,11 @@ VALUES ('3', 2, 12, true, 'i want to TA', true, true, false),
 
 
 INSERT INTO rightofrefusal(student, course, term) VALUES
-(3, 8, 3),
-(3, 7, 3),
+(3, 1, 3),
+(3, 1, 3),
 (5, 2, 3),
 (3, 3, 2),
-(3, 7, 2);
+(3, 2, 2);
 
 CREATE VIEW ApplicationView AS 
 SELECT student, username, course, code, application.term as termid, 
