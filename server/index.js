@@ -637,7 +637,7 @@ app.post("/api/admin/rofr", (req, res) => {
 
             const rows = req.body.rows
 
-            db.tx(t => {
+            db.tx(async t => {
                 let arr = []
                 for (const item of rows) {
                     list = item.split('\t')
@@ -646,21 +646,24 @@ app.post("/api/admin/rofr", (req, res) => {
                         list[idx] = list[idx].trim()
                     }
                     const dbQuery = `
-INSERT INTO rightofrefusal (student, course, term)
-SELECT student.studentnum, course.id, term.id 
-FROM student, course, term
-WHERE student.studentnum=$1
-AND course.code=$2
-AND term.term=$3
-ON CONFLICT DO NOTHING
-RETURNING student, course, term;
+                        INSERT INTO rightofrefusal (student, course, term)
+                        SELECT student.studentnum, course.id, term.id 
+                        FROM student, course, term
+                        WHERE student.studentnum=$1
+                        AND course.code=$2
+                        AND term.term=$3
+                        ON CONFLICT DO NOTHING
+                        RETURNING student, course, term;
                     `
                     console.log(list)
-                    arr.push(t.one(dbQuery, list)
+                    arr.push(await t.oneOrNone(dbQuery, list)
+                        .then(data => {
+                            return data
+                        })
                         .catch(error => {
                             console.log(error)
+                            return error
                         }))
-                    console.log('pushed')
                 }
                 console.log('batch', arr)
                 return t.batch(arr)
