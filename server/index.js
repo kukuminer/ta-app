@@ -639,7 +639,6 @@ app.post("/api/admin/rofr", (req, res) => {
 
             db.tx(async t => {
                 let arr = []
-                console.log('begin')
                 for (const item of rows) {
                     var list = item.split('\t')
                     if (list.length == 3) {
@@ -656,28 +655,24 @@ app.post("/api/admin/rofr", (req, res) => {
                             ON CONFLICT DO NOTHING
                             RETURNING student, course, term;
                         `
-                        console.log(list)
                         arr.push(t.oneOrNone(dbQuery, list)
                             .then(data => {
-                                console.log('returned ', data)
                                 return data
                             })
                             .catch(error => {
-                                console.log(error)
+                                console.log('error pushing rofr line:', error)
                                 return error
                             }))
 
                     }
                 }
-                console.log('batch')
                 return t.batch(arr)
             })
                 .then(data => {
-                    console.log(3, data)
                     res.status(200).send(data)
                 })
                 .catch(error => {
-                    console.log(error)
+                    console.log('error pushing rofr data:', error)
                     res.status(500).send(error)
                 })
         })
