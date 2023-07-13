@@ -639,44 +639,47 @@ app.post("/api/admin/rofr", (req, res) => {
 
             db.tx(async t => {
                 let arr = []
+                console.log('begin')
                 for (const item of rows) {
-                    list = item.split('\t')
-                    if (list.length != 3) return
-                    for (var idx in list) {
-                        list[idx] = list[idx].trim()
+                    var list = item.split('\t')
+                    if (list.length == 3) {
+                        for (var idx in list) {
+                            list[idx] = list[idx].trim()
+                        }
+                        const dbQuery = `
+                            INSERT INTO rightofrefusal (student, course, term)
+                            SELECT student.studentnum, course.id, term.id 
+                            FROM student, course, term
+                            WHERE student.studentnum=$1
+                            AND course.code=$2
+                            AND term.term=$3
+                            ON CONFLICT DO NOTHING
+                            RETURNING student, course, term;
+                        `
+                        console.log(list)
+                        arr.push(t.oneOrNone(dbQuery, list)
+                            .then(data => {
+                                console.log('returned ', data)
+                                return data
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                return error
+                            }))
+
                     }
-                    const dbQuery = `
-                        INSERT INTO rightofrefusal (student, course, term)
-                        SELECT student.studentnum, course.id, term.id 
-                        FROM student, course, term
-                        WHERE student.studentnum=$1
-                        AND course.code=$2
-                        AND term.term=$3
-                        ON CONFLICT DO NOTHING
-                        RETURNING student, course, term;
-                    `
-                    console.log(list)
-                    arr.push(await t.oneOrNone(dbQuery, list)
-                        .then(data => {
-                            return data
-                        })
-                        .catch(error => {
-                            console.log(error)
-                            return error
-                        }))
                 }
-                console.log('batch', arr)
+                console.log('batch')
                 return t.batch(arr)
             })
                 .then(data => {
                     console.log(3, data)
+                    res.status(200).send(data)
                 })
                 .catch(error => {
                     console.log(error)
                     res.status(500).send(error)
                 })
-
-            // Verified logic
         })
 })
 
