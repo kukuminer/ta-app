@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button } from '@mui/material'
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox } from '@mui/material'
 import React from 'react'
 import axios from 'axios'
 
@@ -7,10 +7,11 @@ const CSVTable = (props) => {
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
     const [lastPostStatus, setLastPostStatus] = React.useState(null)
+    const [hasHeader, setHasHeader] = React.useState(true)
 
     const postFile = () => {
         const body = props.postBody
-        body.rows = postableData
+        body.rows = hasHeader ? postableData.slice(1) : postableData
         console.log(body)
         axios.post(props.postURL, body)
             .then((res) => {
@@ -36,6 +37,7 @@ const CSVTable = (props) => {
             const reader = new FileReader()
             reader.onload = (e) => {
                 const raw = e.target.result
+                console.log(raw)
                 const split = raw.split('\n')
                 for (var item of split) {
                     item = item.trim()
@@ -56,6 +58,13 @@ const CSVTable = (props) => {
             }
             reader.readAsText(file)
         }
+    }
+
+    const handleCheck = (e) => {
+        setHasHeader(!hasHeader)
+        // uploadedData[0].props.sx = {background: '#DDDDDD'}
+        // console.log(uploadedData[0].props.sx)
+        // TODO: Add dynamic colour changing 
     }
 
     return (
@@ -84,15 +93,20 @@ const CSVTable = (props) => {
                     {lastPostStatus}
                 </p>
             </div>
-
+            <div className='has-header-check'>
+                Has header?
+                <Checkbox
+                    checked={hasHeader}
+                    onClick={handleCheck}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                />
+                <p>
+                    Please ensure the csv is comma separated
+                </p>
+            </div>
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
-                        {/* <TableHead >
-                            <TableRow sx={{ backgroundColor: '#dddddd' }}>
-                                {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
-                            </TableRow>
-                        </TableHead> */}
                         <TableBody>
                             {uploadedData ? uploadedData : <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
                         </TableBody>

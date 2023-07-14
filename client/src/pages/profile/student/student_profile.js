@@ -12,7 +12,7 @@ const POOL_OPTIONS = [
 
 const StudentProfile = ({ setParentState }) => {
     const [state, setState] = React.useState({
-        studentid: '',
+        studentNum: '',
         pool: '',
     })
 
@@ -24,7 +24,7 @@ const StudentProfile = ({ setParentState }) => {
                 setState(old => {
                     return {
                         ...old,
-                        studentid: r.studentid ? r.studentid : '',
+                        studentNum: r.studentNum ? r.studentNum : '',
                         pool: r.pool ? r.pool : '',
                     }
                 })
@@ -53,9 +53,9 @@ const StudentProfile = ({ setParentState }) => {
         <>
             <TextField
                 required
-                id="studentid"
-                value={state.studentid}
-                error={!state.studentid}
+                id="studentNum"
+                value={state.studentNum}
+                error={!state.studentNum}
                 onChange={handleChange}
                 label="Student Number (9 digits)"
                 margin="normal"

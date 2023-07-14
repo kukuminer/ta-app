@@ -1,8 +1,8 @@
 INSERT INTO users(firstname, lastname, email, usertype, username) VALUES
 ('Liran', 'Z', 'liranz@yorku.ca', 'admin', 'kuku'),
-('Jonatan', 'S', 'jonatan@yorku.ca', 'professor', 'jonatan'),
+('Jonatan', 'S', 'jonatan@yorku.ca', 'instructor', 'jonatan'),
 ('John', 'D', 'john@yorku.ca', 'student', 'johndoe'),
-('Michael', 'B', 'mike@yorku.ca', 'professor', 'mikeb'),
+('Michael', 'B', 'mike@yorku.ca', 'instructor', 'mikeb'),
 ('Jane', 'E', 'jane@yorku.ca', 'student', 'jane');
 
 INSERT INTO term(id, term, visible) VALUES
@@ -10,7 +10,7 @@ INSERT INTO term(id, term, visible) VALUES
 (3, 'W24', true),
 (1, 'S23', false);
 
-INSERT INTO student(id, studentnum)
+INSERT INTO student(id, studentNum)
 SELECT id, id FROM users WHERE userType = 'student';
 
 INSERT INTO course (code, name, description) 
@@ -18,8 +18,8 @@ VALUES ('EECS2030', 'intro to OOP', 'oop intro'),
 ('EECS2011', 'algorithms', 'algo text'), 
 ('EECS3214', 'networks', 'network hover text');
 
-INSERT INTO professor(id) 
-SELECT (id) FROM users WHERE userType = 'professor';
+INSERT INTO instructor(id) 
+SELECT (id) FROM users WHERE userType = 'instructor';
 
 INSERT INTO section(course, letter, term, profid)
 VALUES ('1', 'A', 2, '2'), 

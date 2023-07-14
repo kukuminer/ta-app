@@ -2,21 +2,21 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS student CASCADE;
 DROP TABLE IF EXISTS course CASCADE;
 DROP TABLE IF EXISTS section CASCADE;
-DROP TABLE IF EXISTS professor CASCADE;
+DROP TABLE IF EXISTS instructor CASCADE;
 DROP TABLE IF EXISTS application CASCADE;
 DROP TABLE IF EXISTS assignment CASCADE;
 DROP TABLE IF EXISTS termApplication CASCADE;
 DROP TABLE IF EXISTS rightofrefusal CASCADE;
 DROP TABLE IF EXISTS term CASCADE;
 
-CREATE TYPE usertype AS ENUM ('admin', 'professor', 'student');
+CREATE TYPE usertype AS ENUM ('admin', 'instructor', 'student');
 
 CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,
     firstname varchar(100) NOT NULL,
     lastname varchar(100) NOT NULL,
     email varchar(200) NOT NULL,
-    usertype usertype NOT NULL, -- admin/professor/student
+    usertype usertype NOT NULL, -- admin/instructor/student
     username text NOT NULL,
 
     -- UNIQUE (email,username),
@@ -27,17 +27,18 @@ CREATE TABLE users ( -- user is reserved :(
 
 CREATE TYPE pool AS ENUM ('unit 1', 'unit 2');
 
-CREATE TABLE student (
+CREATE TABLE applicant (
     id int NOT NULL,
-    studentnum varchar(9) NOT NULL,
+    studentNum varchar(9),
+    employeeid varchar(9),
     pool pool,
 
     PRIMARY KEY (id),
-    UNIQUE (studentnum),
+    UNIQUE (studentNum),
     FOREIGN KEY (id) references users(id) ON UPDATE cascade ON DELETE cascade
 );
 
-CREATE TABLE professor (
+CREATE TABLE instructor (
     id int NOT NULL,
 
     PRIMARY KEY (id),
@@ -71,7 +72,7 @@ CREATE TABLE section (
     PRIMARY KEY (id),
     UNIQUE (course, letter, term),
     FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
-    FOREIGN KEY (profid) references professor(id) ON UPDATE cascade ON DELETE cascade,
+    FOREIGN KEY (profid) references instructor(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );
 
@@ -115,6 +116,7 @@ CREATE TABLE termapplication (
     term int,
     availability int NOT NULL,
     approval boolean,
+    skills text,
     explanation text,
     inCanada boolean,
     wantsToTeach boolean,
@@ -131,7 +133,7 @@ CREATE TABLE rightofrefusal (
     term int NOT NULL,
 
     PRIMARY KEY (student, course, term),
-    -- FOREIGN KEY (student) references student(studentnum) ON UPDATE cascade ON DELETE cascade,
+    -- FOREIGN KEY (student) references student(studentNum) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );

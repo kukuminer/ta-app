@@ -126,7 +126,7 @@ app.get("/api/usertype/:userId", (req, res) => {
 app.get("/api/user/student/:userId", (req, res) => {
     const id = getUser.getUser(req)
     const dbQuery = `
-    SELECT studentid, pool FROM student 
+    SELECT studentNum, pool FROM student 
     WHERE id IN (SELECT id FROM users WHERE username=$1)
     `
     db.any(dbQuery, [id])
@@ -135,7 +135,7 @@ app.get("/api/user/student/:userId", (req, res) => {
                 res.json(data[0])
             }
             else {
-                res.json([{ studentid: null, pool: null }])
+                res.json([{ studentNum: null, pool: null }])
             }
         })
         .catch((error) => {
@@ -152,17 +152,17 @@ app.post("/api/user/student/update", (req, res) => {
     const r = req.body.state
     const idQuery = 'SELECT id FROM users WHERE username=$1'
     const postQuery = `
-        INSERT INTO student(id, studentid, pool) 
+        INSERT INTO student(id, studentNum, pool) 
         VALUES ($1, $2, $3)
         ON CONFLICT (id) DO UPDATE
-        SET studentid=$2, pool=$3
+        SET studentNum=$2, pool=$3
         WHERE student.id=$1
     `
     db.any(idQuery, id)
         .then((data) => {
             if (data.length !== 1) throw new Error("Not 1 user found in DB!")
             const uid = data[0].id
-            db.any(postQuery, [uid, r.studentid, r.pool])
+            db.any(postQuery, [uid, r.studentNum, r.pool])
                 .then((data) => {
                     res.status(200).send()
                 })
@@ -175,7 +175,7 @@ app.post("/api/user/student/update", (req, res) => {
 
 
 /** 
- * For populating the professor dashboard
+ * For populating the instructor dashboard
  */
 app.get("/api/professor/courses/:userId", (req, res) => {
     const id = getUser.getUser(req)
@@ -271,7 +271,7 @@ app.post("/api/professor/assignment", (req, res) => {
     `
     const r = req.body
     const userId = getUser.getUserFromBody(req)
-    db.any(dbQuery, [r.studentId, r.sectionId, r.pref, r.note, userId])
+    db.any(dbQuery, [r.studentNum, r.sectionId, r.pref, r.note, userId])
         .then((data) => {
             if (data.length !== 1) throw new Error('Bad auth')
             res.json(data)
@@ -613,9 +613,9 @@ SELECT u.id, c.id, t.id FROM
 ON CONFLICT DO NOTHING;
 
 INSERT INTO rightofrefusal (student, course, term)
-SELECT student.studentnum, course.id, term.id 
+SELECT student.studentNum, course.id, term.id 
 FROM student, course, term
-WHERE student.studentnum='3'
+WHERE student.studentNum='3'
 AND course.code='EECS2011'
 AND term.term='F23'
 ON CONFLICT DO NOTHING
@@ -640,17 +640,16 @@ app.post("/api/admin/rofr", (req, res) => {
             db.tx(async t => {
                 let arr = []
                 for (const item of rows) {
-                    var list = item.split('\t')
+                    var list = item.split(',')
                     if (list.length == 3) {
                         for (var idx in list) {
                             list[idx] = list[idx].trim()
                         }
                         const dbQuery = `
                             INSERT INTO rightofrefusal (student, course, term)
-                            SELECT student.studentnum, course.id, term.id 
-                            FROM student, course, term
-                            WHERE student.studentnum=$1
-                            AND course.code=$2
+                            SELECT $1, course.id, term.id 
+                            FROM course, term
+                            WHERE course.code=$2
                             AND term.term=$3
                             ON CONFLICT DO NOTHING
                             RETURNING student, course, term;

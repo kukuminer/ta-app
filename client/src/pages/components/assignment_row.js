@@ -16,7 +16,7 @@ class Assignment extends React.Component {
             origPref: props.data.pref,
             note: props.data.note,
             origNote: props.data.note,
-            studentId: props.data.userid,
+            studentNum: props.data.userid,
             sectionId: props.data.sectionid,
         }
         for (const key of this.dataKeys) {
@@ -43,7 +43,7 @@ class Assignment extends React.Component {
         const body = {
             pref: this.state.pref,
             note: this.state.note,
-            studentId: this.state.studentId,
+            studentNum: this.state.studentNum,
             sectionId: this.state.sectionId,
             userId: getUser()
         }

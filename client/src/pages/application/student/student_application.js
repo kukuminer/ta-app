@@ -27,7 +27,7 @@ class StudentApplicationClass extends React.Component {
     }
     TIMER = null
     MAX_AVAILABILITY = 4
-    MIN_AVAILABILITY = 1
+    MIN_AVAILABILITY = 0
 
     constructor(props) {
         super(props)
@@ -57,12 +57,6 @@ class StudentApplicationClass extends React.Component {
     }
     componentWillUnmount() {
         clearTimeout(this.TIMER)
-    }
-    async foo() {
-        return 'foo'
-    }
-    async bar() {
-        return 'bar'
     }
 
     handleChange = (changedKey, event) => {
