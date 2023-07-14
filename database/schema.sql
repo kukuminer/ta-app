@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS student CASCADE;
+DROP TABLE IF EXISTS applicant CASCADE;
 DROP TABLE IF EXISTS course CASCADE;
 DROP TABLE IF EXISTS section CASCADE;
 DROP TABLE IF EXISTS instructor CASCADE;
@@ -8,15 +8,16 @@ DROP TABLE IF EXISTS assignment CASCADE;
 DROP TABLE IF EXISTS termApplication CASCADE;
 DROP TABLE IF EXISTS rightofrefusal CASCADE;
 DROP TABLE IF EXISTS term CASCADE;
+DROP TYPE IF EXISTS usertype CASCADE;
 
-CREATE TYPE usertype AS ENUM ('admin', 'instructor', 'student');
+CREATE TYPE usertype AS ENUM ('admin', 'instructor', 'applicant');
 
 CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,
     firstname varchar(100) NOT NULL,
     lastname varchar(100) NOT NULL,
     email varchar(200) NOT NULL,
-    usertype usertype NOT NULL, -- admin/instructor/student
+    usertype usertype NOT NULL, -- admin/instructor/applicant
     username text NOT NULL,
 
     -- UNIQUE (email,username),
@@ -78,7 +79,7 @@ CREATE TABLE section (
 
 CREATE TABLE application (
     id serial NOT NULL,
-    student int NOT NULL,
+    applicant int NOT NULL,
     course int NOT NULL,
     term int NOT NULL, 
 
@@ -87,29 +88,29 @@ CREATE TABLE application (
     qualification int,
 
     PRIMARY KEY (id),
-    UNIQUE (student, course, term),
-    FOREIGN KEY (student) references student(id) ON UPDATE cascade ON DELETE cascade,
+    UNIQUE (applicant, course, term),
+    FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );
 
 CREATE TABLE assignment (
     id serial NOT NULL,
-    student int NOT NULL,
+    applicant int NOT NULL,
     section int NOT NULL,
 
     pref int, -- instructor provided
     note text, -- instructor provided
     assigned int, -- admin provided
     PRIMARY KEY (id),
-    UNIQUE (student, section),
-    FOREIGN KEY (student) references student(id) ON UPDATE cascade ON DELETE cascade,
+    UNIQUE (applicant, section),
+    FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (section) references section(id) ON UPDATE cascade ON DELETE cascade
 );
 
 CREATE TABLE termapplication (
     id serial NOT NULL,
-    student int NOT NULL,
+    applicant int NOT NULL,
 
     submitted boolean DEFAULT false,
 
@@ -122,18 +123,18 @@ CREATE TABLE termapplication (
     wantsToTeach boolean,
 
     PRIMARY KEY (id),
-    UNIQUE (student, term),
-    FOREIGN KEY (student) references student(id) ON UPDATE cascade ON DELETE cascade, 
+    UNIQUE (applicant, term),
+    FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade, 
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );
 
 CREATE TABLE rightofrefusal (
-    student varchar(9) NOT NULL,
+    applicant varchar(9) NOT NULL,
     course int NOT NULL,
     term int NOT NULL,
 
-    PRIMARY KEY (student, course, term),
-    -- FOREIGN KEY (student) references student(studentNum) ON UPDATE cascade ON DELETE cascade,
+    PRIMARY KEY (applicant, course, term),
+    -- FOREIGN KEY (applicant) references applicant(studentNum) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );

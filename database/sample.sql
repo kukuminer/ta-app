@@ -1,17 +1,17 @@
 INSERT INTO users(firstname, lastname, email, usertype, username) VALUES
 ('Liran', 'Z', 'liranz@yorku.ca', 'admin', 'kuku'),
 ('Jonatan', 'S', 'jonatan@yorku.ca', 'instructor', 'jonatan'),
-('John', 'D', 'john@yorku.ca', 'student', 'johndoe'),
+('John', 'D', 'john@yorku.ca', 'applicant', 'johndoe'),
 ('Michael', 'B', 'mike@yorku.ca', 'instructor', 'mikeb'),
-('Jane', 'E', 'jane@yorku.ca', 'student', 'jane');
+('Jane', 'E', 'jane@yorku.ca', 'applicant', 'jane');
 
 INSERT INTO term(id, term, visible) VALUES
 (2, 'F23', true),
 (3, 'W24', true),
 (1, 'S23', false);
 
-INSERT INTO student(id, studentNum)
-SELECT id, id FROM users WHERE userType = 'student';
+INSERT INTO applicant(id, studentNum)
+SELECT id, id FROM users WHERE userType = 'applicant';
 
 INSERT INTO course (code, name, description) 
 VALUES ('EECS2030', 'intro to OOP', 'oop intro'), 
@@ -29,29 +29,25 @@ VALUES ('1', 'A', 2, '2'),
 ('2', 'B', 2, '4'),
 ('3', 'C', 2, '4');
 
-SELECT (course, letter) 
-FROM section 
-WHERE profid=2 and isCurrent=true;
-
-INSERT INTO application(student, course, term, interest, qualification) 
+INSERT INTO application(applicant, course, term, interest, qualification) 
 VALUES ('3', '1', 2, 3, 3), 
 ('3', '2', 2, 3, 2),
 ('5', '1', 2, 4, 4),
 ('3', '1', 3, 2, 2);
 
--- INSERT INTO assignment(student, section)
+-- INSERT INTO assignment(applicant, section)
 -- VALUES (3, 1)
--- ON CONFLICT (student, section)
--- DO UPDATE SET pref = 50, note = 'good student'
+-- ON CONFLICT (applicant, section)
+-- DO UPDATE SET pref = 50, note = 'good applicant'
 -- WHERE id = 1;
 
-INSERT INTO termapplication(student, term, availability, approval, explanation, incanada, wantstoteach, submitted)
+INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted)
 VALUES ('3', 2, 12, true, 'i want to TA', true, true, false),
 ('3', 1, 9, true, 'i wanted to TA', true, true, true),
 ('5', 2, 11, true, 'jane want teach', true, true, true);
 
 
-INSERT INTO rightofrefusal(student, course, term) VALUES
+INSERT INTO rightofrefusal(applicant, course, term) VALUES
 (3, 1, 3),
 (3, 1, 3),
 (5, 2, 3),
@@ -59,8 +55,8 @@ INSERT INTO rightofrefusal(student, course, term) VALUES
 (3, 2, 2);
 
 CREATE VIEW ApplicationView AS 
-SELECT student, username, course, code, application.term as termid, 
+SELECT applicant, username, course, code, application.term as termid, 
 term.term, interest, qualification
-FROM application JOIN users ON student=users.id 
+FROM application JOIN users ON applicant=users.id 
 JOIN course ON application.course=course.id 
 JOIN term ON application.term=term.id;

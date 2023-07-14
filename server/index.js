@@ -152,11 +152,11 @@ app.post("/api/user/student/update", (req, res) => {
     const r = req.body.state
     const idQuery = 'SELECT id FROM users WHERE username=$1'
     const postQuery = `
-        INSERT INTO student(id, studentNum, pool) 
+        INSERT INTO applicant(id, studentNum, pool) 
         VALUES ($1, $2, $3)
         ON CONFLICT (id) DO UPDATE
         SET studentNum=$2, pool=$3
-        WHERE student.id=$1
+        WHERE applicant.id=$1
     `
     db.any(idQuery, id)
         .then((data) => {
@@ -167,7 +167,7 @@ app.post("/api/user/student/update", (req, res) => {
                     res.status(200).send()
                 })
                 .catch((error) => {
-                    console.log("error posting to student table:", error)
+                    console.log("error posting to applicant table:", error)
                     res.status(500).send(error)
                 })
         })
