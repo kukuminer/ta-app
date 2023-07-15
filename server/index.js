@@ -80,7 +80,7 @@ app.post("/api/user/update", (req, res) => {
     `
     db.any(usertypeQuery, [id])
         .then((data) => {
-            var usertype = 'student'
+            var usertype = 'applicant'
             if (data.length === 1) {
                 usertype = data[0].usertype
             }
@@ -126,7 +126,7 @@ app.get("/api/usertype/:userId", (req, res) => {
 app.get("/api/user/student/:userId", (req, res) => {
     const id = getUser.getUser(req)
     const dbQuery = `
-    SELECT studentNum, pool FROM student 
+    SELECT studentNum, pool FROM applicant 
     WHERE id IN (SELECT id FROM users WHERE username=$1)
     `
     db.any(dbQuery, [id])
@@ -139,13 +139,13 @@ app.get("/api/user/student/:userId", (req, res) => {
             }
         })
         .catch((error) => {
-            console.log("Error fetching student info from DB:", error)
+            console.log("Error fetching applicant info from DB:", error)
             res.status(500).send(error)
         })
 })
 
 /**
- * Posts student info to DB
+ * Posts applicant info to DB
  */
 app.post("/api/user/student/update", (req, res) => {
     const id = getUser.getUserFromBody(req)
@@ -201,11 +201,11 @@ app.get("/api/professor/courses/:userId", (req, res) => {
     SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN users 
-    ON application.student=users.id
+    ON application.applicant=users.id
     INNER JOIN section
     ON application.course = section.course AND application.term = section.term
     LEFT JOIN assignment 
-    ON application.student = assignment.student AND section.id = assignment.section
+    ON application.applicant = assignment.applicant AND section.id = assignment.section
     WHERE section.id = 1
     AND profid = 2
     `
@@ -220,11 +220,11 @@ app.get("/api/professor/:sectionId/:userId", (req, res) => {
     SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
     FROM application 
     INNER JOIN users 
-    ON application.student=users.id
+    ON application.applicant=users.id
     INNER JOIN section
     ON application.course = section.course AND application.term = section.term
     LEFT JOIN assignment 
-    ON application.student = assignment.student AND section.id = assignment.section
+    ON application.applicant = assignment.applicant AND section.id = assignment.section
     WHERE section.id = $1
     AND profid IN (SELECT id FROM users WHERE username = $2)
         `
@@ -243,16 +243,16 @@ app.get("/api/professor/:sectionId/:userId", (req, res) => {
  */
 app.post("/api/professor/assignment", (req, res) => {
     /*
-    INSERT INTO assignment(student, section, pref, note)
+    INSERT INTO assignment(applicant, section, pref, note)
     VALUES (3, (SELECT id FROM section WHERE profid=2 AND id=1), 1, 'eebe')
-    ON CONFLICT (student, section)
+    ON CONFLICT (applicant, section)
     DO UPDATE SET pref = 1, note = 'eeb'
-    WHERE assignment.student = 3 
+    WHERE assignment.applicant = 3 
     AND assignment.section in (SELECT id FROM section WHERE profid=4 AND id=1)
     RETURNING assignment.id
      */
     const dbQuery = `
-    INSERT INTO assignment(student, section, pref, note)
+    INSERT INTO assignment(applicant, section, pref, note)
     VALUES ($1, 
         (SELECT id 
         FROM section 
@@ -260,9 +260,9 @@ app.post("/api/professor/assignment", (req, res) => {
         AND id=$2), 
         $3, 
         $4)
-    ON CONFLICT (student, section)
+    ON CONFLICT (applicant, section)
     DO UPDATE SET pref = $3, note = $4
-    WHERE assignment.student = $1 
+    WHERE assignment.applicant = $1 
     AND assignment.section in 
         (SELECT id FROM section 
             WHERE profid IN (SELECT id FROM users WHERE username=$5) 
@@ -289,8 +289,8 @@ app.get("/api/student/refusal/:term/:userId", (req, res) => {
     const userId = getUser.getUser(req)
     const term = req.params.term
     const dbQuery = `
-    SELECT student, course, term FROM rightofrefusal
-    WHERE student IN (SELECT id FROM users WHERE username=$1)
+    SELECT applicant, course, term FROM rightofrefusal
+    WHERE applicant IN (SELECT id FROM users WHERE username=$1)
     AND term=$2
     `
     db.any(dbQuery, [userId, term])
@@ -304,21 +304,21 @@ app.get("/api/student/refusal/:term/:userId", (req, res) => {
 })
 
 /**
- * Gets all the terms that the student can or has applied to
- * For populating the student dashboard from termapplication table
+ * Gets all the terms that the applicant can or has applied to
+ * For populating the applicant dashboard from termapplication table
  * 
-SELECT term.id as seq, term.term, student, submitted, availability, approval, explanation, incanada, wantstoteach
+SELECT term.id as seq, term.term, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
 FROM term LEFT JOIN 
-(SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username='jane')) AS termapplication
+(SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username='jane')) AS termapplication
 ON term.id = termapplication.term
 WHERE term.visible = true
  */
 app.get("/api/student/applications/available/:userId", (req, res) => {
     const userId = getUser.getUser(req)
     const dbQuery = `
-    SELECT term.id AS term, term.term AS termname, student, submitted, availability, approval, explanation, incanada, wantstoteach
+    SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
     FROM term LEFT JOIN 
-    (SELECT * FROM termapplication WHERE student IN (SELECT id FROM users WHERE username=$1)) AS termapplication
+    (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username=$1)) AS termapplication
     ON term.id = termapplication.term
     WHERE term.visible = true    
     `
@@ -339,7 +339,7 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
     const dbQuery = `
     SELECT submitted, availability, approval, explanation, incanada, wantstoteach
     FROM termapplication
-    WHERE student IN (SELECT id FROM users WHERE username=$1)
+    WHERE applicant IN (SELECT id FROM users WHERE username=$1)
     AND term=$2
     `
     db.any(dbQuery, [userId, term])
@@ -353,7 +353,7 @@ app.get("/api/student/termapplication/:term/:userId", (req, res) => {
 })
 
 /**
- * Get the courses within a term that the student has and can apply to
+ * Get the courses within a term that the applicant has and can apply to
  * Gets existing applications if they exist
  * For populating the application page with courses
 `
@@ -363,7 +363,7 @@ FROM
     (SELECT course FROM section WHERE term=3)
 ) AS course
 LEFT JOIN 
-(SELECT * FROM application WHERE student IN (SELECT id FROM users WHERE username='jane') 
+(SELECT * FROM application WHERE applicant IN (SELECT id FROM users WHERE username='jane') 
     AND term=3) AS application
 ON application.course = course.id
 `
@@ -374,7 +374,7 @@ FROM
     WHERE course.id IN (SELECT course FROM section WHERE term=2)) AS course
 LEFT JOIN
 (SELECT * FROM application 
-    WHERE student IN (SELECT id FROM users WHERE username='jane') AND term=2) AS application
+    WHERE applicant IN (SELECT id FROM users WHERE username='jane') AND term=2) AS application
 ON application.course = course.id
  */
 app.get("/api/student/applications/:term/:userId", (req, res) => {
@@ -387,7 +387,7 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
         WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
     LEFT JOIN 
     (SELECT * FROM application 
-        WHERE student IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
+        WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
     ON application.course = course.id
     `
     db.any(dbQuery, [userId, term])
@@ -401,14 +401,14 @@ app.get("/api/student/applications/:term/:userId", (req, res) => {
 })
 
 /** 
- * Posts student changes to specific course applications
+ * Posts applicant changes to specific course applications
  * `
-INSERT INTO application(student, course, term, interest, qualification) 
+INSERT INTO application(applicant, course, term, interest, qualification) 
 VALUES ((SELECT id FROM users WHERE username='johndoe'), 
     '3214', 'F23', 4, 4)
-ON CONFLICT (student, course, term)
+ON CONFLICT (applicant, course, term)
 DO UPDATE SET interest=4, qualification=4
-WHERE application.student=(SELECT id FROM users WHERE username='johndoe')
+WHERE application.applicant=(SELECT id FROM users WHERE username='johndoe')
 AND application.course='3214'
 AND application.term='F23'
 RETURNING application.interest, application.qualification
@@ -419,12 +419,12 @@ app.post("/api/student/application", (req, res) => {
     const r = req.body
     const userId = getUser.getUserFromBody(req)
     const dbQuery = `
-    INSERT INTO application(student, course, term, interest, qualification) 
+    INSERT INTO application(applicant, course, term, interest, qualification) 
     VALUES ((SELECT id FROM users WHERE username=$1), 
         $2, $3, $4, $5)
-    ON CONFLICT (student, course, term)
+    ON CONFLICT (applicant, course, term)
     DO UPDATE SET interest=$4, qualification=$5
-    WHERE application.student=(SELECT id FROM users WHERE username=$1)
+    WHERE application.applicant=(SELECT id FROM users WHERE username=$1)
     AND application.course=$2
     AND application.term=$3
     RETURNING application.interest, application.qualification
@@ -443,12 +443,12 @@ app.post("/api/student/application", (req, res) => {
 /** 
  * Termapplication changes post endpoint
  * `
-    INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
+    INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    ON CONFLICT (student, term)
+    ON CONFLICT (applicant, term)
     DO UPDATE SET submitted=$3, availability=$4,
     approval=$5, explanation=$6, incanada=$7, wantsoteach=$8
-    WHERE termapplication.student=$1
+    WHERE termapplication.applicant=$1
     AND termapplication.term=$2
     RETURNING submitted, availability
 `
@@ -458,13 +458,13 @@ app.post("/api/student/term", (req, res) => {
     const r = req.body
     const userId = getUser.getUserFromBody(req)
     dbQuery = `
-    INSERT INTO termapplication(student, term, submitted, availability, approval, explanation, incanada, wantstoteach)
+    INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ((SELECT id FROM users WHERE username=$1), 
         $2, $3, $4, $5, $6, $7, $8)
-    ON CONFLICT (student, term)
+    ON CONFLICT (applicant, term)
     DO UPDATE SET submitted=$3, availability=$4,
     approval=$5, explanation=$6, incanada=$7, wantstoteach=$8
-    WHERE termapplication.student=(SELECT id FROM users WHERE username=$1)
+    WHERE termapplication.applicant=(SELECT id FROM users WHERE username=$1)
     AND termapplication.term=$2
     RETURNING submitted, availability, approval, explanation, incanada, wantstoteach
     `
@@ -596,7 +596,7 @@ app.get("/api/admin/table/:tableName", (req, res) => {
  * ADMIN ENDPOINT
  * For updating the ROFT table using 
 `
-INSERT INTO rightofrefusal (student, course, term)
+INSERT INTO rightofrefusal (applicant, course, term)
 SELECT u.id, c.id, t.id FROM 
 (SELECT 1 AS n, id FROM users WHERE username='jane') AS u JOIN 
 (SELECT 1 AS n, id FROM course WHERE code='2030') AS c ON u.n = c.n JOIN
@@ -605,21 +605,21 @@ ON CONFLICT DO NOTHING
 RETURNING u.id AS username, c.id AS course, t.id AS term
 ;
 
-INSERT INTO rightofrefusal (student, course, term)
+INSERT INTO rightofrefusal (applicant, course, term)
 SELECT u.id, c.id, t.id FROM 
 (SELECT id FROM users WHERE username='jane') AS u JOIN 
 (SELECT id FROM course WHERE code='2030') AS c ON TRUE JOIN
 (SELECT 1 AS n, id FROM term WHERE term='W22') AS t ON t.n = c.n
 ON CONFLICT DO NOTHING;
 
-INSERT INTO rightofrefusal (student, course, term)
-SELECT student.studentNum, course.id, term.id 
-FROM student, course, term
-WHERE student.studentNum='3'
+INSERT INTO rightofrefusal (applicant, course, term)
+SELECT applicant.studentNum, course.id, term.id 
+FROM applicant, course, term
+WHERE applicant.studentNum='3'
 AND course.code='EECS2011'
 AND term.term='F23'
 ON CONFLICT DO NOTHING
-RETURNING student, course, term;
+RETURNING applicant, course, term;
 ;
 
  */
@@ -646,13 +646,13 @@ app.post("/api/admin/rofr", (req, res) => {
                             list[idx] = list[idx].trim()
                         }
                         const dbQuery = `
-                            INSERT INTO rightofrefusal (student, course, term)
+                            INSERT INTO rightofrefusal (applicant, course, term)
                             SELECT $1, course.id, term.id 
                             FROM course, term
                             WHERE course.code=$2
                             AND term.term=$3
                             ON CONFLICT DO NOTHING
-                            RETURNING student, course, term;
+                            RETURNING applicant, course, term;
                         `
                         arr.push(t.oneOrNone(dbQuery, list)
                             .then(data => {

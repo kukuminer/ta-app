@@ -5,14 +5,15 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/mater
 
 const GET_URL = "/api/user/student/" // /userId
 const POOL_OPTIONS = [
-    <MenuItem key='UTA' value={'UTA'}>Undergrad</MenuItem>,
-    <MenuItem key='GTA' value={'GTA'}>Graduate</MenuItem>,
-    <MenuItem key='N/A' value={'N/A'}>Neither</MenuItem>
+    <MenuItem key='unit 1' value={'unit 1'}>Undergrad</MenuItem>,
+    <MenuItem key='unit 2' value={'unit 2'}>Graduate</MenuItem>,
+    <MenuItem key='N/A' value={'n'}>Neither</MenuItem>
 ]
 
 const StudentProfile = ({ setParentState }) => {
     const [state, setState] = React.useState({
         studentNum: '',
+        employeeId: '',
         pool: '',
     })
 
@@ -25,6 +26,7 @@ const StudentProfile = ({ setParentState }) => {
                     return {
                         ...old,
                         studentNum: r.studentNum ? r.studentNum : '',
+                        employeeId: r.employeeId ? r.employeeId : '',
                         pool: r.pool ? r.pool : '',
                     }
                 })
@@ -52,7 +54,6 @@ const StudentProfile = ({ setParentState }) => {
     return (
         <>
             <TextField
-                required
                 id="studentNum"
                 value={state.studentNum}
                 error={!state.studentNum}
@@ -61,6 +62,15 @@ const StudentProfile = ({ setParentState }) => {
                 margin="normal"
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]{9}' }}
 
+            />
+            <TextField
+                id="employeeNum"
+                value={state.employeeId}
+                error={!state.employeeId}
+                onChange={handleChange}
+                label="Employee ID (9 digits)"
+                margin="normal"
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]{9}' }}
             />
             <FormControl margin="normal">
                 <InputLabel id="pool-select">I am</InputLabel>

@@ -9,7 +9,7 @@ import './profile.css'
 const GET_URL = "/api/user/" // /userId
 const POST_URL = "/api/user/update"
 const POST_AUX_URL = {
-    'student': "/api/user/student/update",
+    'applicant': "/api/user/student/update",
     'professor': null,
     'admin': null,
 }
@@ -19,7 +19,7 @@ const Profile = () => {
         firstname: '',
         lastname: '',
         email: '',
-        usertype: 'student',
+        usertype: 'applicant',
         username: '',
     })
 
@@ -117,7 +117,7 @@ const Profile = () => {
 
     function chooseComponent(usertype) {
         switch (usertype) {
-            case 'student': return <StudentProfile setParentState={setStateFromChild} />
+            case 'applicant': return <StudentProfile setParentState={setStateFromChild} />
             case 'admin': return null
             case 'professor': return null
             default: throw new Error("Unknown usertype!")
