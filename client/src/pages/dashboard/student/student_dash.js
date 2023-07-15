@@ -20,11 +20,8 @@ const StudentDash = () => {
     return (
         <>
             <h1>
-                This is the student dashboard
+                TA Applications
             </h1>
-            <p>
-                TA applications:
-            </p>
             <TableContainer className="student-table" sx={{width:'80vw', maxWidth: '1000px'}}>
                 <Table>
                     <TableHead >

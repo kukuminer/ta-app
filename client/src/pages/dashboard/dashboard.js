@@ -9,7 +9,7 @@ import "./dashboard.css"
 
 const components = {
     'professor': <ProfessorDash />,
-    'student': <StudentDash />,
+    'applicant': <StudentDash />,
     'admin': <AdminDash />,
 }
 

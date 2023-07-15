@@ -5,7 +5,7 @@ import getUser from "../../getUser"
 import "./application.css"
 
 const components = {
-    'student': <StudentApplication />,
+    'applicant': <StudentApplication />,
     'professor': null,
     'admin': null,
 }
