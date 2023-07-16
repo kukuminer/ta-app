@@ -182,14 +182,14 @@ class StudentApplicationClass extends React.Component {
                             </label>
                         </div>
                         <div className="form-row">
-                            Load availability in quarter-loads (1-4) (Tooltip here):
+                            Load availability in quarter-loads ({this.MIN_AVAILABILITY}-{this.MAX_AVAILABILITY}) (Tooltip here):
                             <TextField
                                 type="number"
                                 value={this.state.availability}
                                 onChange={event => this.handleChange('availability', event)}
                                 InputProps={{
                                     inputProps: {
-                                        max: 4, min: 1
+                                        max: this.MAX_AVAILABILITY, min: this.MIN_AVAILABILITY
                                     }
                                 }}
                             />
