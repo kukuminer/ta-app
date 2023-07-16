@@ -290,7 +290,7 @@ app.get("/api/student/refusal/:term/:userId", (req, res) => {
     const term = req.params.term
     const dbQuery = `
     SELECT applicant, course, term FROM rightofrefusal
-    WHERE applicant IN (SELECT id FROM users WHERE username=$1)
+    WHERE applicant IN (SELECT studentnum FROM applicant WHERE studentnum=$1)
     AND term=$2
     `
     db.any(dbQuery, [userId, term])
