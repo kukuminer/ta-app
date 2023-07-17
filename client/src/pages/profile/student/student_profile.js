@@ -31,7 +31,6 @@ const StudentProfile = ({ setParentState }) => {
         axios.get(url)
             .then((res) => {
                 const r = res.data
-                console.log(r)
                 setState(old => {
                     return {
                         ...old,
