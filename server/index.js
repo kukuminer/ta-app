@@ -126,17 +126,12 @@ app.get("/api/usertype/:userId", (req, res) => {
 app.get("/api/user/student/:userId", (req, res) => {
     const id = getUser.getUser(req)
     const dbQuery = `
-    SELECT studentNum, pool FROM applicant 
+    SELECT studentNum, employeeId, pool FROM applicant 
     WHERE id IN (SELECT id FROM users WHERE username=$1)
     `
-    db.any(dbQuery, [id])
+    db.one(dbQuery, [id])
         .then((data) => {
-            if (data.length === 1) {
-                res.json(data[0])
-            }
-            else {
-                res.json([{ studentNum: null, pool: null }])
-            }
+            res.json(data)
         })
         .catch((error) => {
             console.log("Error fetching applicant info from DB:", error)
@@ -152,17 +147,17 @@ app.post("/api/user/student/update", (req, res) => {
     const r = req.body.state
     const idQuery = 'SELECT id FROM users WHERE username=$1'
     const postQuery = `
-        INSERT INTO applicant(id, studentNum, pool) 
-        VALUES ($1, $2, $3)
+        INSERT INTO applicant(id, studentNum, employeeId, pool) 
+        VALUES ($1, $2, $3, $4)
         ON CONFLICT (id) DO UPDATE
-        SET studentNum=$2, pool=$3
+        SET studentNum=$2, employeeid=$3, pool=$4
         WHERE applicant.id=$1
     `
     db.any(idQuery, id)
         .then((data) => {
             if (data.length !== 1) throw new Error("Not 1 user found in DB!")
             const uid = data[0].id
-            db.any(postQuery, [uid, r.studentNum, r.pool])
+            db.any(postQuery, [uid, r.studentNum, r.employeeId, r.pool])
                 .then((data) => {
                     res.status(200).send()
                 })
