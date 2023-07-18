@@ -1,6 +1,7 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox } from '@mui/material'
 import React from 'react'
 import axios from 'axios'
+import Papa from 'papaparse'
 
 const CSVTable = (props) => {
 
