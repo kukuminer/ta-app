@@ -635,7 +635,7 @@ app.post("/api/admin/rofr", (req, res) => {
             db.tx(async t => {
                 let arr = []
                 for (const item of rows) {
-                    var list = item.split(',')
+                    const list = item
                     if (list.length == 3) {
                         for (var idx in list) {
                             list[idx] = list[idx].trim()

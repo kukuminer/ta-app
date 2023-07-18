@@ -11,9 +11,9 @@ const CSVTable = (props) => {
     const [hasHeader, setHasHeader] = React.useState(false)
 
     const postFile = () => {
+        setLastPostStatus(null)
         const body = props.postBody
         body.rows = hasHeader ? postableData.slice(1) : postableData
-        console.log(body)
         axios.post(props.postURL, body)
             .then((res) => {
                 setLastPostStatus(res.status + ' OK')
@@ -27,7 +27,7 @@ const CSVTable = (props) => {
 
     const handleFile = (event) => {
         const file = event.target.files[0]
-        console.log(file)
+        // console.log(file)
         formatData(file)
     }
 
@@ -35,29 +35,44 @@ const CSVTable = (props) => {
     const formatData = (file) => {
         console.log(file)
         if (file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                const raw = e.target.result
-                console.log(raw)
-                const split = raw.split('\n')
-                for (var item of split) {
-                    item = item.trim()
-                }
-                setPostableData(split)
-                var newData = []
-                for (const [idx, row] of Object.entries(split)) {
-                    if (row) {
+            Papa.parse(file, {
+                complete: function (results) {
+                    console.log("Finished:", results.data);
+                    setPostableData(results.data)
+                    var newData = []
+                    for (const [idx, row] of Object.entries(results.data)) {
                         var newRow = []
-                        const vals = row.trim().split(',')
-                        for (const [j, item] of Object.entries(vals)) {
+                        for (const [j, item] of Object.entries(row)) {
                             newRow.push(<TableCell key={j}>{item}</TableCell>)
                         }
                         newData.push(<TableRow key={idx}>{newRow}</TableRow>)
                     }
+                    setUploadedData(newData)
                 }
-                setUploadedData(newData)
-            }
-            reader.readAsText(file)
+            })
+            // const reader = new FileReader()
+            // reader.onload = (e) => {
+            //     const raw = e.target.result
+            //     console.log(raw)
+            //     const split = raw.split('\n')
+            //     for (var item of split) {
+            //         item = item.trim()
+            //     }
+            //     setPostableData(split)
+            //     var newData = []
+            //     for (const [idx, row] of Object.entries(split)) {
+            //         if (row) {
+            //             var newRow = []
+            //             const vals = row.trim().split(',')
+            //             for (const [j, item] of Object.entries(vals)) {
+            //                 newRow.push(<TableCell key={j}>{item}</TableCell>)
+            //             }
+            //             newData.push(<TableRow key={idx}>{newRow}</TableRow>)
+            //         }
+            //     }
+            //     setUploadedData(newData)
+            // }
+            // reader.readAsText(file)
         }
     }
 
