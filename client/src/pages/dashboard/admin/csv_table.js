@@ -8,7 +8,7 @@ const CSVTable = (props) => {
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
     const [lastPostStatus, setLastPostStatus] = React.useState(null)
-    const [hasHeader, setHasHeader] = React.useState(true)
+    const [hasHeader, setHasHeader] = React.useState(false)
 
     const postFile = () => {
         const body = props.postBody
