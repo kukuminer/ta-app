@@ -22,7 +22,6 @@ const CSVTable = (props) => {
                 setLastPostStatus('Error, see console log')
                 console.log('error posting:', error)
             })
-
     }
 
     const handleFile = (event) => {
@@ -33,7 +32,6 @@ const CSVTable = (props) => {
 
 
     const formatData = (file) => {
-        console.log(file)
         if (file) {
             Papa.parse(file, {
                 complete: function (results) {
@@ -50,29 +48,6 @@ const CSVTable = (props) => {
                     setUploadedData(newData)
                 }
             })
-            // const reader = new FileReader()
-            // reader.onload = (e) => {
-            //     const raw = e.target.result
-            //     console.log(raw)
-            //     const split = raw.split('\n')
-            //     for (var item of split) {
-            //         item = item.trim()
-            //     }
-            //     setPostableData(split)
-            //     var newData = []
-            //     for (const [idx, row] of Object.entries(split)) {
-            //         if (row) {
-            //             var newRow = []
-            //             const vals = row.trim().split(',')
-            //             for (const [j, item] of Object.entries(vals)) {
-            //                 newRow.push(<TableCell key={j}>{item}</TableCell>)
-            //             }
-            //             newData.push(<TableRow key={idx}>{newRow}</TableRow>)
-            //         }
-            //     }
-            //     setUploadedData(newData)
-            // }
-            // reader.readAsText(file)
         }
     }
 
