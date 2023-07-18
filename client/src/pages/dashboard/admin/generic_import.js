@@ -2,6 +2,7 @@ import React from "react"
 import axios from "axios"
 import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import getUser from "../../../getUser"
+import CSVTable from "./csv_table"
 
 const GET_URL = "/api/admin/tables"
 const GET_KEYS_URL = "/api/admin/table/" //+tablename
@@ -18,6 +19,8 @@ const GenericImportTab = () => {
     const [constraints, setConstraints] = React.useState('')
     const [keysToUpdate, setKeysToUpdate] = React.useState('')
     const [lastPostStatus, setLastPostStatus] = React.useState('')
+
+    const [body, setBody] = React.useState({})
 
     React.useEffect(() => {
         axios.get(GET_URL)
@@ -44,7 +47,7 @@ const GenericImportTab = () => {
                     // setKeyList(keys)
                     const row = []
                     for (const [idx, key] of Object.entries(keys)) {
-                        row.push(<TableCell key={idx} sx={key.is_nullable==='NO' ? {backgroundColor: '#ddddff'} : {}}>{key.column_name}</TableCell>)
+                        row.push(<TableCell key={idx} sx={key.is_nullable === 'NO' ? { backgroundColor: '#ddddff' } : {}}>{key.column_name}</TableCell>)
                     }
                     setKeyCells(row)
                 })
@@ -76,6 +79,16 @@ const GenericImportTab = () => {
             reader.readAsText(file)
         }
     }
+
+    React.useEffect(() => {
+        setBody({
+            userId: getUser(),
+            tableName: selectedTable,
+            rows: null,
+            columns: keysToUpdate,
+            constraints: constraints,
+        })
+    }, [selectedTable, keysToUpdate, constraints])
 
     const postFile = () => {
         const body = {
@@ -147,10 +160,11 @@ const GenericImportTab = () => {
             <TextField
                 id="ukey-text"
                 label="Unique constraints"
-                sx={{ margin: '1em 0', width: '80vw'}}
+                sx={{ margin: '1em 0', width: '80vw' }}
                 onChange={(event) => setConstraints(event.target.value)}
             />
-            <div className="admin-buttons">
+            <CSVTable postBody={body} postURL={POST_URL} />
+            {/* <div className="admin-buttons">
                 <Button variant="contained" component="label">
                     Upload CSV
                     <input hidden
@@ -177,17 +191,17 @@ const GenericImportTab = () => {
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
-                        {/* <TableHead >
-                            <TableRow sx={{ backgroundColor: '#dddddd' }}>
-                                {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
-                            </TableRow>
-                        </TableHead> */}
+                        // {/* <TableHead >
+                        //     <TableRow sx={{ backgroundColor: '#dddddd' }}>
+                        //         {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
+                        //     </TableRow>
+                        // </TableHead> *}
                         <TableBody>
                             {uploadedData ? uploadedData : <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </div>
+            </div> */}
         </>
     )
 }
