@@ -34,6 +34,7 @@ const CSVTable = (props) => {
     const formatData = (file) => {
         if (file) {
             Papa.parse(file, {
+                skipEmptyLines: true,
                 complete: function (results) {
                     console.log("Finished:", results.data);
                     setPostableData(results.data)

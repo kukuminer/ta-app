@@ -67,3 +67,21 @@ JUL 13:
 - CSV parsing with library
 - student profile
 - configure sample data
+
+JUL 20:
+new users to be assigned as a student
+"new user" page to create entry in users table
+- uses PPY id
+
+termapplication: add studentId as column
+require 1 of (studentId, applicantId)
+when a new user registers, if their studentId is in termapplication,
+add their userId to those entries
+
+for future: push forward termapplication to next term
+
+- refactor admin generic upsert
+- fix profile (again)
+- make sample tables
+- new user page (with new termapplication table) 
+https://www.postgresql.org/docs/current/ddl-constraints.html

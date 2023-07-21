@@ -685,51 +685,50 @@ app.post("/api/admin/upsert", (req, res) => {
                 res.status(403).send('Unauthorized!')
                 return
             }
-            const tableName = req.body.tableName
+
+            const tableName = new pgp.helpers.TableName(req.body.tableName)
             const rows = req.body.rows
             const constr = req.body.constraints.split(',')
             const cols = req.body.columns.split(',')
-            dbQuery = `INSERT INTO ` + tableName + `(` + cols + `) VALUES `
-            for (const [idx, row] of Object.entries(rows)) {
-                if (row) {
-                    const split = row.trim().split(',')
-                    for (const idx in split) {
-                        if (split[idx] == '') {
-                            split.splice(idx, 1)
+
+            db.tx(async t => {
+                let arr = []
+                for (const item of rows) {
+                    if (item.join(',').length > 0) {
+                        const colSet = new pgp.helpers.ColumnSet(cols, { table: tableName })
+                        var tbl = {}
+                        for (const idx in item) {
+                            tbl[cols[idx]] = item[idx]
                         }
-                        else {
-                            split[idx] = "'" + split[idx] + "'"
-                        }
-                    }
-                    const joined = split.join(',')
-                    dbQuery += '(' + joined + '),'
-                }
-            }
-            dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-            if (req.body.constraints) {
-                dbQuery += `
-                ON CONFLICT (`+ constr.join(',') + `) DO
-                UPDATE SET 
-                `
-                for (const col of cols) {
-                    if (!constr.includes(col)) {
-                        dbQuery += col + '=EXCLUDED.' + col + ','
+
+
+                        const dbQuery = pgp.helpers.insert(tbl, colSet) +
+                            ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
+                            colSet.assignColumns({ from: 'EXCLUDED', skip: constr })
+
+                        arr.push(t.any(dbQuery)
+                            .then(data => {
+                                return data
+                            })
+                            .catch(error => {
+                                console.log('error upsert at row: ' + item, error)
+                            })
+                        )
+
                     }
                 }
-                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-            }
-            db.any(dbQuery)
-                .then((data) => {
+                return t.batch(arr)
+            })
+                .then(data => {
                     res.status(200).send(data)
                 })
-                .catch((error) => {
-                    console.log(error)
+                .catch(error => {
+                    console.log('error upsert:', error)
                     res.status(500).send(error)
-                    return
                 })
         })
         .catch((error) => {
-            res.status(403).send(error)
+            res.status(400).send(error)
         })
 })
 
