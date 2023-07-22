@@ -70,10 +70,8 @@ const CSVTable = (props) => {
     }
 
     React.useEffect(() => {
-        console.log(props.postConditions)
         if (props.postConditions) {
             for (const item of props.postConditions) {
-                console.log(item)
                 if (!item) {
                     setMeetsPostConditions(false)
                     return
@@ -81,7 +79,6 @@ const CSVTable = (props) => {
             }
             setMeetsPostConditions(true)
         }
-        console.log(meetsPostConditions)
     }, [props.postConditions])
 
     return (
