@@ -1,18 +1,29 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox } from '@mui/material'
 import React from 'react'
 import axios from 'axios'
+import Papa from 'papaparse'
 
+/**
+ * 
+ * @param {Object} props 
+ * props should contain:
+ * - postBody {Object}
+ * - postURL {String}
+ * - postConditions {Array[bool]}
+ * @returns 
+ */
 const CSVTable = (props) => {
 
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
     const [lastPostStatus, setLastPostStatus] = React.useState(null)
-    const [hasHeader, setHasHeader] = React.useState(true)
+    const [hasHeader, setHasHeader] = React.useState(false)
+    const [meetsPostConditions, setMeetsPostConditions] = React.useState(false)
 
     const postFile = () => {
+        setLastPostStatus(null)
         const body = props.postBody
         body.rows = hasHeader ? postableData.slice(1) : postableData
-        console.log(body)
         axios.post(props.postURL, body)
             .then((res) => {
                 setLastPostStatus(res.status + ' OK')
@@ -21,42 +32,33 @@ const CSVTable = (props) => {
                 setLastPostStatus('Error, see console log')
                 console.log('error posting:', error)
             })
-
     }
 
     const handleFile = (event) => {
         const file = event.target.files[0]
-        console.log(file)
+        // console.log(file)
         formatData(file)
     }
 
 
     const formatData = (file) => {
-        console.log(file)
         if (file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                const raw = e.target.result
-                console.log(raw)
-                const split = raw.split('\n')
-                for (var item of split) {
-                    item = item.trim()
-                }
-                setPostableData(split)
-                var newData = []
-                for (const [idx, row] of Object.entries(split)) {
-                    if (row) {
+            Papa.parse(file, {
+                skipEmptyLines: true,
+                complete: function (results) {
+                    console.log("Finished:", results.data);
+                    setPostableData(results.data)
+                    var newData = []
+                    for (const [idx, row] of Object.entries(results.data)) {
                         var newRow = []
-                        const vals = row.trim().split(',')
-                        for (const [j, item] of Object.entries(vals)) {
+                        for (const [j, item] of Object.entries(row)) {
                             newRow.push(<TableCell key={j}>{item}</TableCell>)
                         }
                         newData.push(<TableRow key={idx}>{newRow}</TableRow>)
                     }
+                    setUploadedData(newData)
                 }
-                setUploadedData(newData)
-            }
-            reader.readAsText(file)
+            })
         }
     }
 
@@ -66,6 +68,21 @@ const CSVTable = (props) => {
         // console.log(uploadedData[0].props.sx)
         // TODO: Add dynamic colour changing 
     }
+
+    React.useEffect(() => {
+        console.log(props.postConditions)
+        if (props.postConditions) {
+            for (const item of props.postConditions) {
+                console.log(item)
+                if (!item) {
+                    setMeetsPostConditions(false)
+                    return
+                }
+            }
+            setMeetsPostConditions(true)
+        }
+        console.log(meetsPostConditions)
+    }, [props.postConditions])
 
     return (
         <>
@@ -85,7 +102,7 @@ const CSVTable = (props) => {
                     onClick={postFile}
                     sx={{ margin: '0 1em' }}
                     color="secondary"
-                    disabled={!(postableData && uploadedData)}
+                    disabled={!(postableData && uploadedData && meetsPostConditions)}
                 >
                     POST to DB
                 </Button>
@@ -96,6 +113,7 @@ const CSVTable = (props) => {
             <div className='has-header-check'>
                 Has header?
                 <Checkbox
+                    id={"has-header-checkbox"}
                     checked={hasHeader}
                     onClick={handleCheck}
                     inputProps={{ 'aria-label': 'controlled' }}

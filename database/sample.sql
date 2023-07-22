@@ -42,9 +42,9 @@ VALUES ('3', '1', 2, 3, 3),
 -- WHERE id = 1;
 
 INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted)
-VALUES ('3', 2, 12, true, 'i want to TA', true, true, false),
-('3', 1, 9, true, 'i wanted to TA', true, true, true),
-('5', 2, 11, true, 'jane want teach', true, true, true);
+VALUES ('3', 2, 4, true, 'i want to TA', true, true, false),
+('3', 1, 3, true, 'i wanted to TA', true, true, true),
+('5', 2, 4, true, 'jane want teach', true, true, true);
 
 
 INSERT INTO rightofrefusal(applicant, course, term) VALUES

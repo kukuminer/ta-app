@@ -19,7 +19,7 @@ const Profile = () => {
         firstname: '',
         lastname: '',
         email: '',
-        usertype: 'applicant',
+        usertype: 'loading',
         username: '',
     })
 
@@ -120,6 +120,7 @@ const Profile = () => {
             case 'applicant': return <StudentProfile setParentState={setStateFromChild} />
             case 'admin': return null
             case 'professor': return null
+            case 'loading': return <p>Loading...</p>
             default: throw new Error("Unknown usertype!")
         }
     }

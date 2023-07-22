@@ -1,14 +1,23 @@
-import React from "react"
 import getUser from "../../../getUser"
+import React from "react"
 import axios from "axios"
 import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 const GET_URL = "/api/user/student/" // /userId
 const POOL_OPTIONS = [
-    <MenuItem key='unit 1' value={'unit 1'}>Undergrad</MenuItem>,
-    <MenuItem key='unit 2' value={'unit 2'}>Graduate</MenuItem>,
-    <MenuItem key='N/A' value={'n'}>Neither</MenuItem>
+    <MenuItem key='unit 1' value={'unit 1'}>Undergrad/Not a student</MenuItem>,
+    <MenuItem key='unit 2' value={'unit 2'}>Graduate student</MenuItem>,
+    // <MenuItem key='N/A' value={'none'}>Neither</MenuItem>
 ]
+
+/**
+ * For mapping the SQL response to the appropriate state variable
+ */
+const map = {
+    'studentNum': 'studentnum',
+    'employeeId': 'employeeid',
+    'pool': 'pool',
+}
 
 const StudentProfile = ({ setParentState }) => {
     const [state, setState] = React.useState({
@@ -25,12 +34,11 @@ const StudentProfile = ({ setParentState }) => {
                 setState(old => {
                     return {
                         ...old,
-                        studentNum: r.studentNum ? r.studentNum : '',
-                        employeeId: r.employeeId ? r.employeeId : '',
-                        pool: r.pool ? r.pool : '',
+                        studentNum: r[map['studentNum']] ? r[map['studentNum']] : '',
+                        employeeId: r[map['employeeId']] ? r[map['employeeId']] : '',
+                        pool: r[map['pool']] ? r[map['pool']] : '',
                     }
                 })
-
             })
     }, [])
 
@@ -64,7 +72,7 @@ const StudentProfile = ({ setParentState }) => {
 
             />
             <TextField
-                id="employeeNum"
+                id="employeeId"
                 value={state.employeeId}
                 error={!state.employeeId}
                 onChange={handleChange}

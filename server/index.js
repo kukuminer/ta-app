@@ -126,17 +126,12 @@ app.get("/api/usertype/:userId", (req, res) => {
 app.get("/api/user/student/:userId", (req, res) => {
     const id = getUser.getUser(req)
     const dbQuery = `
-    SELECT studentNum, pool FROM applicant 
+    SELECT studentNum, employeeId, pool FROM applicant 
     WHERE id IN (SELECT id FROM users WHERE username=$1)
     `
-    db.any(dbQuery, [id])
+    db.one(dbQuery, [id])
         .then((data) => {
-            if (data.length === 1) {
-                res.json(data[0])
-            }
-            else {
-                res.json([{ studentNum: null, pool: null }])
-            }
+            res.json(data)
         })
         .catch((error) => {
             console.log("Error fetching applicant info from DB:", error)
@@ -152,17 +147,17 @@ app.post("/api/user/student/update", (req, res) => {
     const r = req.body.state
     const idQuery = 'SELECT id FROM users WHERE username=$1'
     const postQuery = `
-        INSERT INTO applicant(id, studentNum, pool) 
-        VALUES ($1, $2, $3)
+        INSERT INTO applicant(id, studentNum, employeeId, pool) 
+        VALUES ($1, $2, $3, $4)
         ON CONFLICT (id) DO UPDATE
-        SET studentNum=$2, pool=$3
+        SET studentNum=$2, employeeid=$3, pool=$4
         WHERE applicant.id=$1
     `
     db.any(idQuery, id)
         .then((data) => {
             if (data.length !== 1) throw new Error("Not 1 user found in DB!")
             const uid = data[0].id
-            db.any(postQuery, [uid, r.studentNum, r.pool])
+            db.any(postQuery, [uid, r.studentNum, r.employeeId, r.pool])
                 .then((data) => {
                     res.status(200).send()
                 })
@@ -640,7 +635,7 @@ app.post("/api/admin/rofr", (req, res) => {
             db.tx(async t => {
                 let arr = []
                 for (const item of rows) {
-                    var list = item.split(',')
+                    const list = item
                     if (list.length == 3) {
                         for (var idx in list) {
                             list[idx] = list[idx].trim()
@@ -690,51 +685,50 @@ app.post("/api/admin/upsert", (req, res) => {
                 res.status(403).send('Unauthorized!')
                 return
             }
-            const tableName = req.body.tableName
+
+            const tableName = new pgp.helpers.TableName(req.body.tableName)
             const rows = req.body.rows
             const constr = req.body.constraints.split(',')
             const cols = req.body.columns.split(',')
-            dbQuery = `INSERT INTO ` + tableName + `(` + cols + `) VALUES `
-            for (const [idx, row] of Object.entries(rows)) {
-                if (row) {
-                    const split = row.trim().split(',')
-                    for (const idx in split) {
-                        if (split[idx] == '') {
-                            split.splice(idx, 1)
+
+            db.tx(async t => {
+                let arr = []
+                for (const item of rows) {
+                    if (item.join(',').length > 0) {
+                        const colSet = new pgp.helpers.ColumnSet(cols, { table: tableName })
+                        var tbl = {}
+                        for (const idx in item) {
+                            tbl[cols[idx]] = item[idx]
                         }
-                        else {
-                            split[idx] = "'" + split[idx] + "'"
-                        }
-                    }
-                    const joined = split.join(',')
-                    dbQuery += '(' + joined + '),'
-                }
-            }
-            dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-            if (req.body.constraints) {
-                dbQuery += `
-                ON CONFLICT (`+ constr.join(',') + `) DO
-                UPDATE SET 
-                `
-                for (const col of cols) {
-                    if (!constr.includes(col)) {
-                        dbQuery += col + '=EXCLUDED.' + col + ','
+
+
+                        const dbQuery = pgp.helpers.insert(tbl, colSet) +
+                            ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
+                            colSet.assignColumns({ from: 'EXCLUDED', skip: constr })
+
+                        arr.push(t.any(dbQuery)
+                            .then(data => {
+                                return data
+                            })
+                            .catch(error => {
+                                console.log('error upsert at row: ' + item, error)
+                            })
+                        )
+
                     }
                 }
-                dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-            }
-            db.any(dbQuery)
-                .then((data) => {
+                return t.batch(arr)
+            })
+                .then(data => {
                     res.status(200).send(data)
                 })
-                .catch((error) => {
-                    console.log(error)
+                .catch(error => {
+                    console.log('error upsert:', error)
                     res.status(500).send(error)
-                    return
                 })
         })
         .catch((error) => {
-            res.status(403).send(error)
+            res.status(400).send(error)
         })
 })
 

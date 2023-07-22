@@ -2,6 +2,7 @@ import React from "react"
 import axios from "axios"
 import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import getUser from "../../../getUser"
+import CSVTable from "./csv_table"
 
 const GET_URL = "/api/admin/tables"
 const GET_KEYS_URL = "/api/admin/table/" //+tablename
@@ -19,13 +20,15 @@ const GenericImportTab = () => {
     const [keysToUpdate, setKeysToUpdate] = React.useState('')
     const [lastPostStatus, setLastPostStatus] = React.useState('')
 
+    const [body, setBody] = React.useState({})
+
     React.useEffect(() => {
         axios.get(GET_URL)
             .then((res) => {
                 var tableList = []
                 for (var i in res.data) {
                     const name = res.data[i].tablename
-                    tableList.push(<MenuItem value={name} key={name}>{name}</MenuItem>)
+                    tableList.push(<MenuItem id={name} value={name} key={name}>{name}</MenuItem>)
                 }
                 setTables(tableList)
             })
@@ -44,60 +47,71 @@ const GenericImportTab = () => {
                     // setKeyList(keys)
                     const row = []
                     for (const [idx, key] of Object.entries(keys)) {
-                        row.push(<TableCell key={idx} sx={key.is_nullable==='NO' ? {backgroundColor: '#ddddff'} : {}}>{key.column_name}</TableCell>)
+                        row.push(<TableCell key={idx} sx={key.is_nullable === 'NO' ? { backgroundColor: '#ddddff' } : {}}>{key.column_name}</TableCell>)
                     }
                     setKeyCells(row)
                 })
         }
     }, [selectedTable])
 
-    const handleFile = (event) => {
-        const file = event.target.files[0]
+    // const handleFile = (event) => {
+    //     const file = event.target.files[0]
 
-        if (file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                const raw = e.target.result
-                const split = raw.split('\n')
-                setPostableData(split)
-                var newData = []
-                for (const [idx, row] of Object.entries(split)) {
-                    if (row) {
-                        var newRow = []
-                        const vals = row.trim().split(',')
-                        for (const [j, item] of Object.entries(vals)) {
-                            newRow.push(<TableCell key={j}>{item}</TableCell>)
-                        }
-                        newData.push(<TableRow key={idx}>{newRow}</TableRow>)
-                    }
-                }
-                setUploadedData(newData)
-            }
-            reader.readAsText(file)
-        }
-    }
+    //     if (file) {
+    //         const reader = new FileReader()
+    //         reader.onload = (e) => {
+    //             const raw = e.target.result
+    //             const split = raw.split('\n')
+    //             setPostableData(split)
+    //             var newData = []
+    //             for (const [idx, row] of Object.entries(split)) {
+    //                 if (row) {
+    //                     var newRow = []
+    //                     const vals = row.trim().split(',')
+    //                     for (const [j, item] of Object.entries(vals)) {
+    //                         newRow.push(<TableCell key={j}>{item}</TableCell>)
+    //                     }
+    //                     newData.push(<TableRow key={idx}>{newRow}</TableRow>)
+    //                 }
+    //             }
+    //             setUploadedData(newData)
+    //         }
+    //         reader.readAsText(file)
+    //     }
+    // }
 
-    const postFile = () => {
-        const body = {
+    React.useEffect(() => {
+        setBody({
             userId: getUser(),
             tableName: selectedTable,
-            rows: postableData,
+            rows: null,
             columns: keysToUpdate,
             constraints: constraints,
-        }
-        axios.post(POST_URL, body)
-            .then((res) => {
-                setLastPostStatus(res.status + ' OK')
-            })
-            .catch((error) => {
-                setLastPostStatus('Error, see console log')
-                console.log('error posting:', error)
-            })
-    }
+        })
+    }, [selectedTable, keysToUpdate, constraints])
+
+    // const postFile = () => {
+    //     const body = {
+    //         userId: getUser(),
+    //         tableName: selectedTable,
+    //         rows: postableData,
+    //         columns: keysToUpdate,
+    //         constraints: constraints,
+    //     }
+    //     axios.post(POST_URL, body)
+    //         .then((res) => {
+    //             setLastPostStatus(res.status + ' OK')
+    //         })
+    //         .catch((error) => {
+    //             setLastPostStatus('Error, see console log')
+    //             console.log('error posting:', error)
+    //         })
+    // }
 
     return (
         <>
             <FormControl
+                id={"table-select-form"}
                 fullWidth
                 error={!selectedTable}
                 sx={{ width: '80vw' }}
@@ -147,10 +161,11 @@ const GenericImportTab = () => {
             <TextField
                 id="ukey-text"
                 label="Unique constraints"
-                sx={{ margin: '1em 0', width: '80vw'}}
+                sx={{ margin: '1em 0', width: '80vw' }}
                 onChange={(event) => setConstraints(event.target.value)}
             />
-            <div className="admin-buttons">
+            <CSVTable postBody={body} postURL={POST_URL} postConditions={[!!selectedTable]}/>
+            {/* <div className="admin-buttons">
                 <Button variant="contained" component="label">
                     Upload CSV
                     <input hidden
@@ -177,17 +192,17 @@ const GenericImportTab = () => {
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
-                        {/* <TableHead >
-                            <TableRow sx={{ backgroundColor: '#dddddd' }}>
-                                {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
-                            </TableRow>
-                        </TableHead> */}
+                        // {/* <TableHead >
+                        //     <TableRow sx={{ backgroundColor: '#dddddd' }}>
+                        //         {keyCells ? keyCells.slice(1) : <TableCell>Please select a table</TableCell>}
+                        //     </TableRow>
+                        // </TableHead> *}
                         <TableBody>
                             {uploadedData ? uploadedData : <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </div>
+            </div> */}
         </>
     )
 }
