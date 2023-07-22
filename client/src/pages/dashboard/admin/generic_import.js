@@ -28,7 +28,7 @@ const GenericImportTab = () => {
                 var tableList = []
                 for (var i in res.data) {
                     const name = res.data[i].tablename
-                    tableList.push(<MenuItem value={name} key={name}>{name}</MenuItem>)
+                    tableList.push(<MenuItem id={name} value={name} key={name}>{name}</MenuItem>)
                 }
                 setTables(tableList)
             })
@@ -54,31 +54,31 @@ const GenericImportTab = () => {
         }
     }, [selectedTable])
 
-    const handleFile = (event) => {
-        const file = event.target.files[0]
+    // const handleFile = (event) => {
+    //     const file = event.target.files[0]
 
-        if (file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                const raw = e.target.result
-                const split = raw.split('\n')
-                setPostableData(split)
-                var newData = []
-                for (const [idx, row] of Object.entries(split)) {
-                    if (row) {
-                        var newRow = []
-                        const vals = row.trim().split(',')
-                        for (const [j, item] of Object.entries(vals)) {
-                            newRow.push(<TableCell key={j}>{item}</TableCell>)
-                        }
-                        newData.push(<TableRow key={idx}>{newRow}</TableRow>)
-                    }
-                }
-                setUploadedData(newData)
-            }
-            reader.readAsText(file)
-        }
-    }
+    //     if (file) {
+    //         const reader = new FileReader()
+    //         reader.onload = (e) => {
+    //             const raw = e.target.result
+    //             const split = raw.split('\n')
+    //             setPostableData(split)
+    //             var newData = []
+    //             for (const [idx, row] of Object.entries(split)) {
+    //                 if (row) {
+    //                     var newRow = []
+    //                     const vals = row.trim().split(',')
+    //                     for (const [j, item] of Object.entries(vals)) {
+    //                         newRow.push(<TableCell key={j}>{item}</TableCell>)
+    //                     }
+    //                     newData.push(<TableRow key={idx}>{newRow}</TableRow>)
+    //                 }
+    //             }
+    //             setUploadedData(newData)
+    //         }
+    //         reader.readAsText(file)
+    //     }
+    // }
 
     React.useEffect(() => {
         setBody({
@@ -90,27 +90,28 @@ const GenericImportTab = () => {
         })
     }, [selectedTable, keysToUpdate, constraints])
 
-    const postFile = () => {
-        const body = {
-            userId: getUser(),
-            tableName: selectedTable,
-            rows: postableData,
-            columns: keysToUpdate,
-            constraints: constraints,
-        }
-        axios.post(POST_URL, body)
-            .then((res) => {
-                setLastPostStatus(res.status + ' OK')
-            })
-            .catch((error) => {
-                setLastPostStatus('Error, see console log')
-                console.log('error posting:', error)
-            })
-    }
+    // const postFile = () => {
+    //     const body = {
+    //         userId: getUser(),
+    //         tableName: selectedTable,
+    //         rows: postableData,
+    //         columns: keysToUpdate,
+    //         constraints: constraints,
+    //     }
+    //     axios.post(POST_URL, body)
+    //         .then((res) => {
+    //             setLastPostStatus(res.status + ' OK')
+    //         })
+    //         .catch((error) => {
+    //             setLastPostStatus('Error, see console log')
+    //             console.log('error posting:', error)
+    //         })
+    // }
 
     return (
         <>
             <FormControl
+                id={"table-select-form"}
                 fullWidth
                 error={!selectedTable}
                 sx={{ width: '80vw' }}
@@ -163,7 +164,7 @@ const GenericImportTab = () => {
                 sx={{ margin: '1em 0', width: '80vw' }}
                 onChange={(event) => setConstraints(event.target.value)}
             />
-            <CSVTable postBody={body} postURL={POST_URL} />
+            <CSVTable postBody={body} postURL={POST_URL} postConditions={[!!selectedTable]}/>
             {/* <div className="admin-buttons">
                 <Button variant="contained" component="label">
                     Upload CSV

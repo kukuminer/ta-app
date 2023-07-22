@@ -3,12 +3,22 @@ import React from 'react'
 import axios from 'axios'
 import Papa from 'papaparse'
 
+/**
+ * 
+ * @param {Object} props 
+ * props should contain:
+ * - postBody {Object}
+ * - postURL {String}
+ * - postConditions {Array[bool]}
+ * @returns 
+ */
 const CSVTable = (props) => {
 
     const [uploadedData, setUploadedData] = React.useState(null)
     const [postableData, setPostableData] = React.useState(null)
     const [lastPostStatus, setLastPostStatus] = React.useState(null)
     const [hasHeader, setHasHeader] = React.useState(false)
+    const [meetsPostConditions, setMeetsPostConditions] = React.useState(false)
 
     const postFile = () => {
         setLastPostStatus(null)
@@ -59,6 +69,21 @@ const CSVTable = (props) => {
         // TODO: Add dynamic colour changing 
     }
 
+    React.useEffect(() => {
+        console.log(props.postConditions)
+        if (props.postConditions) {
+            for (const item of props.postConditions) {
+                console.log(item)
+                if (!item) {
+                    setMeetsPostConditions(false)
+                    return
+                }
+            }
+            setMeetsPostConditions(true)
+        }
+        console.log(meetsPostConditions)
+    }, [props.postConditions])
+
     return (
         <>
             <div className="admin-buttons">
@@ -77,7 +102,7 @@ const CSVTable = (props) => {
                     onClick={postFile}
                     sx={{ margin: '0 1em' }}
                     color="secondary"
-                    disabled={!(postableData && uploadedData)}
+                    disabled={!(postableData && uploadedData && meetsPostConditions)}
                 >
                     POST to DB
                 </Button>
@@ -88,6 +113,7 @@ const CSVTable = (props) => {
             <div className='has-header-check'>
                 Has header?
                 <Checkbox
+                    id={"has-header-checkbox"}
                     checked={hasHeader}
                     onClick={handleCheck}
                     inputProps={{ 'aria-label': 'controlled' }}
