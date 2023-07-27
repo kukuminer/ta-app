@@ -4,6 +4,7 @@ import getUser from "../../getUser"
 import axios from "axios"
 import { Alert, Button, FormControl, TextField } from "@mui/material"
 import StudentProfile from "./student/student_profile"
+import BaseProfile from "./base_profile"
 import './profile.css'
 
 const GET_URL = "/api/user/" // /userId
@@ -16,11 +17,11 @@ const POST_AUX_URL = {
 
 const Profile = () => {
     const [state, setState] = React.useState({
-        firstname: '',
-        lastname: '',
-        email: '',
+        // firstname: '',
+        // lastname: '',
+        // email: '',
         usertype: 'loading',
-        username: '',
+        // username: '',
     })
 
     const [alert, setAlert] = React.useState({
@@ -30,7 +31,8 @@ const Profile = () => {
 
     const setStateFromChild = React.useCallback((newState) => {
         setState(newState)
-    }, [])
+    }, [setState])
+
 
     React.useEffect(() => {
         getUserInfo()
@@ -41,6 +43,7 @@ const Profile = () => {
         axios.get(url)
             .then((res) => {
                 const r = res.data[0]
+                console.log(r)
                 if (r) {
                     setState(old => {
                         return {
@@ -50,6 +53,14 @@ const Profile = () => {
                             email: r.email,
                             usertype: r.usertype,
                             username: r.username,
+                        }
+                    })
+                }
+                else { //User doesn't exist, make new applicant!
+                    setState(old => {
+                        return {
+                            ...old,
+                            usertype: 'applicant',
                         }
                     })
                 }
@@ -134,36 +145,7 @@ const Profile = () => {
                     </h1>
                     <form onSubmit={handleSubmit}>
                         <FormControl margin="normal">
-                            <div sx={{ display: 'flex', flexDirection: "row", justifyContent: 'center' }}>
-                                <TextField
-                                    required
-                                    id="firstname"
-                                    value={state.firstname}
-                                    error={!state.firstname}
-                                    onChange={handleChange}
-                                    label="First Name"
-                                    margin="normal"
-                                />
-                                <TextField
-                                    required
-                                    id="lastname"
-                                    value={state.lastname}
-                                    error={!state.lastname}
-                                    onChange={handleChange}
-                                    label="Surname"
-                                    margin="normal"
-                                />
-                            </div>
-                            <TextField
-                                required
-                                id="email"
-                                value={state.email}
-                                error={!state.email}
-                                onChange={handleChange}
-                                label="Email"
-                                margin="normal"
-                                type="email"
-                            />
+                            <BaseProfile updateState={setStateFromChild} state={state} />
                             {chooseComponent(state.usertype)}
                             {alert.visible ? alert.html : null}
                             <Button variant="contained" type="submit">Save</Button>
