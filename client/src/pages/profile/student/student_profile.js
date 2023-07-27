@@ -31,14 +31,17 @@ const StudentProfile = ({ setParentState }) => {
         axios.get(url)
             .then((res) => {
                 const r = res.data
-                setState(old => {
-                    return {
-                        ...old,
-                        studentNum: r[map['studentNum']] ? r[map['studentNum']] : '',
-                        employeeId: r[map['employeeId']] ? r[map['employeeId']] : '',
-                        pool: r[map['pool']] ? r[map['pool']] : '',
-                    }
-                })
+                console.log(r)
+                if(r) {
+                    setState(old => {
+                        return {
+                            ...old,
+                            studentNum: r[map['studentNum']] ? r[map['studentNum']] : '',
+                            employeeId: r[map['employeeId']] ? r[map['employeeId']] : '',
+                            pool: r[map['pool']] ? r[map['pool']] : '',
+                        }
+                    })
+                }
             })
     }, [])
 

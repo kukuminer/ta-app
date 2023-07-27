@@ -129,7 +129,7 @@ app.get("/api/user/student/:userId", (req, res) => {
     SELECT studentNum, employeeId, pool FROM applicant 
     WHERE id IN (SELECT id FROM users WHERE username=$1)
     `
-    db.one(dbQuery, [id])
+    db.oneOrNone(dbQuery, [id])
         .then((data) => {
             res.json(data)
         })
