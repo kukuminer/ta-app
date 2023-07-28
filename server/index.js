@@ -80,10 +80,12 @@ app.post("/api/user/update", (req, res) => {
     `
     db.any(usertypeQuery, [id])
         .then((data) => {
+            // If the user doesn't exist, default applicant
             var usertype = 'applicant'
             if (data.length === 1) {
                 usertype = data[0].usertype
             }
+            // Then post with proper usertype
             db.any(postQuery, [id, r.firstname, r.lastname, r.email, usertype])
                 .then((data) => {
                     res.status(200).json(data)
