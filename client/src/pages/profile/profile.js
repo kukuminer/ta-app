@@ -2,7 +2,7 @@ import React from "react"
 import { Navigate } from "react-router-dom"
 import getUser from "../../getUser"
 import axios from "axios"
-import { Alert, Button, FormControl, TextField } from "@mui/material"
+import { Alert, Button, FormControl } from "@mui/material"
 import StudentProfile from "./student/student_profile"
 import BaseProfile from "./base_profile"
 import './profile.css'
@@ -30,50 +30,36 @@ const Profile = () => {
     })
 
     const setStateFromChild = React.useCallback((newState) => {
+        console.log(newState)
         setState(newState)
     }, [setState])
 
+    async function getUserInfo() {
+        const url = GET_URL + getUser()
+        const res = await axios.get(url)
+        const r = res.data[0]
+        if (r) {
+            for (const [key, val] of Object.entries(r)) {
+                setState(old => {
+                    var ret = { ...old }
+                    ret[key] = val
+                    return ret
+                })
+            }
+        } else { //User doesn't exist, make new applicant!
+            setState(old => {
+                return {
+                    ...old,
+                    usertype: 'applicant',
+                }
+            })
+            // state['usertype'] = 'applicant';
+        }
+    }
 
     React.useEffect(() => {
         getUserInfo()
-    }, [])
-
-    function getUserInfo() {
-        const url = GET_URL + getUser()
-        axios.get(url)
-            .then((res) => {
-                const r = res.data[0]
-                console.log(r)
-                if (r) {
-                    setState(old => {
-                        return {
-                            ...old,
-                            firstname: r.firstname,
-                            lastname: r.lastname,
-                            email: r.email,
-                            usertype: r.usertype,
-                            username: r.username,
-                        }
-                    })
-                }
-                else { //User doesn't exist, make new applicant!
-                    setState(old => {
-                        return {
-                            ...old,
-                            usertype: 'applicant',
-                        }
-                    })
-                }
-            })
-    }
-
-    function handleChange(event) {
-        setState((old) => {
-            var news = structuredClone(old)
-            news[event.target.id] = event.target.value
-            return news
-        })
-    }
+    })
 
     async function handleSubmit(event) {
         event.preventDefault()
@@ -128,7 +114,7 @@ const Profile = () => {
 
     function chooseComponent(usertype) {
         switch (usertype) {
-            case 'applicant': return <StudentProfile setParentState={setStateFromChild} />
+            case 'applicant': return <StudentProfile updateState={setStateFromChild} state={state} />
             case 'admin': return null
             case 'professor': return null
             case 'loading': return <p>Loading...</p>

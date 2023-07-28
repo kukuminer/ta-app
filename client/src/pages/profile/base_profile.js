@@ -1,12 +1,19 @@
 import { FormControl, TextField } from "@mui/material"
+import React from "react"
+// import getUser from "../../getUser"
+// import axios from "axios"
 
-const BaseProfile = ({state, updateState}) => {
-    console.log(state)
+const BaseProfile = ({ state, updateState }) => {
+
     function handleChange(event) {
         state[event.target.id] = event.target.value
-        console.log(state)
         updateState(state)
     }
+
+    // React.useEffect(() => {
+    //     console.log(childState)
+    //     updateState(state)
+    // }, [state, updateState, childState])
 
     return (
         <>

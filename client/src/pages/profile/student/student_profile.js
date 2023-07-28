@@ -5,61 +5,44 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/mater
 
 const GET_URL = "/api/user/student/" // /userId
 const POOL_OPTIONS = [
-    <MenuItem key='unit 1' value={'unit 1'}>Undergrad/Not a student</MenuItem>,
-    <MenuItem key='unit 2' value={'unit 2'}>Graduate student</MenuItem>,
+    <MenuItem key='unit 2' id={'unit 2'} value={'unit 2'}>Unit 2 (All other applicants)</MenuItem>,
+    <MenuItem key='unit 1' id={'unit 1'} value={'unit 1'}>Unit 1 (Full time Graduate student at York)</MenuItem>,
     // <MenuItem key='N/A' value={'none'}>Neither</MenuItem>
 ]
 
 /**
  * For mapping the SQL response to the appropriate state variable
  */
-const map = {
-    'studentNum': 'studentnum',
-    'employeeId': 'employeeid',
-    'pool': 'pool',
-}
+// const map = {
+//     'studentNum': 'studentnum',
+//     'employeeId': 'employeeid',
+//     'pool': 'pool',
+// }
 
-const StudentProfile = ({ setParentState }) => {
-    const [state, setState] = React.useState({
-        studentNum: '',
-        employeeId: '',
-        pool: '',
-    })
+const StudentProfile = ({ state, updateState }) => {
+    // const [state, setState] = React.useState({
+    //     studentNum: '',
+    //     employeeId: '',
+    //     pool: '',
+    // })
 
     React.useEffect(() => {
         const url = GET_URL + getUser()
         axios.get(url)
             .then((res) => {
                 const r = res.data
-                console.log(r)
-                if(r) {
-                    setState(old => {
-                        return {
-                            ...old,
-                            studentNum: r[map['studentNum']] ? r[map['studentNum']] : '',
-                            employeeId: r[map['employeeId']] ? r[map['employeeId']] : '',
-                            pool: r[map['pool']] ? r[map['pool']] : '',
-                        }
-                    })
+                if (r) {
+                    for (const [key, val] of Object.entries(r)) {
+                        state[key] = val
+                    }
+                    updateState(state)
                 }
             })
-    }, [])
-
-    React.useEffect(() => {
-        setParentState(old => {
-            return {
-                ...old,
-                ...state,
-            }
-        })
-    }, [setParentState, state])
+    }, [state, updateState])
 
     function handleChange(event) {
-        setState((old) => {
-            var news = structuredClone(old)
-            news[event.target.id ? event.target.id : event.target.name] = event.target.value
-            return news
-        })
+        state[event.target.id] = event.target.value
+        updateState(state)
     }
 
     return (
