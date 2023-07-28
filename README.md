@@ -85,3 +85,9 @@ for future: push forward termapplication to next term
 - make sample tables
 - new user page (with new termapplication table) 
 https://www.postgresql.org/docs/current/ddl-constraints.html
+
+JUL 27:
+- profile view on dashboard: to display:
+--> (firstname, lastname, email) from users
+--> (studentnum, employeeid, pool) from applicant
+- middleware for security (usertype verification)
