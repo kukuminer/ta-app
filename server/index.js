@@ -81,17 +81,7 @@ app.post("/api/user/update", (req, res) => {
         ' ON CONFLICT ("username") DO UPDATE SET ' +
         colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
         ' RETURNING usertype'
-
-    // const postQuery = `
-    // INSERT INTO users (username, firstname, lastname, email, usertype)
-    // VALUES ($1, $2, $3, $4, $5)
-    // ON CONFLICT (username) DO UPDATE 
-    // SET firstname=$2, lastname=$3, email=$4, usertype=$5
-    // WHERE users.username=$1
-    // RETURNING usertype
-    // `
-
-
+        
     db.any(usertypeQuery, [id])
         .then((data) => {
             // If the user doesn't exist, default applicant

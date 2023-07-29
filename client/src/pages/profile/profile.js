@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Navigate } from "react-router-dom"
 import getUser from "../../getUser"
 import axios from "axios"
@@ -24,11 +24,16 @@ const Profile = () => {
     //     html: <Alert severity="error">Failed to update. Please try again</Alert>
     // })
 
+    // const setStateFromChild = useCallback((newState) => {
+    //     console.log(newState)
+    //     setState(newState)
+    // }, [setState])
+
     useEffect(() => {
         const fetchData = async () => {
             const url = GET_URL + getUser()
             const res = await axios.get(url)
-            
+
             setState(res.data.length > 0 ? res.data[0] : { usertype: 'applicant' })
             // setState(res.data[0])
         }
@@ -39,8 +44,8 @@ const Profile = () => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         try {
-            const res1 = await axios.post(POST_URL, {state})
-            const res2 = await axios.post(POST_AUX_URL[state.usertype], {state})
+            const res1 = await axios.post(POST_URL, { state })
+            const res2 = await axios.post(POST_AUX_URL[state.usertype], { state })
         }
         catch (error) {
             console.log(error)
