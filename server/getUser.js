@@ -10,9 +10,9 @@ module.exports = {
             return req.get("PYork-User")
         }
     },
-    getUserFromBody: function(req) {
+    getUserFromBody: function(req, key='userId') {
         if (URL_ID) {
-            return req.body.userId
+            return req.body[key]
         }
         else {
             return req.get("PYork-User")

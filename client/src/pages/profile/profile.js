@@ -19,10 +19,10 @@ const Profile = () => {
 
     const [state, setState] = useState({})
 
-    // const [alert, setAlert] = React.useState({
-    //     visible: false,
-    //     html: <Alert severity="error">Failed to update. Please try again</Alert>
-    // })
+    const [alert, setAlert] = useState({
+        visible: false,
+        html: <Alert severity="error">Failed to update. Please try again</Alert>,
+    })
 
     // const setStateFromChild = useCallback((newState) => {
     //     console.log(newState)
@@ -35,20 +35,43 @@ const Profile = () => {
             const res = await axios.get(url)
 
             setState(res.data.length > 0 ? res.data[0] : { usertype: 'applicant' })
-            // setState(res.data[0])
         }
 
         fetchData()
     }, [])
 
+    const toggleAlert = async(newVisible = !alert.visible) => {
+        setAlert(old => {
+            return {
+                ...old,
+                visible: newVisible,
+            }
+        })
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault()
+        toggleAlert(false)
         try {
-            const res1 = await axios.post(POST_URL, { state })
-            const res2 = await axios.post(POST_AUX_URL[state.usertype], { state })
+            const res1 = await axios.post(POST_URL, { userId: getUser(), state })
+            // const res2 = POST_AUX_URL[state.usertype] ?
+            //     await axios.post(POST_AUX_URL[state.usertype], { state }) :
+            //     null
+            const res2 = POST_AUX_URL[state.usertype] && await axios.post(POST_AUX_URL[state.usertype], { userId: getUser(), state })
+
+
+            setAlert(old => {
+                return {
+                    ...old,
+                    html: <Navigate to="/dashboard" />,
+                    visible: true,
+                }
+            })
+
         }
         catch (error) {
-            console.log(error)
+            console.log('post error:', error)
+            toggleAlert(true)
         }
     }
 
@@ -64,7 +87,7 @@ const Profile = () => {
                         <FormControl margin="normal">
                             <BaseProfile updateState={setState} state={state} />
                             {state?.usertype === 'applicant' && <StudentProfile updateState={setState} state={state} />}
-                            {/* {alert.visible ? alert.html : null} */}
+                            {alert.visible && alert.html}
                             <Button variant="contained" type="submit" onClick={handleSubmit}>Save</Button>
                         </FormControl>
                     </form>

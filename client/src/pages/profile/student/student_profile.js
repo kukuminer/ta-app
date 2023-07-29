@@ -10,14 +10,11 @@ const POOL_OPTIONS = [
     // <MenuItem key='N/A' value={'none'}>Neither</MenuItem>
 ]
 
-/**
- * For mapping the SQL response to the appropriate state variable
- */
-// const map = {
-//     'studentNum': 'studentnum',
-//     'employeeId': 'employeeid',
-//     'pool': 'pool',
-// }
+const DEFAULT_VALS = {
+    studentnum: '',
+    employeeid: '',
+    pool: 'unit 2',
+}
 
 const StudentProfile = ({ state, updateState }) => {
     // const [state, setState] = React.useState({
@@ -44,12 +41,21 @@ const StudentProfile = ({ state, updateState }) => {
         const fetchData = async () => {
             // const fetchedState = {}
             const url = GET_URL + getUser()
-            const res = await axios.get(url)
-            console.log(res.data)
-            updateState({ ...state, ...res.data })
+            try {
+                const res = await axios.get(url)
+                console.log(res.data)
+
+                updateState({ ...state, ...(res.data ?? DEFAULT_VALS), studentfetched: true })
+            }
+            catch (error) {
+                updateState({ ...state, studentfetched: false })
+                console.log('error fetching student data: ', error)
+            }
         }
 
-        fetchData()
+        if (!state.studentfetched) {
+            fetchData()
+        }
     }, [state, updateState])
 
     function handleChange(event) {
@@ -63,8 +69,8 @@ const StudentProfile = ({ state, updateState }) => {
         <>
             <TextField
                 id="studentnum"
-                value={state.studentnum ?? ''}
-                error={!state.studentnum}
+                value={state?.studentnum ?? DEFAULT_VALS.studentnum}
+                error={!state?.studentnum}
                 onChange={handleChange}
                 label="Student Number (9 digits)"
                 margin="normal"
@@ -73,8 +79,8 @@ const StudentProfile = ({ state, updateState }) => {
             />
             <TextField
                 id="employeeid"
-                value={state.employeeid ?? ''}
-                error={!state.employeeid}
+                value={state?.employeeid ?? DEFAULT_VALS.employeeid}
+                error={!state?.employeeid}
                 onChange={handleChange}
                 label="Employee ID (9 digits)"
                 margin="normal"
@@ -85,8 +91,8 @@ const StudentProfile = ({ state, updateState }) => {
                 <Select
                     labelId="pool-select"
                     id="pool"
-                    value={state.pool ?? 'unit 1'}
-                    error={!state.pool}
+                    value={state?.pool ?? DEFAULT_VALS.pool}
+                    error={!state?.pool}
                     onChange={handleChange}
                     label="I am"
                     name="pool"

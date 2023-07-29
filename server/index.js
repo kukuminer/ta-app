@@ -69,7 +69,7 @@ app.get("/api/user/:userId", (req, res) => {
 app.post("/api/user/update", (req, res) => {
     const id = getUser.getUserFromBody(req)
     const r = req.body.state
-    console.log(r)
+    r.username = id
 
     const usertypeQuery = 'SELECT usertype FROM users WHERE username=$1'
 
@@ -77,11 +77,7 @@ app.post("/api/user/update", (req, res) => {
         ['username', 'firstname', 'lastname', 'email', 'usertype'],
         { table: 'users' }
     )
-    const postQuery = pgp.helpers.insert(r, colSet) +
-        ' ON CONFLICT ("username") DO UPDATE SET ' +
-        colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
-        ' RETURNING usertype'
-        
+
     db.any(usertypeQuery, [id])
         .then((data) => {
             // If the user doesn't exist, default applicant
@@ -90,6 +86,12 @@ app.post("/api/user/update", (req, res) => {
                 usertype = data[0].usertype
             }
             // Then post with proper usertype
+            r.usertype = usertype
+            const postQuery = pgp.helpers.insert(r, colSet) +
+                ' ON CONFLICT ("username") DO UPDATE SET ' +
+                colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
+                ' RETURNING usertype'
+
             db.any(postQuery)
                 .then((data) => {
                     res.status(200).json(data)
@@ -151,25 +153,31 @@ app.get("/api/user/student/:userId", (req, res) => {
 app.post("/api/user/student/update", (req, res) => {
     const id = getUser.getUserFromBody(req)
     const r = req.body.state
+    r.username = id
     const idQuery = 'SELECT id FROM users WHERE username=$1'
 
-    const colSet = new pgp.helpers.ColumnSet(
-        ['id', 'studentnum', 'employeeid', 'pool'],
-        { table: 'applicant' }
-    )
-
-    const postQuery = `
-        INSERT INTO applicant(id, studentNum, employeeId, pool) 
-        VALUES ($1, $2, $3, $4)
-        ON CONFLICT (id) DO UPDATE
-        SET studentNum=$2, employeeid=$3, pool=$4
-        WHERE applicant.id=$1
-    `
-    db.any(idQuery, id)
+    // const postQuery = `
+    //     INSERT INTO applicant(id, studentNum, employeeId, pool) 
+    //     VALUES ($1, $2, $3, $4)
+    //     ON CONFLICT (id) DO UPDATE
+    //     SET studentNum=$2, employeeid=$3, pool=$4
+    //     WHERE applicant.id=$1
+    // `
+    db.any(idQuery, [id])
         .then((data) => {
             if (data.length !== 1) throw new Error("Not 1 user found in DB!")
             const uid = data[0].id
-            db.any(postQuery, [uid, r.studentnum, r.employeeid, r.pool])
+            r.id = uid;
+
+            const colSet = new pgp.helpers.ColumnSet(
+                ['id', 'studentnum', 'employeeid', 'pool'],
+                { table: 'applicant' }
+            )
+            const postQuery = pgp.helpers.insert(r, colSet) +
+                ' ON CONFLICT ("id") DO UPDATE SET ' +
+                colSet.assignColumns({ from: 'EXCLUDED', skip: 'id' })
+
+            db.any(postQuery)
                 .then((data) => {
                     res.status(200).send()
                 })
