@@ -6,8 +6,9 @@ import React from "react"
 const BaseProfile = ({ state, updateState }) => {
 
     function handleChange(event) {
-        state[event.target.id] = event.target.value
-        updateState(state)
+        var newState = structuredClone(state)
+        newState[event.target.id] = event.target.value
+        updateState(newState)
     }
 
     // React.useEffect(() => {
@@ -22,8 +23,8 @@ const BaseProfile = ({ state, updateState }) => {
                     <TextField
                         required
                         id="firstname"
-                        value={state.firstname}
-                        error={!state.firstname}
+                        value={state?.firstname ?? ''}
+                        error={!state?.firstname}
                         onChange={handleChange}
                         label="First Name"
                         margin="normal"
@@ -31,8 +32,8 @@ const BaseProfile = ({ state, updateState }) => {
                     <TextField
                         required
                         id="lastname"
-                        value={state.lastname}
-                        error={!state.lastname}
+                        value={state?.lastname ?? ''}
+                        error={!state?.lastname}
                         onChange={handleChange}
                         label="Surname"
                         margin="normal"
@@ -41,8 +42,8 @@ const BaseProfile = ({ state, updateState }) => {
                 <TextField
                     required
                     id="email"
-                    value={state.email}
-                    error={!state.email}
+                    value={state?.email ?? ''}
+                    error={!state?.email}
                     onChange={handleChange}
                     label="Email"
                     margin="normal"

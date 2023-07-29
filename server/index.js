@@ -69,15 +69,29 @@ app.get("/api/user/:userId", (req, res) => {
 app.post("/api/user/update", (req, res) => {
     const id = getUser.getUserFromBody(req)
     const r = req.body.state
+    console.log(r)
+
     const usertypeQuery = 'SELECT usertype FROM users WHERE username=$1'
-    const postQuery = `
-    INSERT INTO users (username, firstname, lastname, email, usertype)
-    VALUES ($1, $2, $3, $4, $5)
-    ON CONFLICT (username) DO UPDATE 
-    SET firstname=$2, lastname=$3, email=$4, usertype=$5
-    WHERE users.username=$1
-    RETURNING usertype
-    `
+
+    const colSet = new pgp.helpers.ColumnSet(
+        ['username', 'firstname', 'lastname', 'email', 'usertype'],
+        { table: 'users' }
+    )
+    const postQuery = pgp.helpers.insert(r, colSet) +
+        ' ON CONFLICT ("username") DO UPDATE SET ' +
+        colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
+        ' RETURNING usertype'
+
+    // const postQuery = `
+    // INSERT INTO users (username, firstname, lastname, email, usertype)
+    // VALUES ($1, $2, $3, $4, $5)
+    // ON CONFLICT (username) DO UPDATE 
+    // SET firstname=$2, lastname=$3, email=$4, usertype=$5
+    // WHERE users.username=$1
+    // RETURNING usertype
+    // `
+
+
     db.any(usertypeQuery, [id])
         .then((data) => {
             // If the user doesn't exist, default applicant
@@ -86,7 +100,7 @@ app.post("/api/user/update", (req, res) => {
                 usertype = data[0].usertype
             }
             // Then post with proper usertype
-            db.any(postQuery, [id, r.firstname, r.lastname, r.email, usertype])
+            db.any(postQuery)
                 .then((data) => {
                     res.status(200).json(data)
                 })
@@ -148,6 +162,12 @@ app.post("/api/user/student/update", (req, res) => {
     const id = getUser.getUserFromBody(req)
     const r = req.body.state
     const idQuery = 'SELECT id FROM users WHERE username=$1'
+
+    const colSet = new pgp.helpers.ColumnSet(
+        ['id', 'studentnum', 'employeeid', 'pool'],
+        { table: 'applicant' }
+    )
+
     const postQuery = `
         INSERT INTO applicant(id, studentNum, employeeId, pool) 
         VALUES ($1, $2, $3, $4)
@@ -159,7 +179,7 @@ app.post("/api/user/student/update", (req, res) => {
         .then((data) => {
             if (data.length !== 1) throw new Error("Not 1 user found in DB!")
             const uid = data[0].id
-            db.any(postQuery, [uid, r.studentNum, r.employeeId, r.pool])
+            db.any(postQuery, [uid, r.studentnum, r.employeeid, r.pool])
                 .then((data) => {
                     res.status(200).send()
                 })
