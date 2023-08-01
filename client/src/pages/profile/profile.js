@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate } from "react-router-dom"
 import getUser from "../../getUser"
 import axios from "axios"
@@ -53,11 +53,13 @@ const Profile = () => {
         event.preventDefault()
         toggleAlert(false)
         try {
-            const res1 = await axios.post(POST_URL, { userId: getUser(), state })
+            // const res1 = 
+            await axios.post(POST_URL, { userId: getUser(), state })
             // const res2 = POST_AUX_URL[state.usertype] ?
             //     await axios.post(POST_AUX_URL[state.usertype], { state }) :
             //     null
-            const res2 = POST_AUX_URL[state.usertype] && await axios.post(POST_AUX_URL[state.usertype], { userId: getUser(), state })
+            // const res2 = 
+            POST_AUX_URL[state.usertype] && await axios.post(POST_AUX_URL[state.usertype], { userId: getUser(), state })
 
 
             setAlert(old => {
