@@ -6,6 +6,7 @@ import AdminDash from "./admin/admin_dash";
 import Header from "../header/header"
 import getUser from "../../getUser";
 import "./dashboard.css"
+import ProfileView from "../components/profile_view";
 
 const components = {
     'professor': <ProfessorDash />,
@@ -29,6 +30,7 @@ const Dashboard = () => {
     return (
         <>
             <Header />
+            <ProfileView />
             {/* Backend only accepts userId as arg, so even if userType is
             modified, secure content will remain secure since it gets 
             re-checked in the backend */}
