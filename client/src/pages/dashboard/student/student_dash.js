@@ -3,6 +3,7 @@ import axios from "axios";
 import getUser from "../../../getUser";
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import ProfileView from "./profile_view";
 
 const StudentDash = () => {
     const id = getUser()
@@ -19,6 +20,7 @@ const StudentDash = () => {
 
     return (
         <>
+            <ProfileView />
             <h1>
                 TA Applications
             </h1>
