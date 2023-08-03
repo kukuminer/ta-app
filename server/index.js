@@ -154,6 +154,8 @@ app.post("/api/user/student/update", (req, res) => {
     const id = getUser.getUserFromBody(req)
     const r = req.body.state
     r.username = id
+    r.studentnum = r.studentnum || null
+    r.employeeid = r.employeeid || null
     const idQuery = 'SELECT id FROM users WHERE username=$1'
 
     // const postQuery = `
