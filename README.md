@@ -91,3 +91,7 @@ JUL 27:
 --> (firstname, lastname, email) from users
 --> (studentnum, employeeid, pool) from applicant
 - middleware for security (usertype verification)
+
+AUG 3:
+- middleware for security (usertype verification)
+- documentation for process flow (for admin primarily)
