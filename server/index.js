@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 const getUser = require('./getUser.js').getUser;
-const Async = require("async");
+// const Async = require("async");
 /**
  * TODO: ADD ENV FOR GET USER 
  * req.get("PYork-User") COMPLETE
