@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import getUser from "../../../getUser"
 import axios from "axios"
+import { Table, TableBody, TableCell, TableRow } from "@mui/material"
 
 
 const GET_URL = "/api/user/" // /userId
@@ -54,25 +55,32 @@ const ProfileView = () => {
     return (
         <>
             <div>
-                <h2>
-                    Profile data:
+                <h2 className="profile-banner-header">
+                    Profile data
                 </h2>
-                <div className="profile-banner-row">
-                    {
-                        Object.entries(DATA_MAP).map(v => {
-                            return <p>{v[1]}: {state[v[0]]}&emsp;</p>
-                        })
-                    }
-                </div>
-                {state.usertype && 
-                    <div className="profile-banner-row">
-                        {
-                            Object.entries(DATA_MAP_AUX[state?.usertype]).map(v => {
-                                return <p>{v[1]}: {state[v[0]]}&emsp;</p>
-                            })
+                <Table>
+                    <TableBody>
+                        <TableRow/>
+                        <TableRow className="profile-banner-row">
+                            {
+                                Object.entries(DATA_MAP).map(v => {
+                                    return <TableCell key={v[0]}>{v[1]}: {state[v[0]]}&emsp;</TableCell>
+                                })
+                            }
+                        </TableRow>
+                        {state.usertype &&
+                            <TableRow className="profile-banner-row">
+                                {
+                                    Object.entries(DATA_MAP_AUX[state?.usertype]).map(v => {
+                                        return <TableCell key={v[0]}>{v[1]}: {state[v[0]]}&emsp;</TableCell>
+                                    })
+                                }
+                            </TableRow>
                         }
-                    </div>
-                }
+
+                    </TableBody>
+
+                </Table>
             </div>
         </>
     )
