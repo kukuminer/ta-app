@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-const getUser = require('./getUser.js').getUser;
+// const getUser = require('./getUser.js').getUser;
 // const Async = require("async");
 /**
  * TODO: ADD ENV FOR GET USER 
@@ -40,8 +40,8 @@ db.any('SELECT now()', [])
 /**
  * Gets all user info for profile page
  */
-app.get("/api/user/:userId", (req, res) => {
-    id = getUser(req)
+app.get("/api/user/:userid", (req, res) => {
+    id = res.locals.userid
     dbQuery = `
     SELECT firstname, lastname, email, usertype, username
     FROM users
@@ -68,7 +68,7 @@ app.get("/api/user/:userId", (req, res) => {
     WHERE users.username='kuku'
  */
 app.post("/api/user/update", (req, res) => {
-    const id = getUser(req)
+    const id = res.locals.userid
     const r = req.body.state
     r.username = id
 
@@ -112,7 +112,7 @@ app.post("/api/user/update", (req, res) => {
  * Gets usertype from userId
  */
 app.get("/api/usertype/:userId", (req, res) => {
-    id = getUser(req);
+    id = res.locals.userid
     // SELECT usertype FROM users WHERE id = $1
     db.any("SELECT usertype FROM users WHERE username = $1", [id])
         .then((data) => {
@@ -133,7 +133,7 @@ app.get("/api/usertype/:userId", (req, res) => {
 })
 
 app.get("/api/user/student/:userId", (req, res) => {
-    const id = getUser(req)
+    const id = res.locals.userid
     const dbQuery = `
     SELECT studentNum, employeeId, pool FROM applicant 
     WHERE id IN (SELECT id FROM users WHERE username=$1)
@@ -152,7 +152,7 @@ app.get("/api/user/student/:userId", (req, res) => {
  * Posts applicant info to DB
  */
 app.post("/api/user/student/update", (req, res) => {
-    const id = getUser(req)
+    const id = res.locals.userid
     const r = req.body.state
     r.username = id
     r.studentnum = r.studentnum || null
@@ -196,7 +196,7 @@ app.post("/api/user/student/update", (req, res) => {
  * For populating the instructor dashboard
  */
 app.get("/api/professor/courses/:userId", (req, res) => {
-    const id = getUser(req)
+    const id = res.locals.userid
     const dbQuery = `
     SELECT id, course, letter, term
     FROM section 
@@ -229,7 +229,7 @@ app.get("/api/professor/courses/:userId", (req, res) => {
     `
  */
 app.get("/api/professor/:sectionId/:userId", (req, res) => {
-    const id = getUser(req)
+    const id = res.locals.userid
     // const course = req.params.course
     // const letter = req.params.letter
     const sectionId = req.params.sectionId
@@ -288,7 +288,7 @@ app.post("/api/professor/assignment", (req, res) => {
     RETURNING assignment.id, assignment.pref, assignment.note
     `
     const r = req.body
-    const userId = getUser(req)
+    const userId = res.locals.userid
     db.any(dbQuery, [r.studentNum, r.sectionId, r.pref, r.note, userId])
         .then((data) => {
             if (data.length !== 1) throw new Error('Bad auth')
@@ -305,7 +305,7 @@ app.post("/api/professor/assignment", (req, res) => {
  */
 app.get("/api/student/refusal/:term/:userId", (req, res) => {
     console.log(res.locals.userId)
-    const userId = getUser(req)
+    const userId = res.locals.userid
     const term = req.params.term
     const dbQuery = `
     SELECT applicant, course, term FROM rightofrefusal
@@ -333,7 +333,7 @@ ON term.id = termapplication.term
 WHERE term.visible = true
  */
 app.get("/api/student/applications/available/:userId", (req, res) => {
-    const userId = getUser(req)
+    const userId = res.locals.userid
     const dbQuery = `
     SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
     FROM term LEFT JOIN 
@@ -353,7 +353,7 @@ app.get("/api/student/applications/available/:userId", (req, res) => {
 })
 
 app.get("/api/student/termapplication/:term/:userId", (req, res) => {
-    const userId = getUser(req)
+    const userId = res.locals.userid
     const term = req.params.term
     const dbQuery = `
     SELECT submitted, availability, approval, explanation, incanada, wantstoteach
@@ -397,7 +397,7 @@ LEFT JOIN
 ON application.course = course.id
  */
 app.get("/api/student/applications/:term/:userId", (req, res) => {
-    const userId = getUser(req)
+    const userId = res.locals.userid
     const term = req.params.term
     const dbQuery = `
     SELECT course.id as code, code as codename, name, description, grade, interest, qualification
@@ -436,7 +436,7 @@ RETURNING application.interest, application.qualification
  */
 app.post("/api/student/application", (req, res) => {
     const r = req.body
-    const userId = getUser(req)
+    const userId = res.locals.userid
     const dbQuery = `
     INSERT INTO application(applicant, course, term, interest, qualification) 
     VALUES ((SELECT id FROM users WHERE username=$1), 
@@ -475,7 +475,7 @@ app.post("/api/student/application", (req, res) => {
  */
 app.post("/api/student/term", (req, res) => {
     const r = req.body
-    const userId = getUser(req)
+    const userId = res.locals.userid
     dbQuery = `
     INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ((SELECT id FROM users WHERE username=$1), 
@@ -567,7 +567,7 @@ app.get("/api/admin/table/:tableName", (req, res) => {
 })
 
 // app.post("/api/admin/overwrite", (req, res) => {
-//     const userId = getUser(req)
+//     const userId = res.locals.userid
 //     db.any('SELECT usertype FROM users WHERE username=$1', userId)
 //         .then((data) => {
 //             if (!(data.length === 1 && data[0].usertype === 'admin')) {
@@ -645,7 +645,7 @@ RETURNING applicant, course, term;
 
 
 app.post("/api/admin/rofr", (req, res) => {
-    const userId = getUser(req)
+    const userId = res.locals.userid
     db.any('SELECT usertype FROM users WHERE username=$1', userId)
         .then((data) => {
             if (!(data.length === 1 && data[0].usertype === 'admin')) {
@@ -701,7 +701,7 @@ app.post("/api/admin/rofr", (req, res) => {
  * This endpoint is for admin to upsert to DB via csv. 
  */
 app.post("/api/admin/upsert", (req, res) => {
-    const userId = getUser(req)
+    const userId = res.locals.userid
     db.any('SELECT usertype FROM users WHERE username=$1', userId)
         .then((data) => {
             if (!(data.length === 1 && data[0].usertype === 'admin')) {
