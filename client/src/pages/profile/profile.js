@@ -85,12 +85,12 @@ const Profile = () => {
                     <h1>
                         TA Application System Profile
                     </h1>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <FormControl margin="normal">
                             <BaseProfile updateState={setState} state={state} />
                             {state?.usertype === 'applicant' && <StudentProfile updateState={setState} state={state} />}
                             {alert.visible && alert.html}
-                            <Button variant="contained" type="submit" onClick={handleSubmit}>Save</Button>
+                            <Button variant="contained" type="submit">Save</Button>
                         </FormControl>
                     </form>
                 </div>
