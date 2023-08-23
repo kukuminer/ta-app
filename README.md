@@ -11,10 +11,29 @@ To see the deployed version, do the following:
 1. run `npm start` in /ta-app/server
 2. run `npm run deploy` in /ta-app/client/build
 3. configure the psql server so that you have the usertype you want. (to access psql, do `~/pg/bin/psql -h localhost -U taapp taapp`
+4. to start psql server, run `bin/pg_ctl -D data/ -l pg.log start`
 If you set yourself as an admin user, you can upload csvs to the tables by following the instructions on the page.
 
 That's it! Now you can go to https://ta-app.eecs.yorku.ca/ and see the app in action.
 If you have any questions, please let me know
+
+TO DEPLOY:
+1. ssh project1
+2. bu ta-app
+3. cd
+FOR FRONT END:
+1. cd ta-app/client
+2. npm run build
+3. cd build
+4. npm run deploy
+START BACKEND:
+1. cd ta-app/server
+2. npm start
+START PSQL:
+1. cd ta-app/pg
+2. bin/pg_ctl -D data/ -l pg.log start
+ACCESS PSQL:
+1. ~/pg/bin/psql -h localhost -U taapp taapp
 
 
 # TODO:
@@ -95,3 +114,7 @@ JUL 27:
 AUG 3:
 - middleware for security (usertype verification)
 - documentation for process flow (for admin primarily)
+
+Aug 17:
+- Refactor endpoints
+- script to start everything in parallel
