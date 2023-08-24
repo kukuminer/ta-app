@@ -8,7 +8,7 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell,
  * Used to modify prof preferences and notes
  */
 class Application extends React.Component {
-    URL = '/api/student/application'
+    URL = '/api/applicant/application'
     dataKeys = [ // These are the keys that get displayed in the columns
         'codename', 'name', //description
     ]

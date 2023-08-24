@@ -245,45 +245,6 @@ app.post("/api/professor/assignment", (req, res) => {
 })
 
 
-/** 
- * Posts applicant changes to specific course applications
- * `
-INSERT INTO application(applicant, course, term, interest, qualification) 
-VALUES ((SELECT id FROM users WHERE username='johndoe'), 
-    '3214', 'F23', 4, 4)
-ON CONFLICT (applicant, course, term)
-DO UPDATE SET interest=4, qualification=4
-WHERE application.applicant=(SELECT id FROM users WHERE username='johndoe')
-AND application.course='3214'
-AND application.term='F23'
-RETURNING application.interest, application.qualification
-`
- * The request is safe because of DB restrictions
- */
-app.post("/api/student/application", (req, res) => {
-    const r = req.body
-    const userId = res.locals.userid
-    const dbQuery = `
-    INSERT INTO application(applicant, course, term, interest, qualification) 
-    VALUES ((SELECT id FROM users WHERE username=$1), 
-        $2, $3, $4, $5)
-    ON CONFLICT (applicant, course, term)
-    DO UPDATE SET interest=$4, qualification=$5
-    WHERE application.applicant=(SELECT id FROM users WHERE username=$1)
-    AND application.course=$2
-    AND application.term=$3
-    RETURNING application.interest, application.qualification
-    `
-    db.any(dbQuery, [userId, r.course, r.term, r.interest, r.qualification])
-        .then((data) => {
-            if (data.length !== 1) throw new Error('Could not add application to db')
-            res.json(data)
-        })
-        .catch((error) => {
-            console.log('db application upsert error: ', error)
-            res.status(400).send(error)
-        })
-})
 
 /** 
  * Termapplication changes post endpoint
