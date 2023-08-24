@@ -62,7 +62,7 @@ module.exports = function ({ app, db, pgp }) {
     /**
      * Gets right of first refusal table info 
      */
-    app.get("/api/applicant/refusal/:term/:userId", (req, res) => {
+    app.get("/api/applicant/refusal/:term", (req, res) => {
         console.log(res.locals.userid)
         const userId = res.locals.userid
         const term = req.params.term
@@ -111,5 +111,54 @@ module.exports = function ({ app, db, pgp }) {
                 res.status(500).send(error)
             })
     })
+
+    app.get("/api/applicant/termapplication/:term", (req, res) => {
+        const userId = res.locals.userid
+        const term = req.params.term
+        const dbQuery = `
+        SELECT submitted, availability, approval, explanation, incanada, wantstoteach
+        FROM termapplication
+        WHERE applicant IN (SELECT id FROM users WHERE username=$1)
+        AND term=$2
+        `
+        db.any(dbQuery, [userId, term])
+            .then((data) => {
+                res.json(data)
+            })
+            .catch((error) => {
+                console.log('error retrieving termapplication details from db')
+                res.status(500).send(error)
+            })
+    })
+
+    /**
+     * Get the courses within a term that the applicant has and can apply to
+     * Gets existing applications if they exist
+     * For populating the application page with courses
+     */
+    app.get("/api/applicant/applications/:term/", (req, res) => {
+        const userId = res.locals.userid
+        const term = req.params.term
+        const dbQuery = `
+    SELECT course.id as code, code as codename, name, description, grade, interest, qualification
+    FROM 
+    (SELECT * FROM course 
+        WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
+    LEFT JOIN 
+    (SELECT * FROM application 
+        WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
+    ON application.course = course.id
+    `
+        db.any(dbQuery, [userId, term])
+            .then((data) => {
+                res.json(data)
+            })
+            .catch((error) => {
+                console.log('error retrieving application info on courses from db for term:', term)
+                res.status(500).send(error)
+            })
+    })
+
+
 
 }
