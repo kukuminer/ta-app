@@ -44,7 +44,7 @@ class StudentApplicationClass extends React.Component {
 
         this.get_courses_url = '/api/student/applications/' + this.state.term + '/' + this.state.userId
         this.get_term_url = '/api/student/termapplication/' + this.state.term + '/' + this.state.userId
-        this.get_refusal_url = '/api/student/refusal/' + this.state.term + '/' + this.state.userId
+        this.get_refusal_url = '/api/applicant/refusal/' + this.state.term + '/' + this.state.userId
         this.courseData = []
     }
     componentDidMount() {

@@ -54,7 +54,7 @@ const Profile = () => {
         toggleAlert(false)
         try {
             // const res1 = 
-            console.log(state)
+            // console.log(state)
             await axios.post(POST_URL, { userId: getUser(), state })
             // const res2 = POST_AUX_URL[state.usertype] ?
             //     await axios.post(POST_AUX_URL[state.usertype], { state }) :
@@ -78,7 +78,7 @@ const Profile = () => {
         }
     }
 
-    console.log(state)
+    // console.log(state)
     return (
         <>
             <div className="profile">

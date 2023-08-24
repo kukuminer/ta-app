@@ -1,9 +1,9 @@
-INSERT INTO users(firstname, lastname, email, usertype, username) VALUES
-('Liran', 'Z', 'liranz@yorku.ca', 'admin', 'kuku'),
-('Jonatan', 'S', 'jonatan@yorku.ca', 'instructor', 'jonatan'),
-('John', 'D', 'john@yorku.ca', 'applicant', 'johndoe'),
-('Michael', 'B', 'mike@yorku.ca', 'instructor', 'mikeb'),
-('Jane', 'E', 'jane@yorku.ca', 'applicant', 'jane');
+INSERT INTO users(id, firstname, lastname, email, usertype, username) VALUES
+(1, 'Liran', 'Z', 'liranz@yorku.ca', 'admin', 'kuku'),
+(2, 'Jonatan', 'S', 'jonatan@yorku.ca', 'instructor', 'jonatan'),
+(3, 'John', 'D', 'john@yorku.ca', 'applicant', 'johndoe'),
+(4, 'Michael', 'B', 'mike@yorku.ca', 'instructor', 'mikeb'),
+(5, 'Jane', 'E', 'jane@yorku.ca', 'applicant', 'jane');
 
 INSERT INTO term(id, term, visible) VALUES
 (2, 'F23', true),

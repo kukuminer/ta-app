@@ -59,4 +59,57 @@ module.exports = function ({ app, db, pgp }) {
             })
     })
 
+    /**
+     * Gets right of first refusal table info 
+     */
+    app.get("/api/applicant/refusal/:term/:userId", (req, res) => {
+        console.log(res.locals.userid)
+        const userId = res.locals.userid
+        const term = req.params.term
+        const dbQuery = `
+    SELECT applicant, course, term FROM rightofrefusal
+    WHERE applicant IN (SELECT studentnum FROM applicant WHERE studentnum=$1)
+    AND term=$2
+    `
+        db.any(dbQuery, [userId, term])
+            .then((data) => {
+                res.json(data)
+            })
+            .catch((error) => {
+                console.log('error retrieving rightofrefusal details from db')
+                res.status(500).send(error)
+            })
+    })
+
+
+    /**
+     * Gets all the terms that the applicant can or has applied to
+     * For populating the applicant dashboard from termapplication table
+     * 
+    SELECT term.id as seq, term.term, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
+    FROM term LEFT JOIN 
+    (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username='jane')) AS termapplication
+    ON term.id = termapplication.term
+    WHERE term.visible = true
+    */
+    app.get("/api/applicant/applications/available", (req, res) => {
+        const userId = res.locals.userid
+        const dbQuery = `
+    SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
+    FROM term LEFT JOIN 
+    (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username=$1)) AS termapplication
+    ON term.id = termapplication.term
+    WHERE term.visible = true    
+    `
+        // AND section.term NOT IN (SELECT term FROM termapplication)
+        db.any(dbQuery, userId)
+            .then((data) => {
+                res.json(data)
+            })
+            .catch((error) => {
+                console.log('error retrieving available applications from db')
+                res.status(500).send(error)
+            })
+    })
+
 }

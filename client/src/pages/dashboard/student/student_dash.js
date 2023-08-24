@@ -1,22 +1,21 @@
 import React from "react";
 import axios from "axios";
-import getUser from "../../../getUser";
+// import getUser from "../../../getUser";
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import ProfileView from "./profile_view";
 
 const StudentDash = () => {
-    const id = getUser()
 
     const [pastTable, setPastTable] = React.useState(null)
 
     React.useEffect(() => {
-        const url = '/api/student/applications/available/' + id
+        const url = '/api/applicant/applications/available/'
         axios.get(url)
             .then((res) => {
                 setPastTable(res.data)
             })
-    }, [id])
+    }, [])
 
     return (
         <>
