@@ -10,7 +10,7 @@ import './profile.css'
 const GET_URL = "/api/user/" // /userId
 const POST_URL = "/api/user/update"
 const POST_AUX_URL = {
-    'applicant': "/api/user/student/update",
+    'applicant': "/api/applicant/update",
     'professor': null,
     'admin': null,
 }
@@ -54,6 +54,7 @@ const Profile = () => {
         toggleAlert(false)
         try {
             // const res1 = 
+            console.log(state)
             await axios.post(POST_URL, { userId: getUser(), state })
             // const res2 = POST_AUX_URL[state.usertype] ?
             //     await axios.post(POST_AUX_URL[state.usertype], { state }) :

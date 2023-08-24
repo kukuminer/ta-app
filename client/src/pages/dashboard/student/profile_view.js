@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableRow } from "@mui/material"
 
 const GET_URL = "/api/user/" // /userId
 const AUX_GET_URL = {
-    'applicant': "/api/user/student/",
+    'applicant': "/api/applicant/",
     'professor': null,
     'admin': null,
 }

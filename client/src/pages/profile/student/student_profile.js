@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import axios from "axios"
 import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
-const GET_URL = "/api/user/student/" // /userId
+const GET_URL = "/api/applicant/" // /userId
 const POOL_OPTIONS = [
     <MenuItem key='unit 1' id={'unit 1'} value={'unit 1'}>Unit 1 (Full time Graduate student at York)</MenuItem>,
     <MenuItem key='unit 2' id={'unit 2'} value={'unit 2'}>Unit 2 (All other applicants)</MenuItem>,
