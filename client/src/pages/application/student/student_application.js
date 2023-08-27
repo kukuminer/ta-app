@@ -16,7 +16,7 @@ const StudentApplication = () => {
 }
 
 class StudentApplicationClass extends React.Component {
-    POST_URL = '/api/student/term'
+    POST_URL = '/api/applicant/termapplication'
     DEFAULT_VALUES = {
         approval: false,
         availability: 0,

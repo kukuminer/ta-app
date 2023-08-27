@@ -188,5 +188,34 @@ module.exports = function ({ app, db, pgp }) {
             })
     })
 
+    /** 
+     * Termapplication changes post endpoint
+     */
+    app.post("/api/applicant/termapplication", (req, res) => {
+        const r = req.body
+        const userId = res.locals.userid
+        dbQuery = `
+    INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
+    VALUES ((SELECT id FROM users WHERE username=$1), 
+        $2, $3, $4, $5, $6, $7, $8)
+    ON CONFLICT (applicant, term)
+    DO UPDATE SET submitted=$3, availability=$4,
+    approval=$5, explanation=$6, incanada=$7, wantstoteach=$8
+    WHERE termapplication.applicant=(SELECT id FROM users WHERE username=$1)
+    AND termapplication.term=$2
+    RETURNING submitted, availability, approval, explanation, incanada, wantstoteach
+    `
+        db.any(dbQuery, [userId, r.term, r.submitted, r.availability, r.approval, r.explanation, r.incanada, r.wantstoteach])
+            .then((data) => {
+                if (data.length !== 1) throw new Error('Could not add termapplication to DB')
+                res.json(data)
+            })
+            .catch((error) => {
+                console.log('db termapplication upsert error: ', error)
+                res.status(400).send(error)
+            })
+    })
+
+
 
 }
