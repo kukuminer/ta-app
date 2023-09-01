@@ -37,7 +37,6 @@ const ProfileView = () => {
                 const res1 = await axios.get(url)
                 var auxURL = AUX_GET_URL[res1?.data[0].usertype]
                 const res2 = auxURL && await axios.get(auxURL + getUser())
-                console.log(res2.data)
 
                 setState(s => { return { ...s, ...res1?.data[0], ...res2?.data } })
             }
