@@ -1,23 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import getUser from '../../../getUser'
+
+const GET_URL = '/api/instructor/courses'
 
 const ProfessorDash = () => {
-    const id = getUser()
-
     const [tableData, setTableData] = React.useState(null)
 
     React.useEffect(() => {
-        const request = {
-            method: 'get',
-            url: '/api/professor/courses/' + id
-        }
-        axios(request)
+        axios.get(GET_URL)
             .then((res) => {
                 setTableData(res.data)
             })
-    }, [id])
+    }, [])
 
     return (
         <>
