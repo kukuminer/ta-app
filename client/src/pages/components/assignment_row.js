@@ -59,7 +59,6 @@ class Assignment extends React.Component {
                             origPref: res.data[0].pref,
                         })
                         this.render()
-                        console.log(this.state)
                     })
                     .catch((error) => {
                         console.log('frontend error posting pref/note: ', error)

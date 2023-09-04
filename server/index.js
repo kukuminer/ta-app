@@ -139,49 +139,6 @@ app.get("/api/usertype/:userId", (req, res) => {
 
 
 
-/**
- * For updating prof preference and note 
- */
-app.post("/api/instructor/assignment", (req, res) => {
-    /*
-    INSERT INTO assignment(applicant, section, pref, note)
-    VALUES (3, (SELECT id FROM section WHERE profid=2 AND id=1), 1, 'eebe')
-    ON CONFLICT (applicant, section)
-    DO UPDATE SET pref = 1, note = 'eeb'
-    WHERE assignment.applicant = 3 
-    AND assignment.section in (SELECT id FROM section WHERE profid=4 AND id=1)
-    RETURNING assignment.id
-     */
-    const dbQuery = `
-    INSERT INTO assignment(applicant, section, pref, note)
-    VALUES ($1, 
-        (SELECT id 
-        FROM section 
-        WHERE profid IN (SELECT id FROM users WHERE username=$5) 
-        AND id=$2), 
-        $3, 
-        $4)
-    ON CONFLICT (applicant, section)
-    DO UPDATE SET pref = $3, note = $4
-    WHERE assignment.applicant = $1 
-    AND assignment.section in 
-        (SELECT id FROM section 
-            WHERE profid IN (SELECT id FROM users WHERE username=$5) 
-            AND id=$2)
-    RETURNING assignment.id, assignment.pref, assignment.note
-    `
-    const r = req.body
-    const userId = res.locals.userid
-    db.any(dbQuery, [r.studentNum, r.sectionId, r.pref, r.note, userId])
-        .then((data) => {
-            if (data.length !== 1) throw new Error('Bad auth')
-            res.json(data)
-        })
-        .catch((error) => {
-            console.log('db assignment upsert error: ', error)
-            res.status(500).send(error)
-        })
-})
 
 /**
  * Gets public section info, insecure endpoint (no id check)
