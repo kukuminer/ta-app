@@ -142,7 +142,7 @@ app.get("/api/usertype/:userId", (req, res) => {
 /**
  * For updating prof preference and note 
  */
-app.post("/api/professor/assignment", (req, res) => {
+app.post("/api/instructor/assignment", (req, res) => {
     /*
     INSERT INTO assignment(applicant, section, pref, note)
     VALUES (3, (SELECT id FROM section WHERE profid=2 AND id=1), 1, 'eebe')

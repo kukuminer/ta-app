@@ -13,6 +13,7 @@ const ProfessorSection = () => {
         const url = GET_URL + sectionId
         axios.get(url)
             .then((res) => {
+                console.log(res.data)
                 setTableData(res.data)
             })
     }, [sectionId])
@@ -24,7 +25,7 @@ const ProfessorSection = () => {
                 <tbody>
                     <tr>
                         <th>Student</th>
-                        <th>Grade</th>
+                        {/* <th>Grade</th> */}
                         <th>Interest</th>
                         <th>Qualification</th>
                         <th>Preference</th>

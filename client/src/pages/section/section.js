@@ -7,7 +7,7 @@ import "./section.css"
 
 const components = {
     'student': null,
-    'professor': <ProfessorSection />,
+    'instructor': <ProfessorSection />,
     'admin': null,
 }
 

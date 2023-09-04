@@ -2,6 +2,12 @@ import React from "react"
 import axios from "axios"
 import getUser from "../../getUser"
 
+const POST_URL = '/api/instructor/assignment'
+const DATA_KEYS = [
+    'firstname', 'lastname', 'interest', 'qualification',
+]
+
+
 /**
  * A class for the rows of professor dashboard table
  * Used to modify prof preferences and notes
@@ -19,7 +25,7 @@ class Assignment extends React.Component {
             studentNum: props.data.userid,
             sectionId: props.data.sectionid,
         }
-        for (const key of this.dataKeys) {
+        for (const key of DATA_KEYS) {
             this.columnData.push(props.data[key])
         }
         this.columnData[0] = this.columnData[0] + ' ' + this.columnData[1]
@@ -27,11 +33,7 @@ class Assignment extends React.Component {
     }
 
     TIMER = null
-    dataKeys = [
-        'firstname', 'lastname', 'grade', 'interest', 'qualification',
-    ]
     columnData = []
-    url = '/api/professor/assignment'
 
     doChangesExist = () => {
         var prefChanged = (this.state.pref !== this.state.origPref)
@@ -50,7 +52,7 @@ class Assignment extends React.Component {
         clearTimeout(this.TIMER)
         this.TIMER = setTimeout(
             function () {
-                axios.post(this.url, body)
+                axios.post(POST_URL, body)
                     .then((res) => {
                         this.setState({
                             origNote: res.data[0].note,
