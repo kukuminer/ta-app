@@ -134,12 +134,6 @@ app.get("/api/usertype/:userId", (req, res) => {
         })
 })
 
-
-
-
-
-
-
 /**
  * Gets public section info, insecure endpoint (no id check)
  * Gets:
