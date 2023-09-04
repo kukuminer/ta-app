@@ -6,10 +6,10 @@ import AdminDash from "./admin/admin_dash";
 import Header from "../header/header"
 import getUser from "../../getUser";
 import "./dashboard.css"
-import ProfileView from "./student/profile_view";
+// import ProfileView from "./student/profile_view";
 
 const components = {
-    'professor': <ProfessorDash />,
+    'instructor': <ProfessorDash />,
     'applicant': <StudentDash />,
     'admin': <AdminDash />,
 }

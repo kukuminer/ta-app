@@ -60,3 +60,17 @@ term.term, interest, qualification
 FROM application JOIN users ON applicant=users.id 
 JOIN course ON application.course=course.id 
 JOIN term ON application.term=term.id;
+
+CREATE VIEW SectionView AS
+SELECT 
+    section.course as courseid,
+    course.code as code,
+    section.letter,
+    section.term as termid,
+    term.term as term,
+    term.visible as visible,
+    section.profid as profid,
+    users.username as prof
+FROM section JOIN course ON section.course = course.id
+JOIN term ON section.term = term.id
+JOIN users ON section.profid = users.id;

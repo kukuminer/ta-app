@@ -118,3 +118,8 @@ AUG 3:
 Aug 17:
 - Refactor endpoints
 - script to start everything in parallel
+
+Sep 1:
+- Section import for new sections, like ROFR import- match by db IDs
+-- match the following:
+-- courseid by code, letter, termid by term name, profid by prof username

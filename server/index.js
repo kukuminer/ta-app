@@ -138,48 +138,6 @@ app.get("/api/usertype/:userId", (req, res) => {
 
 
 
-/**
- * For populationg the professor section view
- * `
-    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
-    FROM application 
-    INNER JOIN users 
-    ON application.applicant=users.id
-    INNER JOIN section
-    ON application.course = section.course AND application.term = section.term
-    LEFT JOIN assignment 
-    ON application.applicant = assignment.applicant AND section.id = assignment.section
-    WHERE section.id = 1
-    AND profid = 2
-    `
- */
-app.get("/api/professor/:sectionId/:userId", (req, res) => {
-    const id = res.locals.userid
-    // const course = req.params.course
-    // const letter = req.params.letter
-    const sectionId = req.params.sectionId
-    const dbQuery =
-        `
-    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
-    FROM application 
-    INNER JOIN users 
-    ON application.applicant=users.id
-    INNER JOIN section
-    ON application.course = section.course AND application.term = section.term
-    LEFT JOIN assignment 
-    ON application.applicant = assignment.applicant AND section.id = assignment.section
-    WHERE section.id = $1
-    AND profid IN (SELECT id FROM users WHERE username = $2)
-        `
-    db.any(dbQuery, [sectionId, id])
-        .then((data) => {
-            res.json(data)
-        })
-        .catch((error) => {
-            console.log('error retrieving prof section info from db')
-            res.status(500).send(error)
-        })
-})
 
 /**
  * For updating prof preference and note 
@@ -235,9 +193,9 @@ app.post("/api/professor/assignment", (req, res) => {
 app.get("/api/section/:sectionId", (req, res) => {
     const sectionId = req.params.sectionId
     const dbQuery = `
-        SELECT code AS course, letter, term FROM section 
+        SELECT course, letter, term FROM section 
         INNER JOIN course ON course=course.id
-        WHERE id = $1
+        WHERE section.id = $1
     `
     db.any(dbQuery, sectionId)
         .then((data) => {

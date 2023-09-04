@@ -41,7 +41,7 @@ const Section = () => {
             <Header />
             <div className="section">
                 <div className="main">
-                    <h1>SECTION {course ? course : 'Loading..'} {letter}</h1>
+                    <h1>SECTION {course ?? 'Loading..'} {letter}</h1>
                     {components[userType]}
                 </div>
             </div>

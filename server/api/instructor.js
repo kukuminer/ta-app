@@ -3,14 +3,25 @@ module.exports = function ({ app, db, pgp }) {
     /** 
      * For populating the instructor dashboard
      */
-    app.get("/api/professor/courses/:userId", (req, res) => {
+    app.get("/api/instructor/courses", (req, res) => {
         const id = res.locals.userid
+        // SELECT id, course, letter, term
+        // FROM section 
+        // WHERE profid IN (SELECT id FROM users WHERE username=$1)
         const dbQuery = `
-    SELECT id, course, letter, term
-    FROM section 
-    WHERE profid IN (SELECT id FROM users WHERE username=$1)
-    AND iscurrent=true
+    SELECT 
+    section.id,
+    course.code as course,
+    section.letter as letter,
+    term.term as term,
+    section.profid as profid
+FROM section JOIN course ON section.course = course.id
+JOIN term ON section.term = term.id
+JOIN users ON section.profid = users.id
+WHERE profid IN (SELECT id FROM users WHERE username=$1)
+AND term.visible = true
     `
+
         db.any(dbQuery, [id])
             .then((data) => {
                 res.json(data)
@@ -20,5 +31,37 @@ module.exports = function ({ app, db, pgp }) {
                 res.status(500).send(error)
             })
     })
+
+    /**
+     * For populating the professor section view
+     */
+    app.get("/api/instructor/:sectionId", (req, res) => {
+        const id = res.locals.userid
+        // const course = req.params.course
+        // const letter = req.params.letter
+        const sectionId = req.params.sectionId
+        const dbQuery =
+            `
+    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
+    FROM application 
+    INNER JOIN users 
+    ON application.applicant=users.id
+    INNER JOIN section
+    ON application.course = section.course AND application.term = section.term
+    LEFT JOIN assignment 
+    ON application.applicant = assignment.applicant AND section.id = assignment.section
+    WHERE section.id = $1
+    AND profid IN (SELECT id FROM users WHERE username = $2)
+        `
+        db.any(dbQuery, [sectionId, id])
+            .then((data) => {
+                res.json(data)
+            })
+            .catch((error) => {
+                console.log('error retrieving prof section info from db')
+                res.status(500).send(error)
+            })
+    })
+
 
 }

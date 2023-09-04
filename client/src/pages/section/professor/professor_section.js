@@ -1,21 +1,21 @@
-import getUser from "../../../getUser"
 import React from "react"
 import axios from "axios"
 import { useParams } from 'react-router-dom'
 import Assignment from "../../components/assignment_row"
 
+const GET_URL = '/api/instructor/'
+
 const ProfessorSection = () => {
-    const id = getUser()
     const { sectionId } = useParams()
     const [tableData, setTableData] = React.useState(null)
 
     React.useEffect(() => {
-        const url = '/api/professor/' + sectionId + '/' + id
+        const url = GET_URL + sectionId
         axios.get(url)
             .then((res) => {
                 setTableData(res.data)
             })
-    }, [sectionId, id])
+    }, [sectionId])
 
     return (
         <>

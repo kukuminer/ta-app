@@ -16,7 +16,7 @@ const ProfessorDash = () => {
 
     return (
         <>
-            <h1>THIS IS THE PROFESSOR DASH</h1>
+            <h1>Instructor Dashboard</h1>
             <p>Your class sections this term:</p>
             <table className='prof-table'>
                 <tbody>
