@@ -71,26 +71,15 @@ app.get("/api/user/:userid", (req, res) => {
     WHERE users.username='kuku'
  */
 app.post("/api/user/update", (req, res) => {
-    const id = res.locals.userid
     const r = req.body.state
-    r.username = id
-
-    const usertypeQuery = 'SELECT usertype FROM users WHERE username=$1'
+    r.username = res.locals.userid
+    r.usertype = res.locals.usertype
 
     const colSet = new pgp.helpers.ColumnSet(
         ['username', 'firstname', 'lastname', 'email', 'usertype'],
         { table: 'users' }
     )
 
-    db.any(usertypeQuery, [id])
-        .then((data) => {
-            // If the user doesn't exist, default applicant
-            var usertype = 'applicant'
-            if (data.length === 1) {
-                usertype = data[0].usertype
-            }
-            // Then post with proper usertype
-            r.usertype = usertype
             const postQuery = pgp.helpers.insert(r, colSet) +
                 ' ON CONFLICT ("username") DO UPDATE SET ' +
                 colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
@@ -104,11 +93,6 @@ app.post("/api/user/update", (req, res) => {
                     console.log(error)
                     res.status(500).send(error)
                 })
-        })
-        .catch((error) => {
-            console.log(error)
-            res.status(500).send(error)
-        })
 })
 
 /**
@@ -158,88 +142,6 @@ app.get("/api/section/:sectionId", (req, res) => {
             res.status(400).send(error)
         })
 })
-
-
-
-// app.post("/api/admin/overwrite", (req, res) => {
-//     const userId = res.locals.userid
-//     db.any('SELECT usertype FROM users WHERE username=$1', userId)
-//         .then((data) => {
-//             if (!(data.length === 1 && data[0].usertype === 'admin')) {
-//                 console.log('unauthorized request!')
-//                 res.status(403).send('Unauthorized!')
-//                 return
-//             }
-//             const tableName = req.body.tableName
-//             const rows = req.body.rows
-//             const cols = req.body.columns.split(',')
-//             dbQuery = "BEGIN; "
-//             dbQuery += 'DELETE FROM ' + tableName + '; '
-//             dbQuery += 'INSERT INTO ' + tableName + '(' + cols + ') VALUES '
-//             for (const [idx, row] of Object.entries(rows)) {
-//                 if (row) {
-//                     const split = row.trim().split(',')
-//                     for (const idx in split) {
-//                         split[idx] = "'" + split[idx] + "'"
-//                     }
-//                     const joined = split.join(',')
-//                     dbQuery += '(' + joined + '),'
-//                 }
-//             }
-//             dbQuery = dbQuery.slice(0, dbQuery.lastIndexOf(','))
-//             dbQuery += "; END;"
-//             console.log(dbQuery)
-//             db.any(dbQuery)
-//                 .then((data) => {
-//                     res.json(data)
-//                 })
-//                 .catch((error) => {
-//                     console.log(error)
-//                     res.status(500).send(error)
-//                 })
-//         })
-//         .catch((error) => {
-//             console.log(error)
-//             res.status(403).send(error)
-//         })
-
-// })
-
-
-/**
- * ADMIN ENDPOINT
- * For updating the ROFT table using 
-`
-INSERT INTO rightofrefusal (applicant, course, term)
-SELECT u.id, c.id, t.id FROM 
-(SELECT 1 AS n, id FROM users WHERE username='jane') AS u JOIN 
-(SELECT 1 AS n, id FROM course WHERE code='2030') AS c ON u.n = c.n JOIN
-(SELECT 1 AS n, id FROM term WHERE term='F23') AS t ON t.n = c.n
-ON CONFLICT DO NOTHING
-RETURNING u.id AS username, c.id AS course, t.id AS term
-;
-
-INSERT INTO rightofrefusal (applicant, course, term)
-SELECT u.id, c.id, t.id FROM 
-(SELECT id FROM users WHERE username='jane') AS u JOIN 
-(SELECT id FROM course WHERE code='2030') AS c ON TRUE JOIN
-(SELECT 1 AS n, id FROM term WHERE term='W22') AS t ON t.n = c.n
-ON CONFLICT DO NOTHING;
-
-INSERT INTO rightofrefusal (applicant, course, term)
-SELECT applicant.studentNum, course.id, term.id 
-FROM applicant, course, term
-WHERE applicant.studentNum='3'
-AND course.code='EECS2011'
-AND term.term='F23'
-ON CONFLICT DO NOTHING
-RETURNING applicant, course, term;
-;
-
- */
-
-
-
 
 /**
  * ENDPOINTS BELOW HERE TO BE DELETED
