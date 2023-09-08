@@ -63,6 +63,7 @@ JOIN term ON application.term=term.id;
 
 CREATE VIEW SectionView AS
 SELECT 
+    section.id as sectionid,
     section.course as courseid,
     course.code as code,
     section.letter,
