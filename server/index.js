@@ -144,8 +144,8 @@ app.get("/api/usertype/:userId", (req, res) => {
 app.get("/api/section/:sectionId", (req, res) => {
     const sectionId = req.params.sectionId
     const dbQuery = `
-        SELECT course, letter, term FROM section 
-        INNER JOIN course ON course=course.id
+        SELECT course.code AS course, letter, term FROM section 
+        INNER JOIN course ON section.course=course.id
         WHERE section.id = $1
     `
     db.any(dbQuery, sectionId)
