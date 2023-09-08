@@ -30,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 require('./middleware/auth')({app, db, pgp})
 require('./api/applicant')({app, db, pgp})
 require('./api/instructor')({app, db, pgp})
+require('./api/admin')({app, db, pgp})
 
 db.any('SELECT now()', [])
     .then((data) => {
@@ -158,25 +159,6 @@ app.get("/api/section/:sectionId", (req, res) => {
         })
 })
 
-/**
- * ADMIN ENDPOINT
- * Get all db table names
- */
-app.get("/api/admin/tables", (req, res) => {
-    const dbQuery = `
-    SELECT tablename FROM pg_catalog.pg_tables
-    WHERE schemaname != 'pg_catalog'
-    AND schemaname != 'information_schema'
-    `
-    db.any(dbQuery)
-        .then((data) => {
-            res.json(data)
-        })
-        .catch((error) => {
-            console.log('error fetching table list from DB:', error)
-            res.status(400).send(error)
-        })
-})
 
 /**
  * ADMIN ENDPOINT
