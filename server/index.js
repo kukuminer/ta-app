@@ -160,29 +160,6 @@ app.get("/api/section/:sectionId", (req, res) => {
 })
 
 
-/**
- * ADMIN ENDPOINT
- * Get all column names of a particular table
- */
-app.get("/api/admin/table/:tableName", (req, res) => {
-    const tableName = req.params.tableName
-    const dbQuery = `
-    SELECT table_name, column_name, is_nullable
-    FROM information_schema.columns 
-    WHERE table_name=$1
-    `
-    // const dbQuery = `
-    // SELECT * FROM `+ tableName + ` LIMIT 1
-    // `
-    db.any(dbQuery, tableName)
-        .then((data) => {
-            res.json(data)
-        })
-        .catch((error) => {
-            console.log('error fetching table info for table:', tableName)
-            res.status(400).send(error)
-        })
-})
 
 // app.post("/api/admin/overwrite", (req, res) => {
 //     const userId = res.locals.userid
@@ -264,6 +241,12 @@ RETURNING applicant, course, term;
 
 app.post("/api/admin/rofr", (req, res) => {
     const userId = res.locals.userid
+    const usertype = res.locals.usertype
+    if(usertype !== 'admin') {
+        console.log('unauthorized request!')
+        res.status(403).send('Unauthorized!')
+    }
+
     db.any('SELECT usertype FROM users WHERE username=$1', userId)
         .then((data) => {
             if (!(data.length === 1 && data[0].usertype === 'admin')) {
