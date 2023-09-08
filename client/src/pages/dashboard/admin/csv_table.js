@@ -18,7 +18,7 @@ const CSVTable = (props) => {
     const [postableData, setPostableData] = React.useState(null)
     const [lastPostStatus, setLastPostStatus] = React.useState(null)
     const [hasHeader, setHasHeader] = React.useState(false)
-    const [meetsPostConditions, setMeetsPostConditions] = React.useState(false)
+    const [meetsPostConditions, setMeetsPostConditions] = React.useState(true)
 
     const postFile = () => {
         setLastPostStatus(null)
@@ -69,7 +69,13 @@ const CSVTable = (props) => {
         // TODO: Add dynamic colour changing 
     }
 
+    /**
+     * Check passed in posting conditions
+     * This is a way for the parent to control whether or not
+     * the file can be posted based on other conditions of the parent
+     */ 
     React.useEffect(() => {
+        console.log("checking post conditions")
         if (props.postConditions) {
             for (const item of props.postConditions) {
                 if (!item) {
