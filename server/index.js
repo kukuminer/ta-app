@@ -239,63 +239,6 @@ RETURNING applicant, course, term;
  */
 
 
-app.post("/api/admin/rofr", (req, res) => {
-    const userId = res.locals.userid
-    const usertype = res.locals.usertype
-    if(usertype !== 'admin') {
-        console.log('unauthorized request!')
-        res.status(403).send('Unauthorized!')
-    }
-
-    db.any('SELECT usertype FROM users WHERE username=$1', userId)
-        .then((data) => {
-            if (!(data.length === 1 && data[0].usertype === 'admin')) {
-                console.log('unauthorized request!')
-                res.status(403).send('Unauthorized!')
-                return
-            }
-
-            const rows = req.body.rows
-
-            db.tx(async t => {
-                let arr = []
-                for (const item of rows) {
-                    const list = item
-                    if (list.length == 3) {
-                        for (var idx in list) {
-                            list[idx] = list[idx].trim()
-                        }
-                        const dbQuery = `
-                            INSERT INTO rightofrefusal (applicant, course, term)
-                            SELECT $1, course.id, term.id 
-                            FROM course, term
-                            WHERE course.code=$2
-                            AND term.term=$3
-                            ON CONFLICT DO NOTHING
-                            RETURNING applicant, course, term;
-                        `
-                        arr.push(t.oneOrNone(dbQuery, list)
-                            .then(data => {
-                                return data
-                            })
-                            .catch(error => {
-                                console.log('error pushing rofr line:', error)
-                                return error
-                            }))
-
-                    }
-                }
-                return t.batch(arr)
-            })
-                .then(data => {
-                    res.status(200).send(data)
-                })
-                .catch(error => {
-                    console.log('error pushing rofr data:', error)
-                    res.status(500).send(error)
-                })
-        })
-})
 
 /**
  * ADMIN ENDPOINT

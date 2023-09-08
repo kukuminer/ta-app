@@ -44,7 +44,128 @@ module.exports = function ({ app, db, pgp }) {
                 res.status(400).send(error)
             })
     })
-    
+
+    /**
+     * Admin ROFR endpoint
+     */
+    app.post("/api/admin/rofr", (req, res) => {
+        const userId = res.locals.userid
+        const usertype = res.locals.usertype
+        console.log(usertype)
+        if (usertype !== 'admin') {
+            console.log('unauthorized request!')
+            res.status(403).send('Unauthorized!')
+        }
+
+        db.any('SELECT usertype FROM users WHERE username=$1', userId)
+            .then((data) => {
+                if (!(data.length === 1 && data[0].usertype === 'admin')) {
+                    console.log('unauthorized request!')
+                    res.status(403).send('Unauthorized!')
+                    return
+                }
+
+                const rows = req.body.rows
+
+                db.tx(async t => {
+                    let arr = []
+                    for (const item of rows) {
+                        const list = item
+                        if (list.length == 3) {
+                            for (var idx in list) {
+                                list[idx] = list[idx].trim()
+                            }
+                            const dbQuery = `
+                                INSERT INTO rightofrefusal (applicant, course, term)
+                                SELECT $1, course.id, term.id 
+                                FROM course, term
+                                WHERE course.code=$2
+                                AND term.term=$3
+                                ON CONFLICT DO NOTHING
+                                RETURNING applicant, course, term;
+                            `
+                            arr.push(t.oneOrNone(dbQuery, list)
+                                .then(data => {
+                                    return data
+                                })
+                                .catch(error => {
+                                    console.log('error pushing rofr line:', error)
+                                    return error
+                                }))
+
+                        }
+                    }
+                    return t.batch(arr)
+                })
+                    .then(data => {
+                        res.status(200).send(data)
+                    })
+                    .catch(error => {
+                        console.log('error pushing rofr data:', error)
+                        res.status(500).send(error)
+                    })
+            })
+    })
+
+    /**
+     * ADMIN ENDPOINT
+     * This endpoint is for admin to upsert to DB via csv. 
+     */
+    app.post("/api/admin/upsert", (req, res) => {
+        const userId = res.locals.userid
+        db.any('SELECT usertype FROM users WHERE username=$1', userId)
+            .then((data) => {
+                if (!(data.length === 1 && data[0].usertype === 'admin')) {
+                    console.log('unauthorized request!')
+                    res.status(403).send('Unauthorized!')
+                    return
+                }
+
+                const tableName = new pgp.helpers.TableName(req.body.tableName)
+                const rows = req.body.rows
+                const constr = req.body.constraints.split(',')
+                const cols = req.body.columns.split(',')
+
+                db.tx(async t => {
+                    let arr = []
+                    for (const item of rows) {
+                        if (item.join(',').length > 0) {
+                            const colSet = new pgp.helpers.ColumnSet(cols, { table: tableName })
+                            var tbl = {}
+                            for (const idx in item) {
+                                tbl[cols[idx]] = item[idx]
+                            }
+
+
+                            const dbQuery = pgp.helpers.insert(tbl, colSet) +
+                                ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
+                                colSet.assignColumns({ from: 'EXCLUDED', skip: constr })
+
+                            arr.push(t.any(dbQuery)
+                                .then(data => {
+                                    return data
+                                })
+                                .catch(error => {
+                                    console.log('error upsert at row: ' + item, error)
+                                })
+                            )
+
+                        }
+                    }
+                    return t.batch(arr)
+                })
+                    .then(data => {
+                        res.status(200).send(data)
+                    })
+                    .catch(error => {
+                        console.log('error upsert:', error)
+                        res.status(500).send(error)
+                    })
+            })
+            .catch((error) => {
+                res.status(400).send(error)
+            })
+    })
 
 
 }
