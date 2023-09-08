@@ -27,10 +27,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-require('./middleware/auth')({app, db, pgp})
-require('./api/applicant')({app, db, pgp})
-require('./api/instructor')({app, db, pgp})
-require('./api/admin')({app, db, pgp})
+require('./middleware/auth')({ app, db, pgp })
+require('./api/applicant')({ app, db, pgp })
+require('./api/instructor')({ app, db, pgp })
+require('./api/admin')({ app, db, pgp })
 
 db.any('SELECT now()', [])
     .then((data) => {
@@ -79,20 +79,19 @@ app.post("/api/user/update", (req, res) => {
         ['username', 'firstname', 'lastname', 'email', 'usertype'],
         { table: 'users' }
     )
+    const postQuery = pgp.helpers.insert(r, colSet) +
+        ' ON CONFLICT ("username") DO UPDATE SET ' +
+        colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
+        ' RETURNING usertype'
 
-            const postQuery = pgp.helpers.insert(r, colSet) +
-                ' ON CONFLICT ("username") DO UPDATE SET ' +
-                colSet.assignColumns({ from: 'EXCLUDED', skip: 'username' }) +
-                ' RETURNING usertype'
-
-            db.any(postQuery)
-                .then((data) => {
-                    res.status(200).json(data)
-                })
-                .catch((error) => {
-                    console.log(error)
-                    res.status(500).send(error)
-                })
+    db.any(postQuery)
+        .then((data) => {
+            res.status(200).json(data)
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(500).send(error)
+        })
 })
 
 /**
