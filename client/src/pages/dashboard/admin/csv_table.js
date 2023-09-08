@@ -75,7 +75,6 @@ const CSVTable = (props) => {
      * the file can be posted based on other conditions of the parent
      */ 
     React.useEffect(() => {
-        console.log("checking post conditions")
         if (props.postConditions) {
             for (const item of props.postConditions) {
                 if (!item) {
