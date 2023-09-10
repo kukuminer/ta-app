@@ -24,7 +24,7 @@ module.exports = function ({app, db}) {
     // REFACTOR ENDPOINTS, THEN SWITCH TO THIS: (and remove the following 3 middleware)
 
     app.use("/api/:usertype", async (req, res, next) => {
-        console.log(req.originalUrl)
+        // console.log(req.originalUrl)
         if(!USERTYPES.includes(req.params.usertype) || 
             res.locals.usertype === req.params.usertype) {
             next()
