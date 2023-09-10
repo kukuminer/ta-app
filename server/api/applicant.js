@@ -63,7 +63,6 @@ module.exports = function ({ app, db, pgp }) {
      * Gets right of first refusal table info 
      */
     app.get("/api/applicant/refusal/:term", (req, res) => {
-        console.log(res.locals.userid)
         const userId = res.locals.userid
         const term = req.params.term
         const dbQuery = `
