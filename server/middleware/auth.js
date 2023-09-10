@@ -1,5 +1,6 @@
 const getUser = require("../getUser").getUser
 
+const USERTYPES = ["applicant", "instructor", "admin"]
 
 module.exports = function ({app, db}) {
     // Set userid 
@@ -22,8 +23,20 @@ module.exports = function ({app, db}) {
 
     // REFACTOR ENDPOINTS, THEN SWITCH TO THIS: (and remove the following 3 middleware)
 
-    // app.use("/api/:usertype", async (req, res, next) => {
-    //     if(res.locals.usertype === req.params.usertype) {
+    app.use("/api/:usertype", async (req, res, next) => {
+        console.log(req.originalUrl)
+        if(!USERTYPES.includes(req.params.usertype) || 
+            res.locals.usertype === req.params.usertype) {
+            next()
+            return
+        }
+        console.log("Forbidden request from", req.socket.remoteAddress)
+        res.status(403).send("You are not allowed to do that")
+    })
+
+
+    // app.use("/api/student", async (req, res, next) => {
+    //     if(res.locals.usertype === 'applicant') {
     //         next()
     //         return
     //     }
@@ -31,31 +44,21 @@ module.exports = function ({app, db}) {
     //     res.status(403).send("You are not allowed to do that")
     // })
 
+    // app.use("/api/professor", async (req, res, next) => {
+    //     if(res.locals.usertype === 'professor') {
+    //         next()
+    //         return
+    //     }
+    //     console.log("Forbidden request from", req.socket.remoteAddress)
+    //     res.status(403).send("You are not allowed to do that")
+    // })
 
-    app.use("/api/student", async (req, res, next) => {
-        if(res.locals.usertype === 'applicant') {
-            next()
-            return
-        }
-        console.log("Forbidden request from", req.socket.remoteAddress)
-        res.status(403).send("You are not allowed to do that")
-    })
-
-    app.use("/api/professor", async (req, res, next) => {
-        if(res.locals.usertype === 'professor') {
-            next()
-            return
-        }
-        console.log("Forbidden request from", req.socket.remoteAddress)
-        res.status(403).send("You are not allowed to do that")
-    })
-
-    app.use("/api/admin", async (req, res, next) => {
-        if(res.locals.usertype === 'admin') {
-            next()
-            return
-        }
-        console.log("Forbidden request from", req.socket.remoteAddress)
-        res.status(403).send("You are not allowed to do that")
-    })
+    // app.use("/api/admin", async (req, res, next) => {
+    //     if(res.locals.usertype === 'admin') {
+    //         next()
+    //         return
+    //     }
+    //     console.log("Forbidden request from", req.socket.remoteAddress)
+    //     res.status(403).send("You are not allowed to do that")
+    // })
 }
