@@ -1,7 +1,6 @@
 import React from "react"
 import { useParams } from 'react-router-dom'
 import Header from "../header/header"
-import getUser from "../../getUser"
 import ProfessorSection from "./professor/professor_section"
 import "./section.css"
 
@@ -13,19 +12,18 @@ const components = {
 
 const Section = () => {
     const { sectionId } = useParams()
-    const userId = getUser()
 
     const [userType, setUserType] = React.useState(null);
     const [course, setCourse] = React.useState(null);
     const [letter, setLetter] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/api/usertype/' + userId)
+        fetch('/api/usertype')
             .then((res) => res.json())
             .then((data) => {
                 setUserType(data.usertype)
             })
-    }, [userId])
+    }, [])
 
     React.useEffect(() => {
         fetch('/api/section/' + sectionId)

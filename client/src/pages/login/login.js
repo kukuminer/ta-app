@@ -2,18 +2,17 @@ import "./login.css"
 import React from "react";
 import axios from 'axios'
 import { Navigate } from "react-router-dom"
-import getUser from "../../getUser";
 
 const NO_USER_NAVIGATE = '/profile'
 const DEFAULT_NAVIGATE = '/dashboard'
-const USER_URL = '/api/usertype/'
+const USER_URL = '/api/usertype'
 
 const Login = (props) => {
     const [target, setTarget] = React.useState(props.target ? props.target : DEFAULT_NAVIGATE)
     const [ready, setReady] = React.useState(false)
 
     React.useEffect(() => {
-        const url = USER_URL + getUser()
+        const url = USER_URL
         axios.get(url)
             .then((res) => {
                 console.log(res.data)

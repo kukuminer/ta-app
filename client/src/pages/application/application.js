@@ -1,7 +1,6 @@
 import React from "react"
 import Header from "../header/header"
 import StudentApplication from "./student/student_application"
-import getUser from "../../getUser"
 import "./application.css"
 
 const components = {
@@ -11,17 +10,16 @@ const components = {
 }
 
 const Application = () => {
-    const userId = getUser()
 
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/api/usertype/' + userId)
+        fetch('/api/usertype')
             .then((res) => res.json())
             .then((data) => {
                 setUserType(data.usertype)
             })
-    }, [userId])
+    }, [])
 
 
     return (

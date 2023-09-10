@@ -10,15 +10,15 @@ const Header = () => {
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        axios.get('/api/usertype/' + userId)
+        axios.get('/api/usertype')
             .then((res) => {
                 setUserType(res.data.usertype)
             })
-    }, [userId])
+    }, [])
 
     const logoutHandler = () => {
         localStorage.removeItem('userId')
-        // navigate('/https://passportyork.yorku.ca/ppylogin/ppylogout')
+        navigate('/https://passportyork.yorku.ca/ppylogin/ppylogout')
     }
     const profileHandler = () => {
         navigate('/profile')

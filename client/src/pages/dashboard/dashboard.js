@@ -16,15 +16,14 @@ const components = {
 
 const Dashboard = () => {
     // var user
-    const userId = getUser()
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        axios.get('/api/usertype/' + userId)
+        axios.get('/api/usertype')
             .then((res) => {
                 setUserType(res.data.usertype)
             })
-    }, [userId])
+    }, [])
 
 
     return (
