@@ -15,11 +15,11 @@ module.exports = function ({ app, db, pgp }) {
     section.letter as letter,
     term.term as term,
     section.profid as profid
-FROM section JOIN course ON section.course = course.id
-JOIN term ON section.term = term.id
-JOIN users ON section.profid = users.id
-WHERE profid IN (SELECT id FROM users WHERE username=$1)
-AND term.visible = true
+    FROM section JOIN course ON section.course = course.id
+    JOIN term ON section.term = term.id
+    JOIN users ON section.profid = users.id
+    WHERE profid IN (SELECT id FROM users WHERE username=$1)
+    AND term.visible = true
     `
 
         db.any(dbQuery, [id])
