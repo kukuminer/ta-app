@@ -1,3 +1,7 @@
+.admin-tab-container {
+    margin: 5px;
+}
+
 .profile-banner-header {
     display: flex;
     flex-direction: column;

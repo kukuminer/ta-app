@@ -1,7 +1,6 @@
 import CSVTable from "./csv_table"
 import React from "react"
 // import axios from "axios"
-import getUser from "../../../getUser"
 
 const POST_URL = '/api/admin/rofr'
 
@@ -35,7 +34,6 @@ const ROFRImportTab = () => {
     // }, [])
 
     const postBody = {
-        userId: getUser(),
         rows: null,
     }
 

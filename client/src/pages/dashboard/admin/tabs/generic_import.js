@@ -1,7 +1,7 @@
 import React from "react"
 import axios from "axios"
 import { FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
-import getUser from "../../../getUser"
+import getUser from "../../../../getUser"
 import CSVTable from "./csv_table"
 
 const GET_URL = "/api/admin/tables"
