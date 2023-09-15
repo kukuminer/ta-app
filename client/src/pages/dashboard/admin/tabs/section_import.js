@@ -1,11 +1,15 @@
 import CSVTable from "./csv_table"
 
-const POST_URL = null
+const POST_URL = '/api/admin/section'
 const SectionImportTab = () => {
-    
+    const body = {
+        rows: null,
+        headers: ['Course Code', 'Letter', 'Term', 'Prof PPY User'],
+    }
+
     return (
         <>
-            <CSVTable postURL={POST_URL} />
+            <CSVTable postBody={body} postURL={POST_URL} />
         </>
     )
 }
