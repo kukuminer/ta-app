@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox } from '@mui/material'
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox, TableHead } from '@mui/material'
 import React from 'react'
 import axios from 'axios'
 import Papa from 'papaparse'
@@ -73,7 +73,7 @@ const CSVTable = (props) => {
      * Check passed in posting conditions
      * This is a way for the parent to control whether or not
      * the file can be posted based on other conditions of the parent
-     */ 
+     */
     React.useEffect(() => {
         if (props.postConditions) {
             for (const item of props.postConditions) {
@@ -85,6 +85,20 @@ const CSVTable = (props) => {
             setMeetsPostConditions(true)
         }
     }, [props.postConditions])
+
+    const headers = React.useMemo(() => {
+        if (props.colHeaders) {
+            var headerRow = []
+            for (const [i, item] of Object.entries(props.colHeaders)) {
+                headerRow.push(<TableCell key={i}>{item}</TableCell>)
+            }
+            console.log(headerRow)
+            return <TableHead sx={{background: '#eeeeee'}}>
+                <TableRow key={'header-row'}>{headerRow}</TableRow>
+            </TableHead>
+        }
+        return null
+    }, [props])
 
     return (
         <>
@@ -113,7 +127,7 @@ const CSVTable = (props) => {
                 </p>
             </div>
             <div className='has-header-check'>
-                Has header?
+                Ignore first row?
                 <Checkbox
                     id={"has-header-checkbox"}
                     checked={hasHeader}
@@ -127,8 +141,9 @@ const CSVTable = (props) => {
             <div className="admin-table">
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="data-table">
+                        {headers}
                         <TableBody>
-                            {uploadedData ? uploadedData : <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
+                            {uploadedData ?? <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </TableContainer>

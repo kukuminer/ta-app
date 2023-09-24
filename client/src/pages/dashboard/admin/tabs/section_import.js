@@ -4,12 +4,12 @@ const POST_URL = '/api/admin/section'
 const SectionImportTab = () => {
     const body = {
         rows: null,
-        headers: ['Course Code', 'Letter', 'Term', 'Prof PPY User'],
     }
+    const colHeaders = ['Course Code', 'Letter', 'Term', 'Prof PPY User']
 
     return (
         <>
-            <CSVTable postBody={body} postURL={POST_URL} />
+            <CSVTable postBody={body} postURL={POST_URL} colHeaders={colHeaders} />
         </>
     )
 }
