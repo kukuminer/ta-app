@@ -5,34 +5,9 @@ import React from "react"
 const POST_URL = '/api/admin/rofr'
 
 const ROFRImportTab = () => {
-    // Send a function to child componenet (csvreader) and have it run when
-    // csv reader finishes
-    function postFile(data) {
-        console.log(data)
-        // const body = {
-        //     userId: getUser(),
-        //     tableName: selectedTable,
-        //     rows: postableData,
-        //     columns: keysToUpdate,
-        //     constraints: constraints,
-        // }
-        // axios.post(POST_URL, body)
-        //     .then((res) => {
-        //         setLastPostStatus(res.status + ' OK')
-        //     })
-        //     .catch((error) => {
-        //         setLastPostStatus('Error, see console log')
-        //         console.log('error posting:', error)
-        //     })
-
-    }
-
-    // const [state, setState] = React.useState(null)
-
-    // const setStateFromChild = React.useCallback((newState) => {
-    //     setState(newState)
-    // }, [])
-
+    const colHeaders = [
+        "Student Num", "Course Code", "Term Name"
+    ]
     const postBody = {
         rows: null,
     }
@@ -40,7 +15,7 @@ const ROFRImportTab = () => {
     return (
         <>
 
-            <CSVTable postFile={postFile} postBody={postBody} postURL={POST_URL} />
+            <CSVTable colHeaders={colHeaders} postBody={postBody} postURL={POST_URL} />
         </>
     )
 }
