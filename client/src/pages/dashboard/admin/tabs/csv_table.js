@@ -1,7 +1,17 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox, TableHead } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import React from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import Papa from 'papaparse'
+
+const CustomTablerow = styled(TableRow, {
+    shouldForwardProp: (prop) => prop !== 'shaded',
+})(({ shaded }) => ({
+    ...(shaded && {
+        backgroundColor: '#eeeeee'
+    })
+}))
 
 /**
  * 
@@ -14,18 +24,19 @@ import Papa from 'papaparse'
  */
 const CSVTable = (props) => {
 
-    const [uploadedData, setUploadedData] = React.useState(null)
-    const [postableData, setPostableData] = React.useState(null)
-    const [lastPostStatus, setLastPostStatus] = React.useState(null)
-    const [hasHeader, setHasHeader] = React.useState(false)
-    const [meetsPostConditions, setMeetsPostConditions] = React.useState(true)
+    const [file, setFile] = useState(null)
+    const [lastPostStatus, setLastPostStatus] = useState(null)
+    const [skipFirst, setSkipFirst] = useState(false)
+    const [meetsPostConditions, setMeetsPostConditions] = useState(true)
 
     const postFile = () => {
         setLastPostStatus(null)
         const body = props.postBody
-        body.rows = hasHeader ? postableData.slice(1) : postableData
+        body.rows = skipFirst ? file.slice(1) : file
         axios.post(props.postURL, body)
             .then((res) => {
+                console.log(file)
+                console.log(res.data)
                 setLastPostStatus(res.status + ' OK')
             })
             .catch((error) => {
@@ -36,37 +47,35 @@ const CSVTable = (props) => {
 
     const handleFile = (event) => {
         const file = event.target.files[0]
-        // console.log(file)
-        formatData(file)
-    }
-
-
-    const formatData = (file) => {
         if (file) {
             Papa.parse(file, {
                 skipEmptyLines: true,
-                complete: function (results) {
-                    console.log("Finished:", results.data);
-                    setPostableData(results.data)
-                    var newData = []
-                    for (const [idx, row] of Object.entries(results.data)) {
-                        var newRow = []
-                        for (const [j, item] of Object.entries(row)) {
-                            newRow.push(<TableCell key={j}>{item}</TableCell>)
-                        }
-                        newData.push(<TableRow key={idx}>{newRow}</TableRow>)
-                    }
-                    setUploadedData(newData)
+                complete: (results) => {
+                    setFile(results.data)
                 }
             })
         }
     }
 
+    /**
+     * The rows displayed in the table
+     */
+    const tableRows = useMemo(() => {
+        if (file) {
+            var newData = []
+            for (const [idx, row] of Object.entries(file)) {
+                var newRow = []
+                for (const [j, item] of Object.entries(row)) {
+                    newRow.push(<TableCell key={j}>{item}</TableCell>)
+                }
+                newData.push(<CustomTablerow shaded={skipFirst && parseInt(idx) === 0} key={idx}>{newRow}</CustomTablerow>)
+            }
+            return newData
+        }
+    }, [file, skipFirst])
+
     const handleCheck = (e) => {
-        setHasHeader(!hasHeader)
-        // uploadedData[0].props.sx = {background: '#DDDDDD'}
-        // console.log(uploadedData[0].props.sx)
-        // TODO: Add dynamic colour changing 
+        setSkipFirst(!skipFirst)
     }
 
     /**
@@ -74,7 +83,7 @@ const CSVTable = (props) => {
      * This is a way for the parent to control whether or not
      * the file can be posted based on other conditions of the parent
      */
-    React.useEffect(() => {
+    useEffect(() => {
         if (props.postConditions) {
             for (const item of props.postConditions) {
                 if (!item) {
@@ -86,14 +95,13 @@ const CSVTable = (props) => {
         }
     }, [props.postConditions])
 
-    const headers = React.useMemo(() => {
+    const headers = useMemo(() => {
         if (props.colHeaders) {
             var headerRow = []
             for (const [i, item] of Object.entries(props.colHeaders)) {
                 headerRow.push(<TableCell key={i}>{item}</TableCell>)
             }
-            console.log(headerRow)
-            return <TableHead sx={{background: '#eeeeee'}}>
+            return <TableHead sx={{ background: '#eeeeee' }}>
                 <TableRow key={'header-row'}>{headerRow}</TableRow>
             </TableHead>
         }
@@ -118,7 +126,7 @@ const CSVTable = (props) => {
                     onClick={postFile}
                     sx={{ margin: '0 1em' }}
                     color="secondary"
-                    disabled={!(postableData && uploadedData && meetsPostConditions)}
+                    disabled={!(file && tableRows && meetsPostConditions)}
                 >
                     POST to DB
                 </Button>
@@ -130,7 +138,7 @@ const CSVTable = (props) => {
                 Ignore first row?
                 <Checkbox
                     id={"has-header-checkbox"}
-                    checked={hasHeader}
+                    checked={skipFirst}
                     onClick={handleCheck}
                     inputProps={{ 'aria-label': 'controlled' }}
                 />
@@ -143,7 +151,7 @@ const CSVTable = (props) => {
                     <Table size="small" aria-label="data-table">
                         {headers}
                         <TableBody>
-                            {uploadedData ?? <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
+                            {tableRows ?? <TableRow><TableCell>Please upload a file</TableCell></TableRow>}
                         </TableBody>
                     </Table>
                 </TableContainer>
