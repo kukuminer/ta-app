@@ -4,12 +4,14 @@ import React from 'react'
 import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import Papa from 'papaparse'
+// import { grey } from '@mui/material/colors'
+import { LIGHT_GRAY, LIGHT_GREEN, LIGHT_RED, LIGHT_YELLOW } from '../../../../color'
 
 const CustomTablerow = styled(TableRow, {
-    shouldForwardProp: (prop) => prop !== 'shaded',
-})(({ shaded }) => ({
-    ...(shaded && {
-        backgroundColor: '#eeeeee'
+    shouldForwardProp: (prop) => prop !== 'color',
+})(({ color }) => ({
+    ...(color && {
+        backgroundColor: color
     })
 }))
 
@@ -28,15 +30,15 @@ const CSVTable = (props) => {
     const [lastPostStatus, setLastPostStatus] = useState(null)
     const [skipFirst, setSkipFirst] = useState(false)
     const [meetsPostConditions, setMeetsPostConditions] = useState(true)
+    const [postResults, setPostResults] = useState(null)
 
     const postFile = () => {
-        setLastPostStatus(null)
+        setLastPostStatus('Loading...')
         const body = props.postBody
         body.rows = skipFirst ? file.slice(1) : file
         axios.post(props.postURL, body)
             .then((res) => {
-                console.log(file)
-                console.log(res.data)
+                setPostResults(res.data)
                 setLastPostStatus(res.status + ' OK')
             })
             .catch((error) => {
@@ -68,11 +70,26 @@ const CSVTable = (props) => {
                 for (const [j, item] of Object.entries(row)) {
                     newRow.push(<TableCell key={j}>{item}</TableCell>)
                 }
-                newData.push(<CustomTablerow shaded={skipFirst && parseInt(idx) === 0} key={idx}>{newRow}</CustomTablerow>)
+                var color = null
+                if (skipFirst && parseInt(idx) === 0) {
+                    color = LIGHT_GRAY
+                    newRow.push(<TableCell key={'status'}></TableCell>)
+                }
+                else if (postResults) {
+                    const item = postResults[idx]
+                    switch (item.status) {
+                        case 'success': color = LIGHT_GREEN; break
+                        case 'fail': color = LIGHT_RED; break
+                        case 'conflict': color = LIGHT_YELLOW; break
+                        default: color = null
+                    }
+                    newRow.push(<TableCell key={'status'}>{item.data}</TableCell>)
+                }
+                newData.push(<CustomTablerow color={color} key={idx}>{newRow}</CustomTablerow>)
             }
             return newData
         }
-    }, [file, skipFirst])
+    }, [file, skipFirst, postResults])
 
     const handleCheck = (e) => {
         setSkipFirst(!skipFirst)
@@ -101,12 +118,15 @@ const CSVTable = (props) => {
             for (const [i, item] of Object.entries(props.colHeaders)) {
                 headerRow.push(<TableCell key={i}>{item}</TableCell>)
             }
+            if(postResults) {
+                headerRow.push(<TableCell key={'status'}>Post Status</TableCell>)
+            }
             return <TableHead sx={{ background: '#eeeeee' }}>
                 <TableRow key={'header-row'}>{headerRow}</TableRow>
             </TableHead>
         }
         return null
-    }, [props])
+    }, [props, postResults])
 
     return (
         <>
