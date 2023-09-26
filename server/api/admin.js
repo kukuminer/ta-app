@@ -1,3 +1,5 @@
+const async = require('async')
+
 module.exports = function ({ app, db, pgp }) {
 
 
@@ -47,13 +49,19 @@ module.exports = function ({ app, db, pgp }) {
 
     app.post("/api/admin/section", (req, res) => {
         const rows = req.body.rows
-        db.tx(async t => {
-            let arr = []
-            for (const item of rows) {
-                const list = item
-                console.log(list)
+
+        async.mapSeries(rows, async (row) => {
+            // console.log(row)
+            return db.tx(async t => {
+                const code = await t.oneOrNone('SELECT id FROM course WHERE code=$1', row)
+                if (!code) return { 'status': 'fail', 'data': 'No such course code' }
+                const term = await t.oneOrNone('SELECT id FROM term WHERE term=$3', row)
+                if (!term) return { 'status': 'fail', 'data': 'No such term' }
+                const instructor = await t.oneOrNone("SELECT id FROM users WHERE username=$4 AND usertype='instructor'", row)
+                if (!instructor) return { 'status': 'fail', 'data': 'No such instructor' }
+
+                // WITH inserted AS (
                 const dbQuery = `
-                WITH inserted AS (
                     INSERT INTO section (course, letter, term, profid)
                     SELECT course.id, $2, term.id, users.id
                     FROM course, term, users
@@ -62,34 +70,85 @@ module.exports = function ({ app, db, pgp }) {
                     AND users.username = $4
                     AND users.usertype = 'instructor'
                     ON CONFLICT DO NOTHING
-                    RETURNING *
-                )
-                SELECT course.code, inserted.letter
-                FROM inserted
-                INNER JOIN course 
-                ON inserted.course = course.id
-                `
+                    RETURNING 'success' as status
+                    `
+                // )
+                // SELECT course.code, inserted.letter, term.term, users.username
+                // FROM inserted
+                // INNER JOIN course 
+                // ON inserted.course = course.id
+                // INNER JOIN term
+                // ON inserted.term = term.id
+                // INNER JOIN users
+                // ON inserted.profid = users.id
 
-                arr.push(t.oneOrNone(dbQuery, list)
-                    .then(data => {
-                        return data
-                    })
-                    .catch(error => {
-                        console.log('error pushing section line:', error)
-                        return error
-                    })
-                )
-            }
-            return t.batch(arr)
+                const ret = await t.oneOrNone(dbQuery, row)
+                return ret ?? { 'status': 'conflict', 'data': 'Conflict with existing entry' }
+            })
         })
-        .then(data => {
-            console.log(data)
-            res.status(200).send(data)
-        })
-        .catch(error => {
-            console.log('error pushing section data:', error)
-            res.status(500).send(error)
-        })
+            .then(data => {
+                res.status(200).send(data)
+            })
+            .catch(error => {
+                console.log('error pushing section data:', error)
+                res.status(500).send(error)
+            })
+
+        // db.tx(async t => {
+        //     let arr = []
+        //     for (const item of rows) {
+        //         const list = item
+        //         // console.log(list)
+        //         const dbQuery = `
+        //         WITH inserted AS (
+        //             INSERT INTO section (course, letter, term, profid)
+        //             SELECT course.id, $2, term.id, users.id
+        //             FROM course, term, users
+        //             WHERE course.code = $1
+        //             AND term.term = $3
+        //             AND users.username = $4
+        //             AND users.usertype = 'instructor'
+        //             ON CONFLICT DO NOTHING
+        //             RETURNING *
+        //         )
+        //         SELECT course.code, inserted.letter, term.term, users.username
+        //         FROM inserted
+        //         INNER JOIN course 
+        //         ON inserted.course = course.id
+        //         INNER JOIN term
+        //         ON inserted.term = term.id
+        //         INNER JOIN users
+        //         ON inserted.profid = users.id
+        //         `
+        //         const codeQuery = 'SELECT id FROM course WHERE code=$1'
+        //         const code = await t.oneOrNone(codeQuery, list)
+        //         // console.log(code)
+        //         // term, prof user
+        //         if(!!code ) {
+        //             arr.push(t.oneOrNone(dbQuery, list))
+        //         }
+
+        //         arr.push(t.oneOrNone(dbQuery, list)
+        //             .then(data => {
+        //                 if(!data)
+        //                 return data
+        //             })
+        //             .catch(error => {
+        //                 console.log('error pushing section line:', error)
+        //                 return error
+        //             })
+        //         )
+        //     }
+        //     return t.batch(arr)
+        // })
+        // .then(data => {
+        //     console.log(data)
+        //     res.status(200).send(data)
+        // })
+        // .catch(error => {
+        //     console.log('error pushing section data:', error)
+        //     res.status(500).send(error)
+        // })
     })
 
     /**
