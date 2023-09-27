@@ -70,7 +70,7 @@ module.exports = function ({ app, db, pgp }) {
                     AND users.username = $4
                     AND users.usertype = 'instructor'
                     ON CONFLICT DO NOTHING
-                    RETURNING 'success' as status
+                    RETURNING 'success' as status, 'Success' as data
                     `
                 // )
                 // SELECT course.code, inserted.letter, term.term, users.username
@@ -87,7 +87,7 @@ module.exports = function ({ app, db, pgp }) {
             })
         })
             .then(data => {
-                res.status(200).send(data)
+                res.status(200).json({success: true, data: data})
             })
             .catch(error => {
                 console.log('error pushing section data:', error)

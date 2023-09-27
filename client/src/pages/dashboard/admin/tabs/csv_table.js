@@ -38,7 +38,7 @@ const CSVTable = (props) => {
         body.rows = skipFirst ? file.slice(1) : file
         axios.post(props.postURL, body)
             .then((res) => {
-                setPostResults(res.data)
+                if (res.data?.success) setPostResults(res.data?.data)
                 setLastPostStatus(res.status + ' OK')
             })
             .catch((error) => {
@@ -54,6 +54,7 @@ const CSVTable = (props) => {
                 skipEmptyLines: true,
                 complete: (results) => {
                     setFile(results.data)
+                    setPostResults(null)
                 }
             })
         }
@@ -67,15 +68,18 @@ const CSVTable = (props) => {
             var newData = []
             for (const [idx, row] of Object.entries(file)) {
                 var newRow = []
+                // Get content from file
                 for (const [j, item] of Object.entries(row)) {
                     newRow.push(<TableCell key={j}>{item}</TableCell>)
                 }
+                // Determine the color, based on post feedback:
                 var color = null
                 if (skipFirst && parseInt(idx) === 0) {
                     color = LIGHT_GRAY
-                    newRow.push(<TableCell key={'status'}></TableCell>)
+                    !!postResults && newRow.push(<TableCell key={'status'}></TableCell>)
                 }
-                else if (postResults) {
+                else if (!!postResults) {
+                    console.log(!!postResults)
                     const item = postResults[idx]
                     switch (item.status) {
                         case 'success': color = LIGHT_GREEN; break
