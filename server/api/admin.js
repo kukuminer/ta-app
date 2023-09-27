@@ -51,7 +51,6 @@ module.exports = function ({ app, db, pgp }) {
         const rows = req.body.rows
 
         async.mapSeries(rows, async (row) => {
-            // console.log(row)
             return db.tx(async t => {
                 const code = await t.oneOrNone('SELECT id FROM course WHERE code=$1', row)
                 if (!code) return { 'status': 'fail', 'data': 'No such course code' }
@@ -60,7 +59,6 @@ module.exports = function ({ app, db, pgp }) {
                 const instructor = await t.oneOrNone("SELECT id FROM users WHERE username=$4 AND usertype='instructor'", row)
                 if (!instructor) return { 'status': 'fail', 'data': 'No such instructor' }
 
-                // WITH inserted AS (
                 const dbQuery = `
                     INSERT INTO section (course, letter, term, profid)
                     SELECT course.id, $2, term.id, users.id
@@ -72,16 +70,6 @@ module.exports = function ({ app, db, pgp }) {
                     ON CONFLICT DO NOTHING
                     RETURNING 'success' as status, 'Success' as data
                     `
-                // )
-                // SELECT course.code, inserted.letter, term.term, users.username
-                // FROM inserted
-                // INNER JOIN course 
-                // ON inserted.course = course.id
-                // INNER JOIN term
-                // ON inserted.term = term.id
-                // INNER JOIN users
-                // ON inserted.profid = users.id
-
                 const ret = await t.oneOrNone(dbQuery, row)
                 return ret ?? { 'status': 'conflict', 'data': 'Conflict with existing entry' }
             })
