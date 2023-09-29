@@ -219,20 +219,49 @@ module.exports = function ({ app, db, pgp }) {
      * This endpoint is for admin to upsert to DB via csv. 
      */
     app.post("/api/admin/upsert", (req, res) => {
-        const userId = res.locals.userid
-        // db.any('SELECT usertype FROM users WHERE username=$1', userId)
-        //     .then((data) => {
-        //         if (!(data.length === 1 && data[0].usertype === 'admin')) {
-        //             console.log('unauthorized request!')
-        //             res.status(403).send('Unauthorized!')
-        //             return
-        //         }
+        console.log(req.body)
 
         const tableName = new pgp.helpers.TableName(req.body.tableName)
         const rows = req.body.rows
         const constr = req.body.constraints.split(',')
         const cols = req.body.columns.split(',')
+        const colSet = new pgp.helpers.ColumnSet(cols, { table: tableName })
 
+        async.mapSeries(rows, async (row) => {
+            if (row.join(',').length > 0) {
+                var tbl = {}
+                for (const idx in row) {
+                    tbl[cols[idx]] = row[idx]
+                }
+
+                const dbQuery = pgp.helpers.insert(tbl, colSet) +
+                    ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
+                    colSet.assignColumns({ from: 'EXCLUDED', skip: constr }) +
+                    " RETURNING 'success' as status, 'Upserted' as data"
+
+                console.log(dbQuery)
+
+                return db.tx(async t => {
+                    try {
+                        return await t.oneOrNone(dbQuery)
+                    }
+                    catch {
+                        return { 'status': 'fail', 'data': 'Unable to insert' }
+                    }
+                })
+
+            }
+        })
+            .then(data => {
+                console.log(data)
+                res.status(200).json({ success: true, data: data })
+            })
+            .catch(error => {
+                console.log('error upsert', error)
+                res.status(500).send(error)
+            })
+
+        return
         db.tx(async t => {
             let arr = []
             for (const item of rows) {
