@@ -123,3 +123,11 @@ Sep 1:
 - Section import for new sections, like ROFR import- match by db IDs
 -- match the following:
 -- courseid by code, letter, termid by term name, profid by prof username
+
+Sep 29:
+- bug fix for ignore first row
+- export tab 
+- show instructors who is unit 1 and unit 2 
+- show instructors the applicant seniority for unit 2 (everybody else)
+-- implement seniority
+- fix up wording (during meeting)
