@@ -38,7 +38,9 @@ const CSVTable = (props) => {
         body.rows = skipFirst ? file.slice(1) : file
         axios.post(props.postURL, body)
             .then((res) => {
-                if (res.data?.success) setPostResults(res.data?.data)
+                if (res.data?.success) {
+                    setPostResults(res.data?.data)
+                }
                 setLastPostStatus(res.status + ' OK')
             })
             .catch((error) => {
@@ -76,18 +78,17 @@ const CSVTable = (props) => {
                 var color = null
                 if (skipFirst && parseInt(idx) === 0) {
                     color = LIGHT_GRAY
-                    !!postResults && newRow.push(<TableCell key={'status'}></TableCell>)
+                    postResults && newRow.push(<TableCell key={'status'}></TableCell>)
                 }
-                else if (!!postResults) {
-                    console.log(!!postResults)
-                    const item = postResults[idx]
-                    switch (item.status) {
+                else if (postResults) {
+                    const item = postResults[idx - file.length + postResults.length]
+                    switch (item?.status) {
                         case 'success': color = LIGHT_GREEN; break
                         case 'fail': color = LIGHT_RED; break
                         case 'conflict': color = LIGHT_YELLOW; break
                         default: color = null
                     }
-                    newRow.push(<TableCell key={'status'}>{item.data}</TableCell>)
+                    newRow.push(<TableCell key={'status'}>{item?.data}</TableCell>)
                 }
                 newData.push(<CustomTablerow color={color} key={idx}>{newRow}</CustomTablerow>)
             }
@@ -122,7 +123,7 @@ const CSVTable = (props) => {
             for (const [i, item] of Object.entries(props.colHeaders)) {
                 headerRow.push(<TableCell key={i}>{item}</TableCell>)
             }
-            if(postResults) {
+            if (postResults) {
                 headerRow.push(<TableCell key={'status'}>Post Status</TableCell>)
             }
             return <TableHead sx={{ background: '#eeeeee' }}>

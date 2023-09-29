@@ -235,25 +235,23 @@ module.exports = function ({ app, db, pgp }) {
                 }
 
                 const dbQuery = pgp.helpers.insert(tbl, colSet) +
+                    // " RETURNING 'success' as status, 'Inserted' as data" + 
                     ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
                     colSet.assignColumns({ from: 'EXCLUDED', skip: constr }) +
-                    " RETURNING 'success' as status, 'Upserted' as data"
-
-                console.log(dbQuery)
+                    " RETURNING 'success' as status, 'Inserted/Updated' as data"
 
                 return db.tx(async t => {
                     try {
                         return await t.oneOrNone(dbQuery)
                     }
-                    catch {
-                        return { 'status': 'fail', 'data': 'Unable to insert' }
+                    catch (err) {
+                        return { 'status': 'fail', 'data': err.message }
                     }
                 })
 
             }
         })
             .then(data => {
-                console.log(data)
                 res.status(200).json({ success: true, data: data })
             })
             .catch(error => {
