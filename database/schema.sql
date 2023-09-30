@@ -33,6 +33,7 @@ CREATE TABLE applicant (
     studentNum varchar(9),
     employeeId varchar(9),
     pool pool,
+    -- seniority,
 
     PRIMARY KEY (id),
     UNIQUE (studentNum),
