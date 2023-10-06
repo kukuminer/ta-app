@@ -3,7 +3,6 @@ import React from 'react'
 import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import Papa from 'papaparse'
-// import { grey } from '@mui/material/colors'
 import { LIGHT_GRAY, LIGHT_GREEN, LIGHT_RED, LIGHT_YELLOW } from '../../../../color'
 
 import CustomTablerow from '../../../components/color_table_row'
