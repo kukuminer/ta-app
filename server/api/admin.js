@@ -53,7 +53,6 @@ module.exports = function ({ app, db, pgp }) {
 
         db.any(dbQuery)
             .then(data => {
-                console.log(data)
                 res.send(data)
             })
             .catch(error => {
