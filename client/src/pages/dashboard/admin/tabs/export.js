@@ -1,7 +1,9 @@
-import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material"
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState, useMemo } from "react"
 import Papa from 'papaparse'
+import CustomTablerow from "../../../components/color_table_row"
+import { LIGHT_GRAY } from "../../../../color"
 
 const GET_URL = "/api/admin/tables"
 const GET_DATA_URL = "/api/admin/table/export/" //+tablename
@@ -37,7 +39,7 @@ const ExportTab = () => {
     }
 
     const downloadLink = useMemo(() => {
-        if(!csv) return null
+        if (!csv) return null
         const data = new Blob([csv.data], { type: 'text/csv;charset=utf-8;' })
         const url = window.URL.createObjectURL(data)
         const link = document.createElement('a')
@@ -47,13 +49,9 @@ const ExportTab = () => {
     }, [csv])
 
     const tableData = useMemo(() => {
-        if(!csv) return null
+        if (!csv) return null
         const res = Papa.parse(csv.data)
-        console.log(res.data)
-        // const rows = csv.data.split('\n')
-        // for(const [idx, row] of Object.entries(rows)) {
-        //     console.log(idx, row.trim().split(','))
-        // }
+        return res.data
     }, [csv])
 
     return <>
@@ -87,10 +85,36 @@ const ExportTab = () => {
         <div className="admin-table">
             <TableContainer component={Paper}>
                 <Table size="small">
-                    {/* {headers} */}
+                    <TableHead>
+                        {
+                            tableData?.slice(0, 1).map((cols, i) =>
+                                <CustomTablerow key={i} color={LIGHT_GRAY}>
+                                    {cols.map((val, j) =>
+                                        <TableCell key={j}>{val}</TableCell>
+                                    )}
+                                </CustomTablerow>
+                            )}
+                    </TableHead>
                     <TableBody>
-                        <TableRow><TableCell>Please select a table</TableCell></TableRow>
+                        {
+                            tableData?.slice(1).map((cols, i) =>
+                                <TableRow key={i}>
+                                    {cols.map((val, j) =>
+                                        <TableCell key={j}>{val}</TableCell>
+                                    )}
+                                </TableRow>
+                            )
+                            ??
+                            <TableRow><TableCell>Please select a table</TableCell></TableRow>
+                        }
                     </TableBody>
+                    {/* {tableData ? tableData.head :
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Please select a table</TableCell>
+                            </TableRow>
+                        </TableHead>
+                    } */}
                 </Table>
 
             </TableContainer>
