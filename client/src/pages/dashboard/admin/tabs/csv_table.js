@@ -1,5 +1,4 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow, Button, Checkbox, TableHead } from '@mui/material'
-import { styled } from '@mui/material/styles'
 import React from 'react'
 import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
@@ -7,13 +6,7 @@ import Papa from 'papaparse'
 // import { grey } from '@mui/material/colors'
 import { LIGHT_GRAY, LIGHT_GREEN, LIGHT_RED, LIGHT_YELLOW } from '../../../../color'
 
-const CustomTablerow = styled(TableRow, {
-    shouldForwardProp: (prop) => prop !== 'color',
-})(({ color }) => ({
-    ...(color && {
-        backgroundColor: color
-    })
-}))
+import CustomTablerow from '../../../components/color_table_row'
 
 /**
  * 
