@@ -1,13 +1,17 @@
 import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material"
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
+import Papa from 'papaparse'
 
 const GET_URL = "/api/admin/tables"
+const GET_DATA_URL = "/api/admin/table/export/" //+tablename
 
 
 const ExportTab = () => {
     const [selectedTable, setSelected] = useState(null)
     const [tables, setTables] = useState(null)
+    // const [tableData, setTableData] = useState(null)
+    const [csv, setCSV] = useState(null)
 
     useEffect(() => {
         load()
@@ -22,9 +26,35 @@ const ExportTab = () => {
         }
     }, [])
 
-    function handleChange(event) {
-        setSelected(tables ? event.target.value : '')
+    async function handleChange(event) {
+        const newValue = tables ? event.target.value : ''
+        setSelected(newValue)
+        if (newValue) {
+            const res = await axios.get(GET_DATA_URL + newValue)
+            const csv = Papa.unparse(res.data)
+            setCSV({ tablename: newValue, data: csv })
+        }
     }
+
+    const downloadLink = useMemo(() => {
+        if(!csv) return null
+        const data = new Blob([csv.data], { type: 'text/csv;charset=utf-8;' })
+        const url = window.URL.createObjectURL(data)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', csv.tablename + '.csv')
+        return link
+    }, [csv])
+
+    const tableData = useMemo(() => {
+        if(!csv) return null
+        const res = Papa.parse(csv.data)
+        console.log(res.data)
+        // const rows = csv.data.split('\n')
+        // for(const [idx, row] of Object.entries(rows)) {
+        //     console.log(idx, row.trim().split(','))
+        // }
+    }, [csv])
 
     return <>
         <FormControl
@@ -49,8 +79,8 @@ const ExportTab = () => {
         <Button
             variant="contained"
             component="label"
-            onClick={console.log("hello")}
-            disabled={!selectedTable}
+            onClick={() => downloadLink.click()}
+            disabled={!downloadLink}
         >
             Download
         </Button>
