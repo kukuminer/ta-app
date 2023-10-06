@@ -7,16 +7,18 @@ import Tab from '@mui/material/Tab'
 import GenericImportTab from './tabs/generic_import';
 import ROFRImportTab from './tabs/rofr_import';
 import SectionImportTab from './tabs/section_import';
+import ExportTab from './tabs/export';
 // import TabPanel from '@mui/material/TabPanel'
 
 const PANELS = {
-    '1': <GenericImportTab />,
-    '2': <ROFRImportTab />,
+    1: <GenericImportTab />,
+    2: <ROFRImportTab />,
     3: <SectionImportTab />,
+    4: <ExportTab />,
 }
 
 const AdminDash = () => {
-    const [value, setValue] = React.useState('1')
+    const [value, setValue] = React.useState(1)
 
     const handleChange = (event, newValue) => {
         setValue(newValue)
@@ -31,10 +33,10 @@ const AdminDash = () => {
                 indicatorColor="secondary"
                 className='admin-tab-container'
             >
-                <Tab value="1" label="Generic Import" />
-                <Tab value="2" label="ROFR Import" />
+                <Tab value={1} label="Generic Import" />
+                <Tab value={2} label="ROFR Import" />
                 <Tab value={3} label="Section Import" />
-                <Tab value="4" label="Export" />
+                <Tab value={4} label="Export" />
             </Tabs>
             {PANELS[value]}
         </>
