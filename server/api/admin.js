@@ -43,7 +43,22 @@ module.exports = function ({ app, db, pgp }) {
             })
             .catch((error) => {
                 console.log('error fetching table info for table:', tableName)
-                res.status(400).send(error)
+                res.status(500).send(error)
+            })
+    })
+
+    app.get("/api/admin/table/export/:tableName", (req, res) => {
+        const tableName = req.params.tableName
+        const dbQuery = 'SELECT * FROM ' + tableName
+
+        db.any(dbQuery)
+            .then(data => {
+                console.log(data)
+                res.send(data)
+            })
+            .catch(error => {
+                console.log('error fetching table data for table:', tableName)
+                res.status(500).send(error)
             })
     })
 
@@ -259,42 +274,42 @@ module.exports = function ({ app, db, pgp }) {
                 res.status(500).send(error)
             })
 
-        return
-        db.tx(async t => {
-            let arr = []
-            for (const item of rows) {
-                if (item.join(',').length > 0) {
-                    const colSet = new pgp.helpers.ColumnSet(cols, { table: tableName })
-                    var tbl = {}
-                    for (const idx in item) {
-                        tbl[cols[idx]] = item[idx]
-                    }
+        // return
+        // db.tx(async t => {
+        //     let arr = []
+        //     for (const item of rows) {
+        //         if (item.join(',').length > 0) {
+        //             const colSet = new pgp.helpers.ColumnSet(cols, { table: tableName })
+        //             var tbl = {}
+        //             for (const idx in item) {
+        //                 tbl[cols[idx]] = item[idx]
+        //             }
 
 
-                    const dbQuery = pgp.helpers.insert(tbl, colSet) +
-                        ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
-                        colSet.assignColumns({ from: 'EXCLUDED', skip: constr })
+        //             const dbQuery = pgp.helpers.insert(tbl, colSet) +
+        //                 ' ON CONFLICT (' + constr + ') DO UPDATE SET ' +
+        //                 colSet.assignColumns({ from: 'EXCLUDED', skip: constr })
 
-                    arr.push(t.any(dbQuery)
-                        .then(data => {
-                            return data
-                        })
-                        .catch(error => {
-                            console.log('error upsert at row: ' + item, error)
-                        })
-                    )
+        //             arr.push(t.any(dbQuery)
+        //                 .then(data => {
+        //                     return data
+        //                 })
+        //                 .catch(error => {
+        //                     console.log('error upsert at row: ' + item, error)
+        //                 })
+        //             )
 
-                }
-            }
-            return t.batch(arr)
-        })
-            .then(data => {
-                res.status(200).send(data)
-            })
-            .catch(error => {
-                console.log('error upsert:', error)
-                res.status(500).send(error)
-            })
+        //         }
+        //     }
+        //     return t.batch(arr)
+        // })
+        //     .then(data => {
+        //         res.status(200).send(data)
+        //     })
+        //     .catch(error => {
+        //         console.log('error upsert:', error)
+        //         res.status(500).send(error)
+        //     })
     })
     //         .catch((error) => {
     //             res.status(400).send(error)
