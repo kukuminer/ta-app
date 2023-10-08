@@ -7,12 +7,12 @@ import { DataGrid } from '@mui/x-data-grid'
 const GET_URL = '/api/instructor/'
 
 const columns = [
-    { field: 'firstname', headerName: 'Name', width: 100 },
-    { field: 'lastname', headerName: 'Surname', width: 100 },
-    { field: 'interest', headerName: 'Interest', width: 100 },
-    { field: 'qualification', headerName: 'Qualification', width: 100 },
-    { field: 'pref', headerName: 'Preference', width: 100 },
-    { field: 'note', headerName: 'Note', width: 200 },
+    { field: 'firstname', headerName: 'Name', width: 200 },
+    { field: 'lastname', headerName: 'Surname', width: 200 },
+    { field: 'interest', headerName: 'Interest', width: 150 },
+    { field: 'qualification', headerName: 'Qualification', width: 150 },
+    { field: 'pref', headerName: 'Preference', width: 150 },
+    { field: 'note', headerName: 'Note', width: 300, editable: true },
 ]
 
 const loadingRows = [
