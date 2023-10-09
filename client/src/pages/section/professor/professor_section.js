@@ -1,26 +1,38 @@
 import React from "react"
+import { useState } from "react"
 import axios from "axios"
 import { useParams } from 'react-router-dom'
 // import Assignment from "../../components/assignment_row"
-import { DataGrid } from '@mui/x-data-grid'
+// import { DataGrid } from '@mui/x-data-grid'
+import ProfSectionTable from "./section_table"
 
 const GET_URL = '/api/instructor/'
 
-const columns = [
-    { field: 'firstname', headerName: 'Name', width: 200 },
-    { field: 'lastname', headerName: 'Surname', width: 200 },
+const columns: GridColDef[] = [
+    { field: 'firstname', headerName: 'Name', width: 150 },
+    { field: 'lastname', headerName: 'Surname', width: 150 },
     { field: 'interest', headerName: 'Interest', width: 150 },
     { field: 'qualification', headerName: 'Qualification', width: 150 },
-    { field: 'pref', headerName: 'Preference', width: 150 },
+    {
+        field: 'pref',
+        headerName: 'Preference',
+        width: 150,
+        editable: true,
+        type: 'number',
+        align: 'left',
+        headerAlign: 'left',
+    },
     { field: 'note', headerName: 'Note', width: 300, editable: true },
 ]
 
 const loadingRows = [
-    { id: 1, firstname: 'Loading...' },
-];
+    { id: 0, firstname: 'Loading...' },
+]
+
 const ProfessorSection = () => {
     const { sectionId } = useParams()
-    const [tableData, setTableData] = React.useState(null)
+    const [tableData, setTableData] = useState(null)
+    // const [rowSelectionModel, setRowSelectionModel] = useState([])
 
     React.useEffect(() => {
         const url = GET_URL + sectionId
@@ -28,6 +40,7 @@ const ProfessorSection = () => {
             .then((res) => {
                 res.data.forEach((element, idx) => {
                     element.id = idx
+                    element.pref = element.pref ?? 0
                     return element
                 });
                 console.log(res.data)
@@ -37,16 +50,30 @@ const ProfessorSection = () => {
 
     return (
         <>
-            <h2>Applicants:</h2>
-            <DataGrid
-                loading={!tableData}
-                rows={tableData ?? loadingRows}
-                columns={columns}
-                density="comfortable"
-                disableRowSelectionOnClick
-                hideFooter
+            <div className="section">
+                <h2>Applicants:</h2>
+                <ProfSectionTable
+                    rows={tableData ?? loadingRows}
+                    columns={columns}
+                    loading={!tableData}
+                />
+                {/* <DataGrid
+                    loading={!tableData}
+                    rows={tableData ?? loadingRows}
+                    columns={columns}
+                    getRowId={(row) => row.id}
+                    density="comfortable"
+                    disableRowSelectionOnClick
+                    hideFooter
+                    editMode="cell"
+                    processRowUpdate={(updated, original) => true}
+                    // onProcessRowUpdateError={(e) => console.log(e)}
+                    // rowSelectionModel={rowSelectionModel}
+                    // onRowSelectionModelChange={(newModel, details) => setRowSelectionModel(newModel)}
+
                 // onCellClick={(p, e, d) => console.log(p, e, d)}
-            />
+                /> */}
+            </div>
 
             {/* <table className='section-application-table'>
                 <tbody>
