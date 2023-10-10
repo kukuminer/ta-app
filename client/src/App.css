@@ -1,3 +1,7 @@
+:root {
+  --EDITABLE: #ddffdd
+}
+
 .App {
   text-align: center;
 }

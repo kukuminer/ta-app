@@ -117,7 +117,9 @@ export default function ProfSectionTable({rows, columns, loading}) {
                 cellModesModel={cellModesModel}
                 onCellModesModelChange={handleCellModesModelChange}
                 onCellClick={handleCellClick}
+                onCellEditStop={() => {console.log("bing")}}
                 hideFooter
+                disableRowSelectionOnClick
             />
         </div>
     );

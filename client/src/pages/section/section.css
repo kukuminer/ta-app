@@ -9,3 +9,7 @@
     /* width: 80vw; */
     /* min-width: 1000px; */
 }
+
+.MuiDataGrid-cell--editable:hover {
+    background-color: #ffffdd;
+}
