@@ -9,10 +9,10 @@ import ProfSectionTable from "./section_table"
 const GET_URL = '/api/instructor/'
 
 const columns: GridColDef[] = [
-    { field: 'firstname', headerName: 'Name', width: 150 },
-    { field: 'lastname', headerName: 'Surname', width: 150 },
-    { field: 'interest', headerName: 'Interest', width: 150 },
-    { field: 'qualification', headerName: 'Qualification', width: 150 },
+    { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
+    { field: 'lastname', headerName: 'Surname', width: 150, headerClassName: 'section-table-header' },
+    { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
+    { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
     {
         field: 'pref',
         headerName: 'Preference',
@@ -22,8 +22,9 @@ const columns: GridColDef[] = [
         valueOptions: ['No preference', 'Acceptable', 'Requested', 'Critical'],
         align: 'left',
         headerAlign: 'left',
+        headerClassName: 'section-table-header',
     },
-    { field: 'note', headerName: 'Note', width: 300, editable: true },
+    { field: 'note', headerName: 'Note', width: 300, editable: true, headerClassName: 'section-table-header' },
 ]
 
 const loadingRows = [
