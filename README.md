@@ -131,3 +131,11 @@ Sep 29:
 - show instructors the applicant seniority for unit 2 (everybody else)
 -- implement seniority
 - fix up wording (during meeting)
+
+Oct 13:
+- change preference to enums for assignment table
+- editable icon for editable fields on instructor view
+- stop editing on select dropdown instead of click off (instructor view)
+- 2 tables for unit 1 and unit 2 TAs (instead of displaying unit in the table)
+- instructor section view explanation column - "view" button opens speech bubble with students termapplication explanation value
+- note multiline
