@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
     {
         field: 'pref',
         headerName: 'Preference',
-        width: 150,
+        width: 180,
         editable: true,
         renderEditCell: renderGridCellSelectInput,
         renderCell: renderGridCellSelectInput,

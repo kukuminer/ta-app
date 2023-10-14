@@ -95,12 +95,14 @@ CREATE TABLE application (
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );
 
+CREATE TYPE preference AS ENUM('no preference', 'acceptable', 'requested', 'critical');
+
 CREATE TABLE assignment (
     id serial NOT NULL,
     applicant int NOT NULL,
     section int NOT NULL,
 
-    pref int, -- instructor provided
+    pref preference, -- instructor provided
     note text, -- instructor provided
     assigned int, -- admin provided
     PRIMARY KEY (id),
