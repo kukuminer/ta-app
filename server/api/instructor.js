@@ -97,7 +97,7 @@ module.exports = function ({ app, db, pgp }) {
         const r = req.body
         console.log(r)
         const userId = res.locals.userid
-        db.any(dbQuery, [r.studentNum, r.sectionId, r.pref, r.note, userId])
+        db.any(dbQuery, [r.studentNum, r.sectionId, r.pref.toLowerCase(), r.note, userId])
             .then((data) => {
                 if (data.length !== 1) throw new Error('Bad auth')
                 res.json(data)

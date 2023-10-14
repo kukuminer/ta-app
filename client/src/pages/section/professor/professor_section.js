@@ -63,7 +63,7 @@ const ProfessorSection = () => {
             .then((res) => {
                 res.data.forEach((element, idx) => {
                     element.id = element.userid
-                    element.pref = element.pref ?? 0
+                    element.pref = element.pref ?? 'no preference'
                     return element
                 });
                 console.log(res.data)
@@ -82,11 +82,12 @@ const ProfessorSection = () => {
             studentNum: params.row.id,
             sectionId: sectionId,
         }
+        body[params.field] = params.value
         console.log(body)
-        // axios.post(POST_URL, body)
-        //     .then((res) => {
-        //         console.log(res)
-        //     })
+        axios.post(POST_URL, body)
+            .then((res) => {
+                console.log(res)
+            })
     }
 
     return (

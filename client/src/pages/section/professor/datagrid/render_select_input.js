@@ -38,10 +38,10 @@ function GridCellSelectInput({ id, value, field }) {
             {/* <MenuItem key={50} value={50}>Acceptable</MenuItem> */}
             {/* <MenuItem key={75} value={75} label="Requested">Requested</MenuItem> */}
             {/* <MenuItem key={100} value={100}>Critical</MenuItem> */}
-            <option>No preference</option>
-            <option>Acceptable</option>
-            <option>Requested</option>
-            <option>Critical</option>
+            <option value='no preference'>No preference</option>
+            <option value='acceptable'>Acceptable</option>
+            <option value='requested'>Requested</option>
+            <option value='critical'>Critical</option>
         </Select>
     )
 }
