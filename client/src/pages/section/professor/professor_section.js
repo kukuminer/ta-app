@@ -1,12 +1,19 @@
-import React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 import { useParams } from 'react-router-dom'
 // import Assignment from "../../components/assignment_row"
 // import { DataGrid } from '@mui/x-data-grid'
-import ProfSectionTable from "./section_table"
+import { GridColDef, GridComparatorFn } from "@mui/x-data-grid"
+import ProfSectionTable from "./datagrid/section_table"
+import renderGridCellSelectInput from "./datagrid/render_select_input"
 
 const GET_URL = '/api/instructor/'
+const POST_URL = '/api/instructor/assignment'
+
+const orderedList = ['No preference', 'Acceptable', 'Requested', 'Critical']
+// const sortOrder: GridComparatorFn = (v1, v2, c1, c2) => {
+
+// }
 
 const columns: GridColDef[] = [
     { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
@@ -18,13 +25,27 @@ const columns: GridColDef[] = [
         headerName: 'Preference',
         width: 150,
         editable: true,
-        type: 'singleSelect',
-        valueOptions: ['No preference', 'Acceptable', 'Requested', 'Critical'],
+        renderEditCell: renderGridCellSelectInput,
+        renderCell: renderGridCellSelectInput,
+        // type: 'singleSelect',
+        // valueOptions: [
+        //     { value: 0, label: 'No preference' },
+        //     { value: 50, label: 'Acceptable' },
+        //     { value: 75, label: 'Requested' },
+        //     { value: 100, label: 'Critical' },
+        // ],
         align: 'left',
         headerAlign: 'left',
         headerClassName: 'section-table-header',
+
     },
-    { field: 'note', headerName: 'Note', width: 300, editable: true, headerClassName: 'section-table-header' },
+    {
+        field: 'note',
+        headerName: 'Note',
+        width: 300,
+        editable: true,
+        headerClassName: 'section-table-header'
+    },
 ]
 
 const loadingRows = [
@@ -36,12 +57,12 @@ const ProfessorSection = () => {
     const [tableData, setTableData] = useState(null)
     // const [rowSelectionModel, setRowSelectionModel] = useState([])
 
-    React.useEffect(() => {
+    useEffect(() => {
         const url = GET_URL + sectionId
         axios.get(url)
             .then((res) => {
                 res.data.forEach((element, idx) => {
-                    element.id = idx
+                    element.id = element.userid
                     element.pref = element.pref ?? 0
                     return element
                 });
@@ -49,6 +70,24 @@ const ProfessorSection = () => {
                 setTableData(res.data)
             })
     }, [sectionId])
+
+    function onEditStop(params, event, details) {
+        console.log(params)
+        console.log(event)
+        console.log(details)
+        if (!params) return
+        const body = {
+            pref: params.row.pref,
+            note: params.row.note,
+            studentNum: params.row.id,
+            sectionId: sectionId,
+        }
+        console.log(body)
+        // axios.post(POST_URL, body)
+        //     .then((res) => {
+        //         console.log(res)
+        //     })
+    }
 
     return (
         <>
@@ -58,6 +97,7 @@ const ProfessorSection = () => {
                     rows={tableData ?? loadingRows}
                     columns={columns}
                     loading={!tableData}
+                    onEditStop={onEditStop}
                 />
                 {/* <DataGrid
                     loading={!tableData}

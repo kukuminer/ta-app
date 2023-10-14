@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridCellModes } from '@mui/x-data-grid';
 
-export default function ProfSectionTable({rows, columns, loading}) {
+export default function ProfSectionTable({rows, columns, loading, onEditStop}) {
     const [cellModesModel, setCellModesModel] = React.useState({});
 
     const handleCellClick = React.useCallback((params, event) => {
@@ -55,7 +55,8 @@ export default function ProfSectionTable({rows, columns, loading}) {
                 cellModesModel={cellModesModel}
                 onCellModesModelChange={handleCellModesModelChange}
                 onCellClick={handleCellClick}
-                onCellEditStop={() => {console.log("bing")}}
+                onCellEditStop={onEditStop}
+                // onRowEditStop={onEditStop}
                 hideFooter
                 disableRowSelectionOnClick
 
