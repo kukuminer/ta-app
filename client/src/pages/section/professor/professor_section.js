@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import { GridColDef, GridComparatorFn } from "@mui/x-data-grid"
 import ProfSectionTable from "./datagrid/section_table"
 import renderGridCellSelectInput from "./datagrid/render_select_input"
+import renderGridCellTextFieldInput from "./datagrid/render_textfield_input"
 
 const GET_URL = '/api/instructor/'
 const POST_URL = '/api/instructor/assignment'
@@ -44,6 +45,8 @@ const columns: GridColDef[] = [
         headerName: 'Note',
         width: 300,
         editable: true,
+        renderEditCell: renderGridCellTextFieldInput,
+        renderCell: renderGridCellTextFieldInput,
         headerClassName: 'section-table-header'
     },
 ]
@@ -76,6 +79,7 @@ const ProfessorSection = () => {
         console.log(event)
         console.log(details)
         if (!params) return
+        if (!params.row) return
         const body = {
             pref: params.row.pref,
             note: params.row.note,
