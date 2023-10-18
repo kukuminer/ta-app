@@ -78,28 +78,11 @@ const ProfessorSection = () => {
             event.defaultMuiPrevented = true;
             return
         }
-        console.log(params)
-        console.log(event)
-        console.log(details)
-        if (!params) return
-        if (!params.row) return
-        const body = {
-            pref: params.row.pref,
-            note: params.row.note,
-            studentNum: params.row.id,
-            sectionId: sectionId,
-        }
-        body[params.field] = params.value
-        console.log(body)
-        axios.post(POST_URL, body)
-            .then((res) => {
-                console.log(res)
-            })
-    }, [sectionId])
+    }, [])
 
     const processRowUpdate = useCallback(async (newRow, oldRow) => {
         console.log(newRow, oldRow)
-        if(JSON.stringify(oldRow) === JSON.stringify(newRow)) return
+        if(JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow
         const body = {
             pref: newRow.pref,
             note: newRow.note,
@@ -109,7 +92,7 @@ const ProfessorSection = () => {
         console.log(body)
         const res = await axios.post(POST_URL, body)
         console.log(res)
-        return {...newRow, id: newRow.userid}
+        return newRow
 
     }, [sectionId])
 

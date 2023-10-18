@@ -64,7 +64,7 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
                 cellModesModel={cellModesModel}
                 onCellModesModelChange={handleCellModesModelChange}
                 onCellClick={handleCellClick}
-                // onCellEditStop={onEditStop}
+                onCellEditStop={onEditStop}
                 // onRowEditStop={onEditStop}
                 hideFooter
                 disableRowSelectionOnClick
