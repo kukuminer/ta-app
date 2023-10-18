@@ -92,7 +92,7 @@ module.exports = function ({ app, db, pgp }) {
         (SELECT id FROM section 
             WHERE profid IN (SELECT id FROM users WHERE username=$5) 
             AND id=$2)
-    RETURNING assignment.id, assignment.pref, assignment.note
+    RETURNING assignment.applicant, assignment.pref, assignment.note
     `
         const r = req.body
         console.log(r)

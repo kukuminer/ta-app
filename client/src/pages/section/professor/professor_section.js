@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import axios from "axios"
 import { useParams } from 'react-router-dom'
 // import Assignment from "../../components/assignment_row"
 // import { DataGrid } from '@mui/x-data-grid'
-import { GridColDef, GridComparatorFn } from "@mui/x-data-grid"
+import { GridColDef, GridComparatorFn, GridRowEditStopReasons } from "@mui/x-data-grid"
 import ProfSectionTable from "./datagrid/section_table"
 import renderGridCellSelectInput from "./datagrid/render_select_input"
 import renderGridCellTextFieldInput from "./datagrid/render_textfield_input"
@@ -11,7 +11,7 @@ import renderGridCellTextFieldInput from "./datagrid/render_textfield_input"
 const GET_URL = '/api/instructor/'
 const POST_URL = '/api/instructor/assignment'
 
-const orderedList = ['No preference', 'Acceptable', 'Requested', 'Critical']
+// const orderedList = ['No preference', 'Acceptable', 'Requested', 'Critical']
 // const sortOrder: GridComparatorFn = (v1, v2, c1, c2) => {
 
 // }
@@ -73,7 +73,11 @@ const ProfessorSection = () => {
             })
     }, [sectionId])
 
-    function onEditStop(params, event, details) {
+    const onEditStop = useCallback((params, event, details) => {
+        if (params.reason === GridRowEditStopReasons.enterKeyDown) {
+            event.defaultMuiPrevented = true;
+            return
+        }
         console.log(params)
         console.log(event)
         console.log(details)
@@ -91,7 +95,23 @@ const ProfessorSection = () => {
             .then((res) => {
                 console.log(res)
             })
-    }
+    }, [sectionId])
+
+    const processRowUpdate = useCallback(async (newRow, oldRow) => {
+        console.log(newRow, oldRow)
+        if(JSON.stringify(oldRow) === JSON.stringify(newRow)) return
+        const body = {
+            pref: newRow.pref,
+            note: newRow.note,
+            studentNum: newRow.userid,
+            sectionId: sectionId,
+        }
+        console.log(body)
+        const res = await axios.post(POST_URL, body)
+        console.log(res)
+        return {...newRow, id: newRow.userid}
+
+    }, [sectionId])
 
     return (
         <>
@@ -103,6 +123,7 @@ const ProfessorSection = () => {
                     columns={columns}
                     loading={!tableData}
                     onEditStop={onEditStop}
+                    processRowUpdate={processRowUpdate}
                 />
                 {/* <DataGrid
                     loading={!tableData}

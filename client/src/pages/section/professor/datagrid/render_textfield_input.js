@@ -17,7 +17,9 @@ function GridCellTextFieldInput({ id, value, field }) {
             apiRef.current.setEditCellValue(
                 { id, field, value: e.target.value, debounceMs: 500 },
                 e,
-            )
+            ).then((res) => {
+                console.log('bounced')
+            })
         },
         [apiRef, field, id]
     )
@@ -28,6 +30,7 @@ function GridCellTextFieldInput({ id, value, field }) {
             onChange={handleChange}
             // onClick={handleChange}
             fullWidth
+            multiline
         />
         //         {/* <MenuItem key='unit 1' id={'unit 1'} value={'unit 1'}>Unit 1 (Full time Graduate student at York)</MenuItem>, */ }
 

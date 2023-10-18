@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridCellModes } from '@mui/x-data-grid';
 
-export default function ProfSectionTable({ rows, columns, loading, onEditStop, idVarName }) {
+export default function ProfSectionTable({ rows, columns, loading, onEditStop, idVarName, processRowUpdate }) {
     const [cellModesModel, setCellModesModel] = React.useState({});
 
     const handleCellClick = React.useCallback((params, event) => {
@@ -15,6 +15,8 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
         }
         console.log(params)
         setCellModesModel((prevModel) => {
+            console.log(prevModel)
+            // return prevModel
             return {
                 // Revert the mode of the other cells from other rows
                 ...Object.keys(prevModel).reduce(
@@ -46,23 +48,29 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
         setCellModesModel(newModel);
     }, []);
 
+    // const processRowUpdate = React.useCallback(async (newRow) => {
+    //     console.log(newRow)
+    //     const response = await onEditStop(newRow)
+    //     return newRow
+    // }, [])
+
     return (
         <div className='section-application-table'>
             <DataGrid
-                getRowId={(row) => row[idVarName]}
+                getRowId={(row) => row?.[idVarName]}
                 rows={rows}
                 columns={columns}
                 loading={loading}
                 cellModesModel={cellModesModel}
                 onCellModesModelChange={handleCellModesModelChange}
                 onCellClick={handleCellClick}
-                onCellEditStop={onEditStop}
+                // onCellEditStop={onEditStop}
                 // onRowEditStop={onEditStop}
                 hideFooter
                 disableRowSelectionOnClick
-                // processRowUpdate={(newv, oldv) => console.log(newv, oldv)}
-                // onProcessRowUpdateError={(e) => console.log(e)}
-                getRowHeight={()=>150}
+                processRowUpdate={processRowUpdate}
+                onProcessRowUpdateError={(e) => console.log(e)}
+                getRowHeight={() => 150}
             />
         </div>
     );
