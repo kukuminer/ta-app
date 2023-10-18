@@ -52,7 +52,7 @@ const columns: GridColDef[] = [
 ]
 
 const loadingRows = [
-    { id: 0, firstname: 'Loading...' },
+    { userid: -1, firstname: 'Loading...' },
 ]
 
 const ProfessorSection = () => {
@@ -65,7 +65,6 @@ const ProfessorSection = () => {
         axios.get(url)
             .then((res) => {
                 res.data.forEach((element, idx) => {
-                    element.id = element.userid
                     element.pref = element.pref ?? 'no preference'
                     return element
                 });
@@ -99,6 +98,7 @@ const ProfessorSection = () => {
             <div className="section">
                 <h2>Applicants:</h2>
                 <ProfSectionTable
+                    idVarName={'userid'}
                     rows={tableData ?? loadingRows}
                     columns={columns}
                     loading={!tableData}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridCellModes } from '@mui/x-data-grid';
 
-export default function ProfSectionTable({ rows, columns, loading, onEditStop }) {
+export default function ProfSectionTable({ rows, columns, loading, onEditStop, idVarName }) {
     const [cellModesModel, setCellModesModel] = React.useState({});
 
     const handleCellClick = React.useCallback((params, event) => {
@@ -49,6 +49,7 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop })
     return (
         <div className='section-application-table'>
             <DataGrid
+                getRowId={(row) => row[idVarName]}
                 rows={rows}
                 columns={columns}
                 loading={loading}
@@ -61,6 +62,7 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop })
                 disableRowSelectionOnClick
                 // processRowUpdate={(newv, oldv) => console.log(newv, oldv)}
                 // onProcessRowUpdateError={(e) => console.log(e)}
+                getRowHeight={()=>150}
             />
         </div>
     );
