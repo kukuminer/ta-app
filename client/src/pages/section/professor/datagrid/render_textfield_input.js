@@ -31,6 +31,7 @@ function GridCellTextFieldInput({ id, value, field }) {
             // onClick={handleChange}
             fullWidth
             multiline
+            maxRows={4}
         />
         //         {/* <MenuItem key='unit 1' id={'unit 1'} value={'unit 1'}>Unit 1 (Full time Graduate student at York)</MenuItem>, */ }
 
