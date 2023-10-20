@@ -66,6 +66,7 @@ const ProfessorSection = () => {
             .then((res) => {
                 res.data.forEach((element, idx) => {
                     element.pref = element.pref ?? 'no preference'
+                    element.note = element.note ?? ''
                     return element
                 });
                 console.log(res.data)

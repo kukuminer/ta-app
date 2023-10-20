@@ -32,7 +32,7 @@ CREATE TABLE applicant (
     id int NOT NULL,
     studentNum varchar(9),
     employeeId varchar(9),
-    pool pool,
+    pool pool NOT NULL,
     -- seniority,
 
     PRIMARY KEY (id),

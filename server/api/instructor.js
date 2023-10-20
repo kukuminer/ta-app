@@ -42,10 +42,12 @@ module.exports = function ({ app, db, pgp }) {
         const sectionId = req.params.sectionId
         const dbQuery =
             `
-    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
+    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note, pool
     FROM application 
     INNER JOIN users 
     ON application.applicant=users.id
+    INNER JOIN applicant
+    ON applicant.id=users.id
     INNER JOIN section
     ON application.course = section.course AND application.term = section.term
     LEFT JOIN assignment 

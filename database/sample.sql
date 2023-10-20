@@ -3,15 +3,18 @@ INSERT INTO users(id, firstname, lastname, email, usertype, username) VALUES
 (2, 'Jonatan', 'S', 'jonatan@yorku.ca', 'instructor', 'jonatan'),
 (3, 'John', 'D', 'john@yorku.ca', 'applicant', 'johndoe'),
 (4, 'Michael', 'B', 'mike@yorku.ca', 'instructor', 'mikeb'),
-(5, 'Jane', 'E', 'jane@yorku.ca', 'applicant', 'jane');
+(5, 'Jane', 'E', 'jane@yorku.ca', 'applicant', 'jane'),
+(6, 'Unit', 'Two student', 'bing@bong.ca', 'applicant', 'unittwo');
+
+INSERT INTO applicant(id, studentNum, pool)
+SELECT id, id*2, 'unit 1' FROM users WHERE userType = 'applicant';
+
+UPDATE applicant SET pool = 'unit 2' WHERE id=6;
 
 INSERT INTO term(id, term, visible) VALUES
 (2, 'F23', true),
 (3, 'W24', true),
 (1, 'S23', false);
-
-INSERT INTO applicant(id, studentNum)
-SELECT id, id FROM users WHERE userType = 'applicant';
 
 INSERT INTO course (code, name, description) 
 VALUES ('EECS2030', 'intro to OOP', 'oop intro'), 
@@ -29,11 +32,12 @@ VALUES ('1', 'A', 2, '2'),
 ('2', 'B', 2, '4'),
 ('3', 'C', 2, '4');
 
-INSERT INTO application(applicant, course, term, interest, qualification) 
-VALUES ('3', '1', 2, 3, 3), 
+INSERT INTO application(applicant, course, term, interest, qualification) VALUES 
+('3', '1', 2, 3, 3), 
 ('3', '2', 2, 3, 2),
 ('5', '1', 2, 4, 4),
-('3', '1', 3, 2, 2);
+('3', '1', 3, 2, 2),
+('6', '1', 2, 2, 2);
 
 -- INSERT INTO assignment(applicant, section)
 -- VALUES (3, 1)
