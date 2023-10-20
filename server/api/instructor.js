@@ -97,7 +97,6 @@ module.exports = function ({ app, db, pgp }) {
     RETURNING assignment.applicant, assignment.pref, assignment.note
     `
         const r = req.body
-        console.log(r)
         const userId = res.locals.userid
         db.any(dbQuery, [r.studentNum, r.sectionId, r.pref.toLowerCase(), r.note, userId])
             .then((data) => {

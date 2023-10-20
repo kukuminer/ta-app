@@ -10,11 +10,11 @@ import renderGridCellTextFieldInput from "./datagrid/render_textfield_input"
 
 const GET_URL = '/api/instructor/'
 const POST_URL = '/api/instructor/assignment'
+const ORDERED_LIST = ['no preference', 'acceptable', 'requested', 'critical']
 
-// const orderedList = ['No preference', 'Acceptable', 'Requested', 'Critical']
-// const sortOrder: GridComparatorFn = (v1, v2, c1, c2) => {
-
-// }
+const sortOrder: GridComparatorFn = (v1, v2) => {
+    return ORDERED_LIST.indexOf(v1) - ORDERED_LIST.indexOf(v2)
+}
 
 const columns: GridColDef[] = [
     { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
@@ -38,7 +38,7 @@ const columns: GridColDef[] = [
         align: 'left',
         headerAlign: 'left',
         headerClassName: 'section-table-header',
-
+        sortComparator: sortOrder,
     },
     {
         field: 'note',
