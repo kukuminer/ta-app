@@ -64,13 +64,15 @@ const ProfessorSection = () => {
         const url = GET_URL + sectionId
         axios.get(url)
             .then((res) => {
+                var dataObj = {}
                 res.data.forEach((element, idx) => {
                     element.pref = element.pref ?? 'no preference'
                     element.note = element.note ?? ''
+                    if (!dataObj[element.pool]) dataObj[element.pool] = []
+                    dataObj[element.pool].push(element)
                     return element
                 });
-                console.log(res.data)
-                setTableData(res.data)
+                setTableData(dataObj)
             })
     }, [sectionId])
 
@@ -83,14 +85,13 @@ const ProfessorSection = () => {
 
     const processRowUpdate = useCallback(async (newRow, oldRow) => {
         console.log(newRow, oldRow)
-        if(JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow
+        if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow
         const body = {
             pref: newRow.pref,
             note: newRow.note,
             studentNum: newRow.userid,
             sectionId: sectionId,
         }
-        console.log(body)
         const res = await axios.post(POST_URL, body)
         console.log(res)
         return newRow
@@ -100,7 +101,23 @@ const ProfessorSection = () => {
     return (
         <>
             <div className="section">
-                <h2>Applicants:</h2>
+                {tableData &&
+                    Object.keys(tableData).map((key, idx) =>
+                        <div key={key}>
+                            <h2>{key.toUpperCase()} Applicants</h2>
+                            <ProfSectionTable
+                                key={key}
+                                idVarName={'userid'}
+                                rows={tableData[key]}
+                                columns={columns}
+                                loading={!tableData}
+                                onEditStop={onEditStop}
+                                processRowUpdate={processRowUpdate}
+                            />
+                        </div>
+                    )
+                }
+                {/* <h2>Unit 1 Applicants:</h2>
                 <ProfSectionTable
                     idVarName={'userid'}
                     rows={tableData ?? loadingRows}
@@ -108,7 +125,7 @@ const ProfessorSection = () => {
                     loading={!tableData}
                     onEditStop={onEditStop}
                     processRowUpdate={processRowUpdate}
-                />
+                /> */}
                 {/* <DataGrid
                     loading={!tableData}
                     rows={tableData ?? loadingRows}
