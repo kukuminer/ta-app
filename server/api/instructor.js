@@ -42,10 +42,12 @@ module.exports = function ({ app, db, pgp }) {
         const sectionId = req.params.sectionId
         const dbQuery =
             `
-    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note
+    SELECT section.id as sectionId, users.id as userId, firstname, lastname, grade, interest, qualification, pref, note, pool
     FROM application 
     INNER JOIN users 
     ON application.applicant=users.id
+    INNER JOIN applicant
+    ON applicant.id=users.id
     INNER JOIN section
     ON application.course = section.course AND application.term = section.term
     LEFT JOIN assignment 
@@ -92,11 +94,11 @@ module.exports = function ({ app, db, pgp }) {
         (SELECT id FROM section 
             WHERE profid IN (SELECT id FROM users WHERE username=$5) 
             AND id=$2)
-    RETURNING assignment.id, assignment.pref, assignment.note
+    RETURNING assignment.applicant, assignment.pref, assignment.note
     `
         const r = req.body
         const userId = res.locals.userid
-        db.any(dbQuery, [r.studentNum, r.sectionId, r.pref, r.note, userId])
+        db.any(dbQuery, [r.studentNum, r.sectionId, r.pref.toLowerCase(), r.note, userId])
             .then((data) => {
                 if (data.length !== 1) throw new Error('Bad auth')
                 res.json(data)

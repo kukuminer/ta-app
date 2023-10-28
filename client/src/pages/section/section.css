@@ -1,9 +1,23 @@
 .section {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .section-application-table {
-    width: 80vw;
-    max-width: 1000px;
+    width: 100%;
+    /* width: 80vw; */
+    /* min-width: 1000px; */
+}
+
+.section-table-header {
+    background: #eeeeee;
+}
+
+.Mui-hovered:hover {
+    background-color: black;
+}
+
+.MuiDataGrid-cell--editable {
+    background-color: #ffffdd;
 }

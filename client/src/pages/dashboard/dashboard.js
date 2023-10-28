@@ -4,7 +4,6 @@ import ProfessorDash from "./professor/professor_dash";
 import StudentDash from "./student/student_dash";
 import AdminDash from "./admin/admin_dash";
 import Header from "../header/header"
-import getUser from "../../getUser";
 import "./dashboard.css"
 // import ProfileView from "./student/profile_view";
 
@@ -15,7 +14,6 @@ const components = {
 }
 
 const Dashboard = () => {
-    // var user
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
