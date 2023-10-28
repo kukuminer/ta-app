@@ -70,7 +70,7 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
                 disableRowSelectionOnClick
                 processRowUpdate={processRowUpdate}
                 onProcessRowUpdateError={(e) => console.log(e)}
-                getRowHeight={() => 150}
+                getRowHeight={() => 120}
             />
         </div>
     );

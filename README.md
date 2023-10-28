@@ -139,3 +139,18 @@ Oct 13:
 - 2 tables for unit 1 and unit 2 TAs (instead of displaying unit in the table)
 - instructor section view explanation column - "view" button opens speech bubble with students termapplication explanation value
 - note multiline
+
+
+Oct 20:
+- do not assign id in sample data
+- update deployment 
+INSTRUCTOR View:
+- Tooltip or popup for student application info
+STUDENT View:
+- remove on-site checkbox
+- consistent font sizes/family
+- course desc tooltip on course column
+-- clickable (i) button
+- expand default size of text box
+- "view" -> "apply" on main dash
+- https://fontawesome.com/
