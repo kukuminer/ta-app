@@ -21,17 +21,21 @@ TO DEPLOY:
 1. ssh project1
 2. bu ta-app
 3. cd
+
 FOR FRONT END:
 1. cd ta-app/client
 2. npm run build
 3. cd build
 4. npm run deploy
+
 START BACKEND:
 1. cd ta-app/server
 2. npm start
 START PSQL:
+
 1. cd ta-app/pg
 2. bin/pg_ctl -D data/ -l pg.log start
+
 ACCESS PSQL:
 1. ~/pg/bin/psql -h localhost -U taapp taapp
 
