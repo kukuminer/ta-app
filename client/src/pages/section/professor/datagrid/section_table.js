@@ -15,7 +15,7 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
         }
         console.log(params)
         setCellModesModel((prevModel) => {
-            console.log(prevModel)
+            // console.log(prevModel)
             // return prevModel
             return {
                 // Revert the mode of the other cells from other rows

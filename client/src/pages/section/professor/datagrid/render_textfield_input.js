@@ -12,14 +12,15 @@ function GridCellTextFieldInput({ id, value, field }) {
     const handleChange = useCallback(
         (e) => {
             // e.defaultMuiPrevented = true
-            console.log(e.target.value)
+            // console.log(e.target.value)
             setValueState(e.target.value)
             apiRef.current.setEditCellValue(
                 { id, field, value: e.target.value, debounceMs: 500 },
                 e,
-            ).then((res) => {
-                console.log('bounced')
-            })
+            )
+            // .then((res) => {
+            //     console.log('bounced')
+            // })
         },
         [apiRef, field, id]
     )

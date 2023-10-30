@@ -93,7 +93,7 @@ const ProfessorSection = () => {
     }, [])
 
     const processRowUpdate = useCallback(async (newRow, oldRow) => {
-        console.log(newRow, oldRow)
+        // console.log(newRow, oldRow)
         if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow
         const body = {
             pref: newRow.pref,
@@ -102,7 +102,7 @@ const ProfessorSection = () => {
             sectionId: sectionId,
         }
         const res = await axios.post(POST_URL, body)
-        console.log(res)
+        // console.log(res)
         return newRow
 
     }, [sectionId])
