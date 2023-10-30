@@ -22,6 +22,16 @@ TO DEPLOY:
 2. bu ta-app
 3. cd
 
+TO UPDATE REPO:
+1. cd ta-app
+2. git status (to ensure the repo is present)
+3. git pull
+4. cd ta-app/client
+5. npm i
+6. npm audit fix --force (if vulnerabilities present (client folder may still have a few, just ignore them. repeat this step until the number is the minimum))
+7. repeat 5. and 6. in ta-app/server
+8. run using following steps
+
 FOR FRONT END:
 1. cd ta-app/client
 2. npm run build
