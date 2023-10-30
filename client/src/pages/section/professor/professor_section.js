@@ -7,6 +7,7 @@ import { GridColDef, GridComparatorFn, GridRowEditStopReasons } from "@mui/x-dat
 import ProfSectionTable from "./datagrid/section_table"
 import renderGridCellSelectInput from "./datagrid/render_select_input"
 import renderGridCellTextFieldInput from "./datagrid/render_textfield_input"
+import renderGridCellTooltip from "./datagrid/render_tooltip"
 
 const GET_URL = '/api/instructor/'
 const POST_URL = '/api/instructor/assignment'
@@ -19,6 +20,14 @@ const sortOrder: GridComparatorFn = (v1, v2) => {
 const columns: GridColDef[] = [
     { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
     { field: 'lastname', headerName: 'Surname', width: 150, headerClassName: 'section-table-header' },
+    {
+        field: 'details',
+        headerName: 'Details',
+        width: 100,
+        renderCell: renderGridCellTooltip,
+        headerClassName: 'section-table-header',
+        sortable: false,
+    },
     { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
     { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
     {
@@ -51,9 +60,9 @@ const columns: GridColDef[] = [
     },
 ]
 
-const loadingRows = [
-    { userid: -1, firstname: 'Loading...' },
-]
+// const loadingRows = [
+//     { userid: -1, firstname: 'Loading...' },
+// ]
 
 const ProfessorSection = () => {
     const { sectionId } = useParams()
@@ -64,6 +73,7 @@ const ProfessorSection = () => {
         const url = GET_URL + sectionId
         axios.get(url)
             .then((res) => {
+                console.log(res.data)
                 var dataObj = {}
                 res.data.forEach((element, idx) => {
                     element.pref = element.pref ?? 'no preference'
