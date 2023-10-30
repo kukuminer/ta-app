@@ -21,7 +21,7 @@ const columns: GridColDef[] = [
     { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
     { field: 'lastname', headerName: 'Surname', width: 150, headerClassName: 'section-table-header' },
     {
-        field: 'details',
+        field: 'explanation',
         headerName: 'Details',
         width: 100,
         renderCell: renderGridCellTooltip,
@@ -73,7 +73,6 @@ const ProfessorSection = () => {
         const url = GET_URL + sectionId
         axios.get(url)
             .then((res) => {
-                console.log(res.data)
                 var dataObj = {}
                 res.data.forEach((element, idx) => {
                     element.pref = element.pref ?? 'no preference'
