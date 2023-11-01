@@ -78,39 +78,6 @@ CREATE TABLE section (
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
 );
 
-CREATE TABLE application (
-    id serial NOT NULL,
-    applicant int NOT NULL,
-    course int NOT NULL,
-    term int NOT NULL, 
-
-    grade int,
-    interest int,
-    qualification int,
-
-    PRIMARY KEY (id),
-    UNIQUE (applicant, course, term),
-    FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade,
-    FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
-    FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
-);
-
-CREATE TYPE preference AS ENUM('no preference', 'acceptable', 'requested', 'critical');
-
-CREATE TABLE assignment (
-    id serial NOT NULL,
-    applicant int NOT NULL,
-    section int NOT NULL,
-
-    pref preference, -- instructor provided
-    note text, -- instructor provided
-    assigned int, -- admin provided
-    PRIMARY KEY (id),
-    UNIQUE (applicant, section),
-    FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade,
-    FOREIGN KEY (section) references section(id) ON UPDATE cascade ON DELETE cascade
-);
-
 CREATE TABLE termapplication (
     id serial NOT NULL,
     applicant int NOT NULL,
@@ -129,6 +96,40 @@ CREATE TABLE termapplication (
     UNIQUE (applicant, term),
     FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade, 
     FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade
+);
+
+CREATE TABLE application (
+    id serial NOT NULL,
+    applicant int NOT NULL,
+    course int NOT NULL,
+    term int NOT NULL, 
+
+    grade int,
+    interest int,
+    qualification int,
+
+    PRIMARY KEY (id),
+    UNIQUE (applicant, course, term),
+    -- FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade,
+    FOREIGN KEY (course) references course(id) ON UPDATE cascade ON DELETE cascade,
+    -- FOREIGN KEY (term) references term(id) ON UPDATE cascade ON DELETE cascade,
+    FOREIGN KEY (applicant, term) references termapplication(applicant, term) ON UPDATE cascade ON DELETE cascade
+);
+
+CREATE TYPE preference AS ENUM('no preference', 'acceptable', 'requested', 'critical');
+
+CREATE TABLE assignment (
+    id serial NOT NULL,
+    applicant int NOT NULL,
+    section int NOT NULL,
+
+    pref preference, -- instructor provided
+    note text, -- instructor provided
+    assigned int, -- admin provided
+    PRIMARY KEY (id),
+    UNIQUE (applicant, section),
+    FOREIGN KEY (applicant) references applicant(id) ON UPDATE cascade ON DELETE cascade,
+    FOREIGN KEY (section) references section(id) ON UPDATE cascade ON DELETE cascade
 );
 
 CREATE TABLE rightofrefusal (

@@ -41,13 +41,13 @@ FOR FRONT END:
 START BACKEND:
 1. cd ta-app/server
 2. npm start
-START PSQL:
 
+START PSQL:
 1. cd ta-app/pg
 2. bin/pg_ctl -D data/ -l pg.log start
 
 ACCESS PSQL:
-1. ~/pg/bin/psql -h localhost -U taapp taapp
+1. ~/pg/bin/psql -h localhost -U taapp
 
 
 # TODO:
@@ -162,9 +162,20 @@ INSTRUCTOR View:
 - Tooltip or popup for student application info
 STUDENT View:
 - remove on-site checkbox
-- consistent font sizes/family
-- course desc tooltip on course column
--- clickable (i) button
 - expand default size of text box
 - "view" -> "apply" on main dash
 - https://fontawesome.com/
+
+Oct 30:
+- submitted field???
+
+INSTRUCTOR VIEW
+- modal for student explanations
+STUDENT VIEW
+- character/line limit for student explanation field
++ COMPLETE do not include draft applications (submitted = t)
++ COMPLETE add availability column
+- course desc tooltip on course column
+-- clickable (i) button
+- consistent font sizes/family
+

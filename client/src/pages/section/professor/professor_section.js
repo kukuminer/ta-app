@@ -20,6 +20,9 @@ const sortOrder: GridComparatorFn = (v1, v2) => {
 const columns: GridColDef[] = [
     { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
     { field: 'lastname', headerName: 'Surname', width: 150, headerClassName: 'section-table-header' },
+    { field: 'availability', headerName: 'Availability', width: 150, headerClassName: 'section-table-header'},
+    { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
+    { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
     {
         field: 'explanation',
         headerName: 'Details',
@@ -28,8 +31,6 @@ const columns: GridColDef[] = [
         headerClassName: 'section-table-header',
         sortable: false,
     },
-    { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
-    { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
     {
         field: 'pref',
         headerName: 'Preference',
@@ -101,7 +102,8 @@ const ProfessorSection = () => {
             studentNum: newRow.userid,
             sectionId: sectionId,
         }
-        const res = await axios.post(POST_URL, body)
+        // const res = 
+        await axios.post(POST_URL, body)
         // console.log(res)
         return newRow
 

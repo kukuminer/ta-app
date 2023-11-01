@@ -13,7 +13,7 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
         if (!event.currentTarget.contains(event.target)) {
             return;
         }
-        console.log(params)
+        // console.log(params)
         setCellModesModel((prevModel) => {
             // console.log(prevModel)
             // return prevModel

@@ -45,10 +45,11 @@ INSERT INTO application(applicant, course, term, interest, qualification) VALUES
 -- DO UPDATE SET pref = 50, note = 'good applicant'
 -- WHERE id = 1;
 
-INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted)
-VALUES ('3', 2, 4, true, 'i want to TA', true, true, false),
+INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
+('3', 2, 4, true, 'i want to TA', true, true, false),
 ('3', 1, 3, true, 'i wanted to TA', true, true, true),
-('5', 2, 4, true, 'jane want teach', true, true, true);
+('5', 2, 4, true, 'jane want teach', true, true, true),
+('6', 2, 2, true, 'multline\nmultiline\nline 3 \n<b>HELLO</b>', true, true, true);
 
 
 INSERT INTO rightofrefusal(applicant, course, term) VALUES

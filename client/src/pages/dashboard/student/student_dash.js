@@ -29,7 +29,7 @@ const StudentDash = () => {
                         <TableRow>
                             <TableCell sx={{ fontWeight: '700' }}>Term</TableCell>
                             <TableCell sx={{ fontWeight: '700' }}>Availability</TableCell>
-                            <TableCell sx={{ fontWeight: '700' }}>On Site?</TableCell>
+                            {/* <TableCell sx={{ fontWeight: '700' }}>On Site?</TableCell> */}
                             <TableCell sx={{ fontWeight: '700' }}>Application Status</TableCell>
                             <TableCell sx={{ fontWeight: '700' }}>Link</TableCell>
                         </TableRow>
@@ -41,10 +41,10 @@ const StudentDash = () => {
                                     <TableRow key={key}>
                                         <TableCell>{val.termname}</TableCell>
                                         <TableCell>{val.availability}</TableCell>
-                                        <TableCell>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</TableCell>
-                                        <TableCell>{val.submitted ? 'Submitted' : val.submitted === false ? 'Saved' : 'Available'}</TableCell>
+                                        {/* <TableCell>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</TableCell> */}
+                                        <TableCell>{val.submitted ? 'Submitted' : val.submitted === false ? 'Draft' : 'Available'}</TableCell>
                                         <TableCell>
-                                            <Link to={'/application/' + val.term} state={val}>View</Link>
+                                            <Link to={'/application/' + val.term} state={val}>Apply</Link>
                                         </TableCell>
                                     </TableRow>
                                 )

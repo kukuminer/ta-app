@@ -274,7 +274,12 @@ class StudentApplicationClass extends React.Component {
                         <div className="form-row">
                             Provide a brief explanation of which courses you want to TA for, and your relevant experience
                             <br />
-                            <textarea value={this.state.explanation} onChange={(event) => this.handleChange('explanation', event)} />
+                            <TextField
+                                value={this.state.explanation}
+                                onChange={(event) => this.handleChange('explanation', event)}
+                                multiline
+                                fullWidth
+                            />
                         </div>
                         <Button variant="contained"
                             size="large"
