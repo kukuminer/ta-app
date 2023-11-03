@@ -234,7 +234,7 @@ class StudentApplicationClass extends React.Component {
                                                 <TableRow>
                                                     <th>Course</th>
                                                     <th>Title</th>
-                                                    {/* <th>Grade</th> */}
+                                                    <th>Description</th>
                                                     <th>Interest</th>
                                                     <th>Qualification</th>
                                                     <th></th>
@@ -259,7 +259,7 @@ class StudentApplicationClass extends React.Component {
                                         <TableRow>
                                             <th>Course</th>
                                             <th>Title</th>
-                                            {/* <th>Grade</th> */}
+                                            <th>Description</th>
                                             <th>Interest</th>
                                             <th>Qualification</th>
                                             <th></th>

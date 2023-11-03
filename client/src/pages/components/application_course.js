@@ -10,7 +10,7 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TableCell,
 class Application extends React.Component {
     URL = '/api/applicant/application'
     dataKeys = [ // These are the keys that get displayed in the columns
-        'codename', 'name', //description
+        'codename', 'name', 'description',//description
     ]
 
     constructor(props) {
