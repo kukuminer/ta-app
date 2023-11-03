@@ -71,6 +71,11 @@ export default function ProfSectionTable({ rows, columns, loading, onEditStop, i
                 processRowUpdate={processRowUpdate}
                 onProcessRowUpdateError={(e) => console.log(e)}
                 getRowHeight={() => 120}
+                sx={{
+                    "& .MuiDataGrid-row.Mui-hovered": {
+                        backgroundColor: "inherit"
+                    }
+                }}
             />
         </div>
     );
