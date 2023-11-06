@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom'
 // import Assignment from "../../components/assignment_row"
 // import { DataGrid } from '@mui/x-data-grid'
 import { GridColDef, GridComparatorFn, GridRowEditStopReasons } from "@mui/x-data-grid"
-import ProfSectionTable from "./datagrid/section_table"
-import renderGridCellSelectInput from "./datagrid/render_select_input"
-import renderGridCellTextFieldInput from "./datagrid/render_textfield_input"
-import renderGridCellTooltip from "./datagrid/render_tooltip"
+import DatagridTable from "../../components/datagrid/datagrid_table"
+import renderGridCellSelectInput from "../../components/datagrid/render_select_input"
+import renderGridCellTextFieldInput from "../../components/datagrid/render_textfield_input"
+import renderGridCellTooltip from "../../components/datagrid/render_tooltip"
 
 const GET_URL = '/api/instructor/'
 const POST_URL = '/api/instructor/assignment'
@@ -116,7 +116,7 @@ const ProfessorSection = () => {
                     Object.keys(tableData).map((key, idx) =>
                         <div key={key}>
                             <h2>{key.toUpperCase()} Applicants</h2>
-                            <ProfSectionTable
+                            <DatagridTable
                                 key={key}
                                 idVarName={'userid'}
                                 rows={tableData[key]}

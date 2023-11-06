@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridCellModes } from '@mui/x-data-grid';
 
-export default function ProfSectionTable({ rows, columns, loading, onEditStop, idVarName, processRowUpdate }) {
+export default function DatagridTable({ rows, columns, loading, onEditStop, idVarName, processRowUpdate }) {
     const [cellModesModel, setCellModesModel] = React.useState({});
 
     const handleCellClick = React.useCallback((params, event) => {

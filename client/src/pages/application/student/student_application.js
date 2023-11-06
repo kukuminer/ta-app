@@ -5,6 +5,7 @@ import getUser from "../../../getUser"
 import Application from "../../components/application_course"
 import HtmlTooltip from "../../components/tooltip"
 import { Button, IconButton, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import DatagridTable from "../../components/datagrid/datagrid_table"
 
 /**
  * Wraps the StudentApplication component to properly pass in the useLocation hook
@@ -14,6 +15,17 @@ const StudentApplication = () => {
     const location = useLocation()
     return <StudentApplicationClass state={location.state} />
 }
+
+const columns: GridColDef[] = [
+    { field: 'codename', headerName: 'Course', width: 150, headerClassName: 'section-table-header' },
+    { field: 'course', headerName: 'Title', width: 150, headerClassName: 'section-table-header', flex: 1 },
+    { field: 'description', headerName: 'Description', width: 150, headerClassName: 'section-table-header' },
+    { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
+    { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
+]
+const rows = [
+    { codename: '2030', course: 'intro oop', description: 'desc', interest: 3, qualification: 3 },
+]
 
 class StudentApplicationClass extends React.Component {
     POST_URL = '/api/applicant/termapplication'
@@ -138,6 +150,8 @@ class StudentApplicationClass extends React.Component {
             })
     }
     makeTable(courseData, refusalInfo) {
+        console.log(courseData)
+        console.log(refusalInfo)
         for (const [key, course] of Object.entries(courseData)) {
             const courseId = course.code
             for (const right of refusalInfo) {
@@ -253,7 +267,15 @@ class StudentApplicationClass extends React.Component {
                         </div>
                         <div>
                             <h3>Course Preferences</h3>
-                            <TableContainer >
+                            <DatagridTable
+                                columns={columns}
+                                idVarName={'codename'}
+                                loading={false}
+                                onEditStop={() => console.log('edit stop')}
+                                processRowUpdate={() => console.log('row update')}
+                                rows={rows}
+                            />
+                            {/* <TableContainer >
                                 <Table size="small" >
                                     <TableHead>
                                         <TableRow>
@@ -269,7 +291,7 @@ class StudentApplicationClass extends React.Component {
                                         {!this.state.courseTable ? <tr><td>loading...</td></tr> : this.state.courseTable}
                                     </TableBody>
                                 </Table>
-                            </TableContainer>
+                            </TableContainer> */}
                         </div>
                         <div className="form-row">
                             Provide a brief explanation of which courses you want to TA for, and your relevant experience

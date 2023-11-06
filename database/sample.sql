@@ -54,7 +54,6 @@ INSERT INTO termapplication(applicant, term, availability, approval, explanation
 
 INSERT INTO rightofrefusal(applicant, course, term) VALUES
 (3, 1, 3),
-(3, 1, 3),
 (5, 2, 3),
 (3, 3, 2),
 (3, 2, 2);
