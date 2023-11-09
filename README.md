@@ -179,3 +179,9 @@ STUDENT VIEW
 -- clickable (i) button
 - consistent font sizes/family
 
+Nov 6:
+- complete student application grid
+-- use rating mui element https://mui.com/material-ui/react-rating/
+- make makefile to deploy the app
+- rating in instructor view? (read only)
+- 
