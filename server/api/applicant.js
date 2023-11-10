@@ -115,10 +115,12 @@ module.exports = function ({ app, db, pgp }) {
         const userId = res.locals.userid
         const term = req.params.term
         const dbQuery = `
-        SELECT submitted, availability, approval, explanation, incanada, wantstoteach
+        SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term
         FROM termapplication
+        INNER JOIN term 
+        ON term.id = termapplication.term
         WHERE applicant IN (SELECT id FROM users WHERE username=$1)
-        AND term=$2
+        AND termapplication.term=$2
         `
         db.any(dbQuery, [userId, term])
             .then((data) => {
