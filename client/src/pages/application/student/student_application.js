@@ -4,9 +4,12 @@ import axios from "axios"
 import getUser from "../../../getUser"
 import Application from "../../components/application_course"
 import HtmlTooltip from "../../components/tooltip"
-import { Button, Checkbox, FormControlLabel, FormGroup, IconButton, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { Button, Checkbox, FormControlLabel, FormGroup, IconButton, Rating, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import DatagridTable from "../../components/datagrid/datagrid_table"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
+import { GridColDef } from "@mui/x-data-grid"
+import renderGridCellTooltip from "../../components/datagrid/render_tooltip"
+import renderGridCellRatingInput from "../../components/datagrid/render_rating_input"
 
 const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_COURSE_APPS = '/api/applicant/applications/'
@@ -18,9 +21,37 @@ const MIN_AVAILABILITY = 0
 const columns: GridColDef[] = [
     { field: 'codename', headerName: 'Course', width: 150, headerClassName: 'section-table-header' },
     { field: 'name', headerName: 'Title', width: 150, headerClassName: 'section-table-header', flex: 1 },
-    { field: 'description', headerName: 'Description', width: 150, headerClassName: 'section-table-header' },
-    { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
-    { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
+    {
+        field: 'description',
+        headerName: 'Description',
+        width: 120,
+        headerClassName: 'section-table-header',
+        renderCell: renderGridCellTooltip,
+    },
+    {
+        field: 'interest',
+        headerName: 'Interest',
+        width: 150,
+        headerClassName: 'section-table-header',
+        editable: true,
+        renderCell: renderGridCellRatingInput,
+        // renderCell: props => (
+        //     <Rating
+        //         name="interest"
+        //         value={props.value}
+        //     />
+        // ),
+        renderEditCell: renderGridCellRatingInput,
+    },
+    {
+        field: 'qualification',
+        headerName: 'Qualification',
+        width: 150,
+        headerClassName: 'section-table-header',
+        editable: true,
+        renderCell: renderGridCellRatingInput,
+        renderEditCell: renderGridCellRatingInput,
+    },
 ]
 // const rows = [
 //     { codename: '2030', course: 'intro oop', description: 'desc', interest: 3, qualification: 3 },
@@ -42,6 +73,10 @@ const StudentApplication = () => {
             const url = GET_COURSE_APPS + params.term
             const res = await axios.get(url)
             console.log(res.data)
+            res.data.forEach(element => {
+                element.id = element.code
+                return element
+            });
             setAppRows(res.data)
         }
         fetchTerm()
@@ -92,7 +127,6 @@ const StudentApplication = () => {
                 />}
                 label={<>
                     Load availability in quarter-loads (0-4)
-
                     <HtmlTooltip title={
                         <>
                             {"Each quarter load is ~34 hours over the course of the semester."}
@@ -102,7 +136,6 @@ const StudentApplication = () => {
                     </HtmlTooltip>
                 </>}
             >
-
             </FormControlLabel>
 
         </FormGroup>
@@ -110,10 +143,10 @@ const StudentApplication = () => {
 
         <DatagridTable
             columns={columns}
-            idVarName={'codename'}
-            loading={false}
-            onEditStop={() => console.log('edit stop')}
-            processRowUpdate={() => console.log('row update')}
+            idVarName={'code'}
+            loading={!appRows}
+            onEditStop={null}
+            processRowUpdate={null}
             rows={appRows}
         />
 
