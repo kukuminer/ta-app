@@ -6,55 +6,65 @@ import Application from "../../components/application_course"
 import HtmlTooltip from "../../components/tooltip"
 import { Button, Checkbox, FormControlLabel, FormGroup, IconButton, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import DatagridTable from "../../components/datagrid/datagrid_table"
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 
 const GET_TERM_APP = '/api/applicant/termapplication/'
-const GET_COURSE_APPS = ''
+const GET_COURSE_APPS = '/api/applicant/applications/'
+const POST_TERM_APP = '/api/applicant/termapplication/'
 
 const MAX_AVAILABILITY = 4
 const MIN_AVAILABILITY = 0
 
 const columns: GridColDef[] = [
     { field: 'codename', headerName: 'Course', width: 150, headerClassName: 'section-table-header' },
-    { field: 'course', headerName: 'Title', width: 150, headerClassName: 'section-table-header', flex: 1 },
+    { field: 'name', headerName: 'Title', width: 150, headerClassName: 'section-table-header', flex: 1 },
     { field: 'description', headerName: 'Description', width: 150, headerClassName: 'section-table-header' },
     { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
     { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
 ]
-const rows = [
-    { codename: '2030', course: 'intro oop', description: 'desc', interest: 3, qualification: 3 },
-]
+// const rows = [
+//     { codename: '2030', course: 'intro oop', description: 'desc', interest: 3, qualification: 3 },
+// ]
 
 const StudentApplication = () => {
-    // const location = useLocation()
     const params = useParams()
     const [termApp, setTermApp] = useState({})
+    const [appRows, setAppRows] = useState({})
 
     useEffect(() => {
-        async function fetch() {
+        async function fetchTerm() {
             const url = GET_TERM_APP + params.term
             const res = await axios.get(url)
             console.log(res)
             setTermApp(res.data[0])
         }
-        fetch()
+        async function fetchApps() {
+            const url = GET_COURSE_APPS + params.term
+            const res = await axios.get(url)
+            console.log(res.data)
+            setAppRows(res.data)
+        }
+        fetchTerm()
+        fetchApps()
     }, [params])
 
-    // function handleChange(key, value) {
-    //     console.log(key, value)
-    //     setTermApp(old => {
-    //         const n = {...old, [key]: value}
-    //         console.log(n)
-    //         return n
-    //     })
-    // }
     function handleChange(event) {
         // Checkboxes use "checked" instead of "value" field in event.target
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value
         setTermApp(old => { return { ...old, [event.target.name]: value } })
     }
 
+    useEffect(() => {
+        if (!termApp) return
+        const postData = setTimeout(() => {
+            axios.post(POST_TERM_APP, termApp).then(res => console.log(res.data[0]))
+        }, 500)
+        return () => clearTimeout(postData)
+    }, [termApp])
+
     return <div className="application">
-        <h2>Teaching Assistant Application for {termApp.term}</h2>
+        <h2>Teaching Assistant Application for {termApp.termname}</h2>
+        {termApp.submitted && <h2>Application is submitted</h2>}
         <p>Your changes are saved automatically. Unsubmitting will withdraw your application.</p>
         <h3>General Info</h3>
         <FormGroup>
@@ -85,16 +95,10 @@ const StudentApplication = () => {
 
                     <HtmlTooltip title={
                         <>
-                            {"You have priority for these courses because you were a TA for them in the previous term."}
+                            {"Each quarter load is ~34 hours over the course of the semester."}
                         </>
                     }>
-                        <IconButton
-                            variant="contained"
-                            size="small"
-                            sx={{ height: 30, width: 30 }}
-                        >
-                            ?
-                        </IconButton>
+                        <InfoOutlinedIcon />
                     </HtmlTooltip>
                 </>}
             >
@@ -103,6 +107,26 @@ const StudentApplication = () => {
 
         </FormGroup>
         <h3>Course Preferences</h3>
+
+        <DatagridTable
+            columns={columns}
+            idVarName={'codename'}
+            loading={false}
+            onEditStop={() => console.log('edit stop')}
+            processRowUpdate={() => console.log('row update')}
+            rows={appRows}
+        />
+
+        <p>
+            Provide a brief explanation of which courses you want to TA for, and your relevant experience
+        </p>
+
+        <Button
+            onClick={() => handleChange({ target: { value: !termApp.submitted, name: 'submitted' } })}
+            variant="contained"
+        >
+            {termApp.submitted ? 'Unsubmit' : 'Submit'}
+        </Button>
     </div>
     // return <StudentApplicationClass state={location.state} />
 }

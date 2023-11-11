@@ -84,7 +84,7 @@ CREATE TABLE termapplication (
 
     submitted boolean DEFAULT false,
 
-    term int,
+    term int NOT NULL,
     availability int NOT NULL,
     approval boolean,
     skills text,

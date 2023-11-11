@@ -1,5 +1,5 @@
 import { Button, Popover, Typography } from "@mui/material"
-import HtmlTooltip from "../tooltip"
+// import HtmlTooltip from "../tooltip"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import { useState } from "react"
 

@@ -115,7 +115,7 @@ module.exports = function ({ app, db, pgp }) {
         const userId = res.locals.userid
         const term = req.params.term
         const dbQuery = `
-        SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term
+        SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term AS termname, term.id AS term
         FROM termapplication
         INNER JOIN term 
         ON term.id = termapplication.term
