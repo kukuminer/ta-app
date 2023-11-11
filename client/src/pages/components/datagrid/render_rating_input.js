@@ -1,21 +1,34 @@
 import { Rating } from "@mui/material";
 import { useGridApiContext } from "@mui/x-data-grid";
+import { useCallback, useState } from "react";
 
 
 function GridCellRatingInput({ id, value, field }) {
     const apiRef = useGridApiContext()
-    console.log(id, value, field)
+
+    const [val, setVal] = useState(value)
+
+    const handleEvent = useCallback(async (params, event, details) => {
+        if (params.id === id && params.field === field) {
+            await apiRef.current.setEditCellValue({ id: id, field: field, value: val })
+        }
+    }, [val, apiRef, id, field])
+
+    apiRef.current.subscribeEvent(
+        'cellEditStop',
+        handleEvent,
+    )
 
     async function handleChange(e) {
-        e.defaultMuiPrevented = true
-        await apiRef.current.setEditCellValue({ id, field, value: e.target.value })
-        apiRef.current.stopCellEditMode({ id: id, field: field, ignoreModifications: false })
+        const newVal = parseInt(e.target.value)
+        setVal(newVal)
+        await apiRef.current.setEditCellValue({ id: id, field: field, value: newVal })
+        apiRef.current.stopCellEditMode({ id: id, field: field })
         apiRef.current.publishEvent(
             "cellEditStop",
             {
                 id: id,
                 field: field,
-                value: e.target.value,
                 row: { ...apiRef.current.getRow(id) }
             },
             e
@@ -24,7 +37,7 @@ function GridCellRatingInput({ id, value, field }) {
 
     return <>
         <Rating
-            value={value ?? 0}
+            value={val ?? 0}
             onChange={handleChange}
             onClick={handleChange}
         />

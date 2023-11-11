@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import axios from "axios"
-import getUser from "../../../getUser"
-import Application from "../../components/application_course"
 import HtmlTooltip from "../../components/tooltip"
-import { Button, Checkbox, FormControlLabel, FormGroup, IconButton, Rating, Table, TableBody, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material"
 import DatagridTable from "../../components/datagrid/datagrid_table"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import { GridColDef } from "@mui/x-data-grid"
@@ -14,6 +12,7 @@ import renderGridCellRatingInput from "../../components/datagrid/render_rating_i
 const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_COURSE_APPS = '/api/applicant/applications/'
 const POST_TERM_APP = '/api/applicant/termapplication/'
+const POST_COURSE_APPS = '/api/applicant/application/'
 
 const MAX_AVAILABILITY = 4
 const MIN_AVAILABILITY = 0
@@ -35,12 +34,6 @@ const columns: GridColDef[] = [
         headerClassName: 'section-table-header',
         editable: true,
         renderCell: renderGridCellRatingInput,
-        // renderCell: props => (
-        //     <Rating
-        //         name="interest"
-        //         value={props.value}
-        //     />
-        // ),
         renderEditCell: renderGridCellRatingInput,
     },
     {
@@ -60,7 +53,7 @@ const columns: GridColDef[] = [
 const StudentApplication = () => {
     const params = useParams()
     const [termApp, setTermApp] = useState({})
-    const [appRows, setAppRows] = useState({})
+    const [appRows, setAppRows] = useState([])
 
     useEffect(() => {
         async function fetchTerm() {
@@ -73,10 +66,10 @@ const StudentApplication = () => {
             const url = GET_COURSE_APPS + params.term
             const res = await axios.get(url)
             console.log(res.data)
-            res.data.forEach(element => {
-                element.id = element.code
-                return element
-            });
+            // res.data.forEach(element => {
+            //     element.id = element.code
+            //     return element
+            // });
             setAppRows(res.data)
         }
         fetchTerm()
@@ -86,9 +79,28 @@ const StudentApplication = () => {
     function handleChange(event) {
         // Checkboxes use "checked" instead of "value" field in event.target
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value
-        setTermApp(old => { return { ...old, [event.target.name]: value } })
+        setTermApp(old => {
+            return { ...old, [event.target.value]: value }
+            // const newval = { ...old, [event.target.value]: value }
+
+            // return newval
+        })
     }
 
+    const updateRow = async (newRow, oldRow) => {
+        if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow
+
+        const body = {
+            course: newRow.code,
+            term: termApp.term,
+            interest: newRow.interest,
+            qualification: newRow.qualification
+        }
+        axios.post(POST_COURSE_APPS, body)
+        return newRow
+    }
+
+    // const postTermApp = (newVal) => {
     useEffect(() => {
         if (!termApp) return
         const postData = setTimeout(() => {
@@ -96,6 +108,7 @@ const StudentApplication = () => {
         }, 500)
         return () => clearTimeout(postData)
     }, [termApp])
+    //}
 
     return <div className="application">
         <h2>Teaching Assistant Application for {termApp.termname}</h2>
@@ -146,8 +159,8 @@ const StudentApplication = () => {
             idVarName={'code'}
             loading={!appRows}
             onEditStop={null}
-            processRowUpdate={null}
-            rows={appRows}
+            processRowUpdate={updateRow}
+            rows={appRows ?? []}
         />
 
         <p>
