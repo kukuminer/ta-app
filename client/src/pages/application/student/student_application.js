@@ -111,14 +111,14 @@ const StudentApplication = () => {
     //}
 
     return <div className="application">
-        <h2>Teaching Assistant Application for {termApp.termname}</h2>
-        {termApp.submitted && <h2>Application is submitted</h2>}
+        <h2>Teaching Assistant Application for {termApp?.termname}</h2>
+        {termApp?.submitted && <h2>Application is submitted</h2>}
         <p>Your changes are saved automatically. Unsubmitting will withdraw your application.</p>
         <h3>General Info</h3>
         <FormGroup>
             <FormControlLabel
                 control={<Checkbox
-                    checked={termApp.wantstoteach ?? false}
+                    checked={termApp?.wantstoteach ?? false}
                     // onChange={(e) => handleChange('wantstoteach', !e.target.checked)}
                     name="wantstoteach"
                     onChange={handleChange}
@@ -127,7 +127,7 @@ const StudentApplication = () => {
             />
             <FormControlLabel
                 control={<TextField
-                    value={termApp.availability ?? ''}
+                    value={termApp?.availability ?? ''}
                     name="availability"
                     onChange={handleChange}
                     type="number"
@@ -171,7 +171,7 @@ const StudentApplication = () => {
             onClick={() => handleChange({ target: { value: !termApp.submitted, name: 'submitted' } })}
             variant="contained"
         >
-            {termApp.submitted ? 'Unsubmit' : 'Submit'}
+            {termApp?.submitted ? 'Unsubmit' : 'Submit'}
         </Button>
     </div>
     // return <StudentApplicationClass state={location.state} />
