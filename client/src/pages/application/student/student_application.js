@@ -92,9 +92,10 @@ const StudentApplication = () => {
     }
 
     useEffect(() => {
-        if (!termApp) return
         const postData = setTimeout(() => {
-            axios.post(POST_TERM_APP, termApp)//.then(res => console.log(res.data[0]))
+            if (Object.keys(termApp).length !== 0) {
+                axios.post(POST_TERM_APP, termApp)//.then(res => console.log(res.data[0]))
+            }
         }, 250)
         return () => clearTimeout(postData)
     }, [termApp])
