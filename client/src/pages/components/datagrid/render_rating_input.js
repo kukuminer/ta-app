@@ -1,6 +1,8 @@
 import { Rating } from "@mui/material";
 import { useGridApiContext } from "@mui/x-data-grid";
 import { useCallback, useState } from "react";
+import CircleIcon from '@mui/icons-material/Circle'
+import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined'
 
 
 function GridCellRatingInput({ id, value, field }) {
@@ -40,6 +42,8 @@ function GridCellRatingInput({ id, value, field }) {
             value={val ?? 0}
             onChange={handleChange}
             onClick={handleChange}
+            icon={<CircleIcon />}
+            emptyIcon={<CircleOutlinedIcon />}
         />
     </>
 }
