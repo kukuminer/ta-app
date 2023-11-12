@@ -59,17 +59,11 @@ const StudentApplication = () => {
         async function fetchTerm() {
             const url = GET_TERM_APP + params.term
             const res = await axios.get(url)
-            console.log(res)
             setTermApp(res.data[0])
         }
         async function fetchApps() {
             const url = GET_COURSE_APPS + params.term
             const res = await axios.get(url)
-            console.log(res.data)
-            // res.data.forEach(element => {
-            //     element.id = element.code
-            //     return element
-            // });
             setAppRows(res.data)
         }
         fetchTerm()
@@ -80,14 +74,11 @@ const StudentApplication = () => {
         // Checkboxes use "checked" instead of "value" field in event.target
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value
         setTermApp(old => {
-            return { ...old, [event.target.value]: value }
-            // const newval = { ...old, [event.target.value]: value }
-
-            // return newval
+            return { ...old, [event.target.name]: value }
         })
     }
 
-    const updateRow = async (newRow, oldRow) => {
+    async function updateRow(newRow, oldRow) {
         if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow
 
         const body = {
@@ -100,15 +91,13 @@ const StudentApplication = () => {
         return newRow
     }
 
-    // const postTermApp = (newVal) => {
     useEffect(() => {
         if (!termApp) return
         const postData = setTimeout(() => {
-            axios.post(POST_TERM_APP, termApp).then(res => console.log(res.data[0]))
-        }, 500)
+            axios.post(POST_TERM_APP, termApp)//.then(res => console.log(res.data[0]))
+        }, 250)
         return () => clearTimeout(postData)
     }, [termApp])
-    //}
 
     return <div className="application">
         <h2>Teaching Assistant Application for {termApp?.termname}</h2>
@@ -166,7 +155,14 @@ const StudentApplication = () => {
         <p>
             Provide a brief explanation of which courses you want to TA for, and your relevant experience
         </p>
-
+        <TextField
+            value={termApp?.explanation}
+            onChange={handleChange}
+            name="explanation"
+            fullWidth
+            multiline
+        />
+        <p />
         <Button
             onClick={() => handleChange({ target: { value: !termApp.submitted, name: 'submitted' } })}
             variant="contained"
