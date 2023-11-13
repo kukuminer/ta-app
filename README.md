@@ -175,13 +175,13 @@ STUDENT VIEW
 - character/line limit for student explanation field
 + COMPLETE do not include draft applications (submitted = t)
 + COMPLETE add availability column
-- course desc tooltip on course column
--- clickable (i) button
-- consistent font sizes/family
++ course desc tooltip on course column
++ clickable (i) button
++ consistent font sizes/family
 
 Nov 6:
-- complete student application grid
--- use rating mui element https://mui.com/material-ui/react-rating/
++ complete student application grid
++ use rating mui element https://mui.com/material-ui/react-rating/
 - make makefile to deploy the app
 - rating in instructor view? (read only)
 - 
