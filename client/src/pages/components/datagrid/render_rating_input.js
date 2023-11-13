@@ -5,7 +5,8 @@ import CircleIcon from '@mui/icons-material/Circle'
 import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined'
 
 
-function GridCellRatingInput({ id, value, field }) {
+function GridCellRatingInput({ id, value, field, readonly }) {
+    console.log(id, field, value, readonly)
     const apiRef = useGridApiContext()
 
     const [val, setVal] = useState(value)
@@ -44,10 +45,11 @@ function GridCellRatingInput({ id, value, field }) {
             onClick={handleChange}
             icon={<CircleIcon />}
             emptyIcon={<CircleOutlinedIcon />}
+            readOnly={readonly}
         />
     </>
 }
 
-export default function renderGridCellRatingInput(params) {
-    return <GridCellRatingInput {...params} />
+export default function renderGridCellRatingInput(params, readonly = false) {
+    return <GridCellRatingInput {...params} readonly={readonly} />
 }
