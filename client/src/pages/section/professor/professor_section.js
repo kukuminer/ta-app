@@ -8,6 +8,7 @@ import DatagridTable from "../../components/datagrid/datagrid_table"
 import renderGridCellSelectInput from "../../components/datagrid/render_select_input"
 import renderGridCellTextFieldInput from "../../components/datagrid/render_textfield_input"
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip"
+import renderGridCellRatingInput from "../../components/datagrid/render_rating_input"
 
 const GET_URL = '/api/instructor/'
 const POST_URL = '/api/instructor/assignment'
@@ -20,9 +21,21 @@ const sortOrder: GridComparatorFn = (v1, v2) => {
 const columns: GridColDef[] = [
     { field: 'firstname', headerName: 'Name', width: 150, headerClassName: 'section-table-header' },
     { field: 'lastname', headerName: 'Surname', width: 150, headerClassName: 'section-table-header' },
-    { field: 'availability', headerName: 'Availability', width: 150, headerClassName: 'section-table-header'},
-    { field: 'interest', headerName: 'Interest', width: 150, headerClassName: 'section-table-header' },
-    { field: 'qualification', headerName: 'Qualification', width: 150, headerClassName: 'section-table-header' },
+    { field: 'availability', headerName: 'Availability', width: 150, headerClassName: 'section-table-header' },
+    {
+        field: 'interest',
+        headerName: 'Interest',
+        width: 150,
+        headerClassName: 'section-table-header',
+        renderCell: (p) => renderGridCellRatingInput(p, true),
+    },
+    {
+        field: 'qualification',
+        headerName: 'Qualification',
+        width: 150,
+        headerClassName: 'section-table-header',
+        renderCell: (p) => renderGridCellRatingInput(p, true),
+    },
     {
         field: 'explanation',
         headerName: 'Details',
