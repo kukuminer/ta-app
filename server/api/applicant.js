@@ -194,6 +194,7 @@ module.exports = function ({ app, db, pgp }) {
      */
     app.post("/api/applicant/termapplication", (req, res) => {
         const r = req.body
+        console.log(r)
         const userId = res.locals.userid
         dbQuery = `
     INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
