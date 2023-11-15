@@ -170,7 +170,7 @@ Oct 30:
 - submitted field???
 
 INSTRUCTOR VIEW
-- modal for student explanations
++ modal for student explanations
 STUDENT VIEW
 - character/line limit for student explanation field
 + COMPLETE do not include draft applications (submitted = t)
@@ -183,5 +183,10 @@ Nov 6:
 + complete student application grid
 + use rating mui element https://mui.com/material-ui/react-rating/
 - make makefile to deploy the app
-- rating in instructor view? (read only)
-- 
++ rating in instructor view? (read only)
+
+nov 13:
+- server side validation for student view
+-- termapplication
+-- application values
+- reduce row height for student course view
