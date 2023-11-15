@@ -51,9 +51,9 @@ const columns: GridColDef[] = [
 // ]
 
 const StudentApplication = () => {
-    const params = useParams()
     const [termApp, setTermApp] = useState({})
     const [appRows, setAppRows] = useState([])
+    const params = useParams()
 
     useEffect(() => {
         async function fetchTerm() {
@@ -83,7 +83,7 @@ const StudentApplication = () => {
 
         const body = {
             course: newRow.code,
-            term: termApp.term,
+            term: params.term,
             interest: newRow.interest,
             qualification: newRow.qualification
         }
@@ -93,7 +93,8 @@ const StudentApplication = () => {
 
     useEffect(() => {
         const postData = setTimeout(() => {
-            if (Object.keys(termApp).length !== 0) {
+            if (!!termApp && Object.keys(termApp).length !== 0) {
+                console.log(termApp)
                 axios.post(POST_TERM_APP, termApp)//.then(res => console.log(res.data[0]))
             }
         }, 250)
@@ -117,7 +118,7 @@ const StudentApplication = () => {
             />
             <FormControlLabel
                 control={<TextField
-                    value={termApp?.availability ?? ''}
+                    value={termApp?.availability ?? 0}
                     name="availability"
                     onChange={handleChange}
                     type="number"
@@ -132,7 +133,7 @@ const StudentApplication = () => {
                     Load availability in quarter-loads (0-4)
                     <HtmlTooltip title={
                         <>
-                            {"Each quarter load is ~34 hours over the course of the semester."}
+                            {"Each quarter load is 33.75 hours over the course of the semester."}
                         </>
                     }>
                         <InfoOutlinedIcon />

@@ -7,7 +7,6 @@ import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined'
 
 function GridCellRatingInput({ id, value, field, readonly }) {
     const apiRef = useGridApiContext()
-    console.log(id, field, value, readonly)
 
     const [val, setVal] = useState(value)
 
