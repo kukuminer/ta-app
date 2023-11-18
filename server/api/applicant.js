@@ -98,7 +98,7 @@ module.exports = function ({ app, db, pgp }) {
     FROM term LEFT JOIN 
     (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username=$1)) AS termapplication
     ON term.id = termapplication.term
-    WHERE term.visible = true    
+    WHERE term.visible = true
     `
         // AND section.term NOT IN (SELECT term FROM termapplication)
         db.any(dbQuery, userId)
@@ -191,10 +191,20 @@ module.exports = function ({ app, db, pgp }) {
 
     /** 
      * Termapplication changes post endpoint
+     * Also includes data validation
      */
     app.post("/api/applicant/termapplication", (req, res) => {
         const r = req.body
+
+        // Data validation
+        r.availability = Math.max(Math.min(4, r.availability), 0)
+        console.log(r.explanation.length)
+        r.explanation = r.explanation?.substring(0, 1000) ?? ''
+        r.submitted = r.submitted === null ? false : r.submitted
+        console.log(r.explanation.length)
         console.log(r)
+
+
         const userId = res.locals.userid
         dbQuery = `
     INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
