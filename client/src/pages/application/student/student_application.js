@@ -10,12 +10,14 @@ import renderGridCellTooltip from "../../components/datagrid/render_tooltip"
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input"
 
 const GET_TERM_APP = '/api/applicant/termapplication/'
+const GET_TERM_APP2 = '/api/applicant/applications/available/'
 const GET_COURSE_APPS = '/api/applicant/applications/'
 const POST_TERM_APP = '/api/applicant/termapplication/'
 const POST_COURSE_APPS = '/api/applicant/application/'
 
 const MAX_AVAILABILITY = 4
 const MIN_AVAILABILITY = 0
+const DEBOUNCE_MS = 400
 
 const columns: GridColDef[] = [
     { field: 'codename', headerName: 'Course', width: 150, headerClassName: 'section-table-header' },
@@ -57,9 +59,13 @@ const StudentApplication = () => {
 
     useEffect(() => {
         async function fetchTerm() {
-            const url = GET_TERM_APP + params.term
+            // const url = GET_TERM_APP + params.term
+            const url = GET_TERM_APP2
             const res = await axios.get(url)
-            setTermApp(res.data[0])
+            const data = res.data.filter((el) => {
+                return parseInt(el.term) === parseInt(params.term)
+            })
+            setTermApp(data[0])
         }
         async function fetchApps() {
             const url = GET_COURSE_APPS + params.term
@@ -97,7 +103,7 @@ const StudentApplication = () => {
                 console.log(termApp)
                 axios.post(POST_TERM_APP, termApp)//.then(res => console.log(res.data[0]))
             }
-        }, 250)
+        }, DEBOUNCE_MS)
         return () => clearTimeout(postData)
     }, [termApp])
 
@@ -155,14 +161,15 @@ const StudentApplication = () => {
         />
 
         <p>
-            Provide a brief explanation of which courses you want to TA for, and your relevant experience
+            Provide a brief explanation of which courses you want to TA for, and your relevant experience (Maximum 1000 characters)
         </p>
         <TextField
-            value={termApp?.explanation}
+            value={termApp?.explanation ?? ''}
             onChange={handleChange}
             name="explanation"
             fullWidth
             multiline
+            inputProps={{ maxLength: 1000 }}
         />
         <p />
         <Button
