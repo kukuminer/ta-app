@@ -90,9 +90,10 @@ const StudentApplication = () => {
         const body = {
             course: newRow.code,
             term: params.term,
-            interest: newRow.interest,
-            qualification: newRow.qualification
+            interest: newRow.interest ?? 1,
+            qualification: newRow.qualification ?? 1,
         }
+        console.log(body)
         axios.post(POST_COURSE_APPS, body)
         return newRow
     }
@@ -158,6 +159,7 @@ const StudentApplication = () => {
             onEditStop={null}
             processRowUpdate={updateRow}
             rows={appRows ?? []}
+            rowHeight={60}
         />
 
         <p>
