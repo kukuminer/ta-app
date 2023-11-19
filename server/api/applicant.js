@@ -201,9 +201,6 @@ module.exports = function ({ app, db, pgp }) {
         console.log(r.explanation.length)
         r.explanation = r.explanation?.substring(0, 1000) ?? ''
         r.submitted = r.submitted === null ? false : r.submitted
-        console.log(r.explanation.length)
-        console.log(r)
-
 
         const userId = res.locals.userid
         dbQuery = `
