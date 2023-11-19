@@ -41,7 +41,7 @@ function GridCellRatingInput({ id, value, field, readonly }) {
 
     return <>
         <Rating
-            value={val ?? 0}
+            value={val ?? 1}
             onChange={handleChange}
             onClick={handleChange}
             icon={<CircleIcon />}
