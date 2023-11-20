@@ -172,7 +172,7 @@ Oct 30:
 INSTRUCTOR VIEW
 + modal for student explanations
 STUDENT VIEW
-- character/line limit for student explanation field
++ character/line limit for student explanation field
 + COMPLETE do not include draft applications (submitted = t)
 + COMPLETE add availability column
 + course desc tooltip on course column
@@ -186,7 +186,7 @@ Nov 6:
 + rating in instructor view? (read only)
 
 nov 13:
-- server side validation for student view
--- termapplication
--- application values
-- reduce row height for student course view
++ server side validation for student view
++ termapplication
++ application values
++ reduce row height for student course view
