@@ -9,7 +9,7 @@ import { GridColDef } from "@mui/x-data-grid"
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip"
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input"
 
-const GET_TERM_APP = '/api/applicant/termapplication/'
+// const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = '/api/applicant/applications/available/'
 const GET_COURSE_APPS = '/api/applicant/applications/'
 const POST_TERM_APP = '/api/applicant/termapplication/'
