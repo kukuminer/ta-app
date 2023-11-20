@@ -139,6 +139,22 @@ app.get("/api/section/:sectionId", (req, res) => {
         })
 })
 
+// /**
+//  * Public endpoint to get term name from term ID
+//  */
+// app.get("/api/term/:termId", (req, res) => {
+//     const termId = req.params.termId
+//     const dbQuery = `SELECT term, visible FROM term WHERE id=$1`
+//     db.oneOrNone(dbQuery, [termId])
+//         .then((data) => {
+//             res.json(data)
+//         })
+//         .catch((error) => {
+//             console.log('error retrieving term data from db:', termId)
+//             res.status(400).send(error)
+//         })
+// })
+
 /**
  * ENDPOINTS BELOW HERE TO BE DELETED
  */
