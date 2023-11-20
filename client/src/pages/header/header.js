@@ -31,7 +31,7 @@ const Header = () => {
                     </h1>
                 </Link>
                 <p>
-                    This app is currently in testing. No user actions are officially submitted
+                    {/* This app is currently in testing. No user actions are officially submitted */}
                 </p>
                 <p className="header-right">
                     User Id: {userData ? userData?.username : 'loading..'}
