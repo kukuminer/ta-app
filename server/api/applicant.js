@@ -171,7 +171,6 @@ module.exports = function ({ app, db, pgp }) {
 
         r.interest = Math.max(Math.min(MAX_RATING, r.interest), MIN_RATING) ?? MIN_RATING
         r.qualification = Math.max(Math.min(MAX_RATING, r.qualification), MIN_RATING) ?? MIN_RATING
-        console.log(r)
         const userId = res.locals.userid
         const dbQuery = `
     INSERT INTO application(applicant, course, term, interest, qualification) 

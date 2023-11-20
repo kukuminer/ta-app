@@ -93,7 +93,6 @@ const StudentApplication = () => {
             interest: newRow.interest ?? 1,
             qualification: newRow.qualification ?? 1,
         }
-        console.log(body)
         axios.post(POST_COURSE_APPS, body)
         return newRow
     }
@@ -101,7 +100,6 @@ const StudentApplication = () => {
     useEffect(() => {
         const postData = setTimeout(() => {
             if (!!termApp && Object.keys(termApp).length !== 0) {
-                console.log(termApp)
                 axios.post(POST_TERM_APP, termApp)//.then(res => console.log(res.data[0]))
             }
         }, DEBOUNCE_MS)
