@@ -156,7 +156,7 @@ Oct 13:
 
 
 Oct 20:
-- do not assign id in sample data
++ do not assign id in sample data
 - update deployment 
 INSTRUCTOR View:
 - Tooltip or popup for student application info
