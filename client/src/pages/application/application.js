@@ -14,7 +14,7 @@ const Application = () => {
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/api/usertype')
+        fetch('/api/userdata')
             .then((res) => res.json())
             .then((data) => {
                 setUserType(data.usertype)
