@@ -98,7 +98,7 @@ module.exports = function ({ app, db, pgp }) {
     FROM term LEFT JOIN 
     (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username=$1)) AS termapplication
     ON term.id = termapplication.term
-    WHERE term.visible = true    
+    WHERE term.visible = true
     `
         // AND section.term NOT IN (SELECT term FROM termapplication)
         db.any(dbQuery, userId)
@@ -115,10 +115,12 @@ module.exports = function ({ app, db, pgp }) {
         const userId = res.locals.userid
         const term = req.params.term
         const dbQuery = `
-        SELECT submitted, availability, approval, explanation, incanada, wantstoteach
+        SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term AS termname, term.id AS term
         FROM termapplication
+        INNER JOIN term 
+        ON term.id = termapplication.term
         WHERE applicant IN (SELECT id FROM users WHERE username=$1)
-        AND term=$2
+        AND termapplication.term=$2
         `
         db.any(dbQuery, [userId, term])
             .then((data) => {
@@ -158,12 +160,18 @@ module.exports = function ({ app, db, pgp }) {
             })
     })
 
+    MAX_RATING = 5
+    MIN_RATING = 1
     /** 
      * Posts applicant changes to specific course applications
      * The request is safe because of DB restrictions
      */
     app.post("/api/applicant/application", (req, res) => {
         const r = req.body
+
+        r.interest = Math.max(Math.min(MAX_RATING, r.interest), MIN_RATING) ?? MIN_RATING
+        r.qualification = Math.max(Math.min(MAX_RATING, r.qualification), MIN_RATING) ?? MIN_RATING
+        console.log(r)
         const userId = res.locals.userid
         const dbQuery = `
     INSERT INTO application(applicant, course, term, interest, qualification) 
@@ -189,9 +197,16 @@ module.exports = function ({ app, db, pgp }) {
 
     /** 
      * Termapplication changes post endpoint
+     * Also includes data validation
      */
     app.post("/api/applicant/termapplication", (req, res) => {
         const r = req.body
+
+        // Data validation
+        r.availability = Math.max(Math.min(4, r.availability), 0)
+        r.explanation = r.explanation?.substring(0, 1000) ?? ''
+        r.submitted = r.submitted === null ? false : r.submitted
+
         const userId = res.locals.userid
         dbQuery = `
     INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)

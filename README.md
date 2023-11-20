@@ -156,7 +156,7 @@ Oct 13:
 
 
 Oct 20:
-- do not assign id in sample data
++ do not assign id in sample data
 - update deployment 
 INSTRUCTOR View:
 - Tooltip or popup for student application info
@@ -170,12 +170,23 @@ Oct 30:
 - submitted field???
 
 INSTRUCTOR VIEW
-- modal for student explanations
++ modal for student explanations
 STUDENT VIEW
-- character/line limit for student explanation field
++ character/line limit for student explanation field
 + COMPLETE do not include draft applications (submitted = t)
 + COMPLETE add availability column
-- course desc tooltip on course column
--- clickable (i) button
-- consistent font sizes/family
++ course desc tooltip on course column
++ clickable (i) button
++ consistent font sizes/family
 
+Nov 6:
++ complete student application grid
++ use rating mui element https://mui.com/material-ui/react-rating/
+- make makefile to deploy the app
++ rating in instructor view? (read only)
+
+nov 13:
++ server side validation for student view
++ termapplication
++ application values
++ reduce row height for student course view
