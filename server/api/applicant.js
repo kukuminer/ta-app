@@ -204,7 +204,6 @@ module.exports = function ({ app, db, pgp }) {
 
         // Data validation
         r.availability = Math.max(Math.min(4, r.availability), 0)
-        console.log(r.explanation?.length)
         r.explanation = r.explanation?.substring(0, 1000) ?? ''
         r.submitted = r.submitted === null ? false : r.submitted
 
