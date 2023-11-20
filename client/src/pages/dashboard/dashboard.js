@@ -17,7 +17,7 @@ const Dashboard = () => {
     const [userType, setUserType] = React.useState(null);
 
     React.useEffect(() => {
-        axios.get('/api/usertype')
+        axios.get('/api/userdata')
             .then((res) => {
                 setUserType(res.data.usertype)
             })

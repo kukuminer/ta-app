@@ -1,18 +1,16 @@
 import React from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom"
-import getUser from "../../getUser";
 import "./header.css"
 
 const Header = () => {
     const navigate = useNavigate()
-    const userId = getUser()
-    const [userType, setUserType] = React.useState(null);
+    const [userData, setUserData] = React.useState(null);
 
     React.useEffect(() => {
-        axios.get('/api/usertype')
+        axios.get('/api/userdata')
             .then((res) => {
-                setUserType(res.data.usertype)
+                setUserData(res.data)
             })
     }, [])
 
@@ -36,9 +34,9 @@ const Header = () => {
                     This app is currently in testing. No user actions are officially submitted
                 </p>
                 <p className="header-right">
-                    userId: {userId}
+                    User Id: {userData ? userData?.username : 'loading..'}
                     <br />
-                    userType: {userType ? userType : 'loading..'}
+                    Role: {userData ? userData?.usertype : 'loading..'}
                     <br />
                     <button onClick={profileHandler} >Profile</button>
                     <a href="https://passportyork.yorku.ca/ppylogin/ppylogout">

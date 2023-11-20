@@ -97,10 +97,10 @@ app.post("/api/user/update", (req, res) => {
 /**
  * Gets usertype from userId
  */
-app.get("/api/usertype", (req, res) => {
+app.get("/api/userdata", (req, res) => {
     id = res.locals.userid
     // SELECT usertype FROM users WHERE id = $1
-    db.oneOrNone("SELECT usertype FROM users WHERE username = $1", [id])
+    db.oneOrNone("SELECT username, usertype FROM users WHERE username = $1", [id])
         .then((data) => {
             if (data) {
                 res.json(data);

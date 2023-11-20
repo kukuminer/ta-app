@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom"
 
 const NO_USER_NAVIGATE = '/profile'
 const DEFAULT_NAVIGATE = '/dashboard'
-const USER_URL = '/api/usertype'
+const USER_URL = '/api/userdata'
 
 const Login = (props) => {
     const [target, setTarget] = React.useState(props.target ? props.target : DEFAULT_NAVIGATE)
