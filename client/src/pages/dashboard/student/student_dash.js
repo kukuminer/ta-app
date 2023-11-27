@@ -2,8 +2,49 @@ import React from "react";
 import axios from "axios";
 // import getUser from "../../../getUser";
 import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import ProfileView from "./profile_view";
+import DatagridTable from "../../components/datagrid/datagrid_table";
+import { GridColDef } from "@mui/x-data-grid";
+
+const columns: GridColDef = [
+    {
+        field: 'term',
+        headerName: 'Term',
+        width: 100,
+        headerClassName: 'section-table-header',
+        valueGetter: (p) => {
+            return { termid: p.row.term, term: p.row.termname }
+        },
+        valueFormatter: (p) => {
+            return p.value.term
+        },
+        sortComparator: (v1, v2) => {
+            return v1.termid - v2.termid
+        }
+    },
+    { field: 'availability', headerName: 'Availability', width: 100, headerClassName: 'section-table-header' },
+    {
+        field: 'submitted',
+        headerName: 'Application Status',
+        width: 150,
+        headerClassName: 'section-table-header',
+        flex: 1,
+        valueFormatter: (p) => {
+            return p.value ? 'Submitted' : p.value === false ? 'Draft' : 'Available'
+        }
+    },
+    {
+        field: '',
+        headerName: 'Link',
+        width: 100,
+        headerClassName: 'section-table-header',
+        sortable: false,
+        hideable: false,
+        renderCell: (p) => {
+            return <Link to={'/application/' + p.id}>Apply</Link>
+        }
+    }
+]
 
 const StudentDash = () => {
 
@@ -13,6 +54,7 @@ const StudentDash = () => {
         const url = '/api/applicant/applications/available/'
         axios.get(url)
             .then((res) => {
+                console.log(res.data)
                 setPastTable(res.data)
             })
     }, [])
@@ -23,36 +65,22 @@ const StudentDash = () => {
             <h1>
                 TA Applications
             </h1>
-            <TableContainer className="student-table" sx={{width:'80vw', maxWidth: '1000px'}}>
-                <Table>
-                    <TableHead >
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: '700' }}>Term</TableCell>
-                            <TableCell sx={{ fontWeight: '700' }}>Availability</TableCell>
-                            {/* <TableCell sx={{ fontWeight: '700' }}>On Site?</TableCell> */}
-                            <TableCell sx={{ fontWeight: '700' }}>Application Status</TableCell>
-                            <TableCell sx={{ fontWeight: '700' }}>Link</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            !pastTable ? <tr><TableCell>loading...</TableCell></tr> : pastTable.map((val, key) => {
-                                return (
-                                    <TableRow key={key}>
-                                        <TableCell>{val.termname}</TableCell>
-                                        <TableCell>{val.availability}</TableCell>
-                                        {/* <TableCell>{val.incanada ? 'Yes' : val.incanada === false ? 'No' : ''}</TableCell> */}
-                                        <TableCell>{val.submitted ? 'Submitted' : val.submitted === false ? 'Draft' : 'Available'}</TableCell>
-                                        <TableCell>
-                                            <Link to={'/application/' + val.term} state={val}>Apply</Link>
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })
+            <div className="dash-table">
+                <DatagridTable
+                    columns={columns}
+                    idVarName={'term'}
+                    loading={!pastTable}
+                    onEditStop={null}
+                    processRowUpdate={null}
+                    rows={pastTable ?? []}
+                    rowHeight={60}
+                    initialState={{
+                        sorting: {
+                            sortModel: [{ field: 'term', sort: 'desc' }]
                         }
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                    }}
+                />
+            </div>
         </>
     )
 }
