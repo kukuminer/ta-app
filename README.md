@@ -187,6 +187,14 @@ Nov 6:
 
 nov 13:
 + server side validation for student view
-+ termapplication
-+ application values
+++ termapplication
+++ application values
 + reduce row height for student course view
+
+nov 20:
++ datagrid to sort list of TA applications for applicants (instead of current table)
++ screenshots sent
++ default sort
+
+nov 27:
+- any changes to schema should be in a new file 
