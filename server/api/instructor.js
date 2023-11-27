@@ -14,6 +14,7 @@ module.exports = function ({ app, db, pgp }) {
     course.code as course,
     section.letter as letter,
     term.term as term,
+    term.id as termid,
     section.profid as profid
     FROM section JOIN course ON section.course = course.id
     JOIN term ON section.term = term.id

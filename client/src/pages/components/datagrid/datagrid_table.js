@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridCellModes } from '@mui/x-data-grid';
 
-export default function DatagridTable({ rows, columns, loading, onEditStop, idVarName, processRowUpdate, rowHeight=120 }) {
+export default function DatagridTable({ rows, columns, loading, onEditStop, idVarName, processRowUpdate, rowHeight=120, initialState={} }) {
     const [cellModesModel, setCellModesModel] = React.useState({});
 
     const handleCellClick = React.useCallback((params, event) => {
@@ -71,6 +71,7 @@ export default function DatagridTable({ rows, columns, loading, onEditStop, idVa
                 processRowUpdate={processRowUpdate}
                 onProcessRowUpdateError={(e) => console.log(e)}
                 getRowHeight={() => rowHeight}
+                initialState={initialState}
                 sx={{
                     "& .MuiDataGrid-row.Mui-hovered": {
                         backgroundColor: "inherit"

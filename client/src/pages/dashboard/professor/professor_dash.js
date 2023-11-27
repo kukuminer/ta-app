@@ -1,13 +1,29 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import { GridColDef } from "@mui/x-data-grid"
+import { GridColDef, GridComparatorFn } from "@mui/x-data-grid"
 import DatagridTable from "../../components/datagrid/datagrid_table"
 
 const GET_URL = '/api/instructor/courses'
 
+const sortOrder: GridComparatorFn = (v1, v2) => {
+    return v1.termid - v2.termid
+}
+
 const columns: GridColDef = [
-    { field: 'term', headerName: 'Term', width: 100, headerClassName: 'section-table-header' },
+    {
+        field: 'term',
+        headerName: 'Term',
+        width: 100,
+        headerClassName: 'section-table-header',
+        valueGetter: (p) => {
+            return { termid: p.row.termid, term: p.row.term }
+        },
+        valueFormatter: (p) => {
+            return p.value.term
+        },
+        sortComparator: sortOrder,
+    },
     { field: 'course', headerName: 'Course', width: 150, headerClassName: 'section-table-header', flex: 1 },
     { field: 'letter', headerName: 'Section', width: 100, headerClassName: 'section-table-header' },
     {
@@ -17,7 +33,8 @@ const columns: GridColDef = [
         headerClassName: 'section-table-header',
         renderCell: (p) => {
             return <Link to={'/section/' + p.id}>View</Link>
-        }
+        },
+        sortable: false
     }
 ]
 
@@ -44,6 +61,11 @@ const ProfessorDash = () => {
                     processRowUpdate={null}
                     rows={tableData ?? []}
                     rowHeight={60}
+                    initialState={{
+                        sorting: {
+                            sortModel: [{ field: 'term', sort: 'desc' }]
+                        },
+                    }}
                 />
             </div>
             {/* <table className='prof-table'>
