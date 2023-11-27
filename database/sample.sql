@@ -14,23 +14,28 @@ UPDATE applicant SET pool = 'unit 2' WHERE id=6;
 INSERT INTO term(id, term, visible) VALUES
 (2, 'F23', true),
 (3, 'W24', true),
-(1, 'S23', false);
+(1, 'S23', false),
+(4, 'S24', true);
 
-INSERT INTO course (code, name, description) 
-VALUES ('EECS2030', 'intro to OOP', 'oop intro'), 
+INSERT INTO course (code, name, description) VALUES 
+('EECS2030', 'intro to OOP', 'oop intro'), 
 ('EECS2011', 'algorithms', 'algo text'), 
-('EECS3214', 'networks', 'network hover text');
+('EECS3214', 'networks', 'network hover text'),
+('EECS4080', 'project course', 'this is the project course description'),
+('EECS1001', 'intro course', '1001 haha');
 
 INSERT INTO instructor(id) 
 SELECT (id) FROM users WHERE userType = 'instructor';
 
-INSERT INTO section(course, letter, term, profid)
-VALUES ('1', 'A', 2, '2'), 
+INSERT INTO section(course, letter, term, profid) VALUES 
+('1', 'A', 2, '2'), 
 ('1', 'B', 2, '4'),
 ('1', 'Z', 3, '2'), 
 ('2', 'A', 2, '2'),
 ('2', 'B', 2, '4'),
-('3', 'C', 2, '4');
+('3', 'C', 2, '4'),
+('4', 'A', 3, '4'),
+('5', 'Z', 4, '4');
 
 INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
 ('3', 2, 4, true, 'i want to TA', true, true, false),
