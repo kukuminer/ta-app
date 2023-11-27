@@ -52,7 +52,7 @@ const ProfessorDash = () => {
         <>
             <h1>Instructor Dashboard</h1>
             <p>Your class sections this term:</p>
-            <div className='instructor-table'>
+            <div className='dash-table'>
                 <DatagridTable
                     columns={columns}
                     idVarName={'id'}
