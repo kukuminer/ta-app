@@ -72,6 +72,7 @@ export default function DatagridTable({ rows, columns, loading, onEditStop, idVa
                 onProcessRowUpdateError={(e) => console.log(e)}
                 getRowHeight={() => rowHeight}
                 initialState={initialState}
+                disableColumnSelector
                 sx={{
                     "& .MuiDataGrid-row.Mui-hovered": {
                         backgroundColor: "inherit"

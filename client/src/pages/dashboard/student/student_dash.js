@@ -12,6 +12,7 @@ const columns: GridColDef = [
         headerName: 'Term',
         width: 100,
         headerClassName: 'section-table-header',
+        hideable: false,
         valueGetter: (p) => {
             return { termid: p.row.term, term: p.row.termname }
         },
@@ -22,24 +23,26 @@ const columns: GridColDef = [
             return v1.termid - v2.termid
         }
     },
-    { field: 'availability', headerName: 'Availability', width: 100, headerClassName: 'section-table-header' },
+    { field: 'availability', headerName: 'Availability', width: 100, headerClassName: 'section-table-header', hideable: false },
     {
         field: 'submitted',
         headerName: 'Application Status',
         width: 150,
         headerClassName: 'section-table-header',
+        hideable: false,
         flex: 1,
         valueFormatter: (p) => {
             return p.value ? 'Submitted' : p.value === false ? 'Draft' : 'Available'
         }
     },
     {
-        field: '',
+        field: 'applicant',
         headerName: 'Link',
         width: 100,
         headerClassName: 'section-table-header',
         sortable: false,
         hideable: false,
+        disableColumnMenu: true,
         renderCell: (p) => {
             return <Link to={'/application/' + p.id}>Apply</Link>
         }
