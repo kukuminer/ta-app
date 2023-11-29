@@ -121,34 +121,24 @@ const StudentApplication = () => {
                 />}
                 label="I want to be a teaching assistant this semester"
             />
-            <FormControlLabel
-                control={<TextField
-                    value={termApp?.availability ?? 0}
-                    name="availability"
-                    onChange={handleChange}
-                    type="number"
-                    InputProps={{
+            <TextField
+                value={termApp?.availability ?? 0}
+                name="availability"
+                onChange={handleChange}
+                label="Availability (quarter loads)"
+                type="number"
+                InputProps={{
                         inputProps: {
                             max: MAX_AVAILABILITY, min: MIN_AVAILABILITY
                         }
                     }}
-                    sx={{ marginRight: '10px' }}
-                />}
-                label={<>
-                    Load availability in quarter-loads (0-4)
-                    <HtmlTooltip title={
-                        <>
-                            {"Each quarter load is 33.75 hours over the course of the semester."}
-                        </>
-                    }>
-                        <InfoOutlinedIcon />
-                    </HtmlTooltip>
-                </>}
-            >
-            </FormControlLabel>
+                sx={{ marginRight: '10px' }}
+                helperText={<div><p>Please provide your availability for the term. A quarter load is 33.75 hours over the course of a term. A full load is 135 hours. If you are not available for a TA position this coming term, please set the value to zero.</p><p><strong>For unit 1 TAs</strong>: selecting a load below your expected funding level, as determined by your supervisor, may affect your funding. If you are unsure what your funding level is, please set this value to 4 and your load will be limited accordingly.</p></div>}
+            />
 
         </FormGroup>
         <h3>Course Preferences</h3>
+        <small>Note that this list is provided to gather your general interests. There is no guarantee that we will be able to provide you with your first choices, so you are strongly encouraged to list as many courses as possible, preferably including all courses you qualify for.</small>
 
         <DatagridTable
             columns={columns}
@@ -161,7 +151,7 @@ const StudentApplication = () => {
         />
 
         <p>
-            Provide a brief explanation of which courses you want to TA for, and your relevant experience (Maximum 1000 characters)
+            Provide a brief explanation of your relevant experience in the courses you listed above (maximum 1000 characters).
         </p>
         <TextField
             value={termApp?.explanation ?? ''}
