@@ -149,6 +149,7 @@ module.exports = function ({ app, db, pgp }) {
     (SELECT * FROM application 
         WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
     ON application.course = course.id
+    ORDER BY course.code
     `
         db.any(dbQuery, [userId, term])
             .then((data) => {
