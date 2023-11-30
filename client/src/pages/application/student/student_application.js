@@ -170,7 +170,13 @@ const StudentApplication = () => {
         />
       </FormGroup>
       <h3>Course Preferences</h3>
-
+      <Alert severity="info">
+        Note that this list is provided to gather your general interests. There
+        is no guarantee that all these courses will hire TAs, and there is no
+        guarantee we will be able to provide you with your first choices. so you
+        are strongly encouraged to list as many courses as possible, preferably
+        including all courses you qualify for.
+      </Alert>
       <DatagridTable
         columns={columns}
         idVarName={"code"}
@@ -179,7 +185,6 @@ const StudentApplication = () => {
         processRowUpdate={updateRow}
         rows={appRows ?? []}
         rowHeight={60}
-        helperText="Note that this list is provided to gather your general interests. There is no guarantee that we will be able to provide you with your first choices, so you are strongly encouraged to list as many courses as possible, preferably including all courses you qualify for."
       />
 
       <p></p>
