@@ -88,7 +88,7 @@ const StudentProfile = ({ state, updateState }) => {
         label="Student Number (9 digits)"
         margin="normal"
         inputProps={{ inputMode: "numeric", pattern: "[0-9]{9}" }}
-        helperText="This field is optional. If provided, it may be used to retrieve your student record, including your grades in the courses you are applying to TA for. It will not be provided to instructors."
+        helperText="This field is optional. If provided, it may be used to retrieve your student record, including your funding information (for unit 1 applicants) and your grades in the courses you are applying to TA for. It will not be provided to instructors."
       />
       <TextField
         id="employeeid"
