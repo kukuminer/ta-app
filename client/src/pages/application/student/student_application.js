@@ -1,18 +1,15 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import HtmlTooltip from "../../components/tooltip";
 import {
   Alert,
+  Box,
   Button,
-  Checkbox,
-  FormControlLabel,
   FormGroup,
   Rating,
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { GridColDef } from "@mui/x-data-grid";
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
