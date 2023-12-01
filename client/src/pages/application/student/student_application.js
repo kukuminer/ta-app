@@ -1,20 +1,20 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import HtmlTooltip from "../../components/tooltip";
 import {
   Alert,
+  Box,
   Button,
-  Checkbox,
-  FormControlLabel,
   FormGroup,
+  Rating,
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { GridColDef } from "@mui/x-data-grid";
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
+import CircleIcon from "@mui/icons-material/Circle";
+import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
@@ -171,11 +171,98 @@ const StudentApplication = () => {
       </FormGroup>
       <h3>Course Preferences</h3>
       <Alert severity="info">
-        Note that this list is provided to gather your general interests. There
-        is no guarantee that all these courses will hire TAs, and there is no
-        guarantee we will be able to provide you with your first choices. so you
-        are strongly encouraged to list as many courses as possible, preferably
-        including all courses you qualify for.
+        <p>
+          Note that this list is provided to gather your general interests.
+          There is no guarantee that all these courses will hire TAs, and there
+          is no guarantee we will be able to provide you with your first
+          choices. so you are strongly encouraged to list as many courses as
+          possible, preferably including all courses you qualify for.
+        </p>
+        <details>
+          <summary>Legend for Interest and Qualification columns</summary>
+          <ul>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={5}
+              />
+              <Box sx={{ ml: 2 }}>
+                <strong>Preferred option</strong>, very interested and
+                qualified. This is the assignment that you are most excited
+                about and confident in your ability to perform well. You have
+                the relevant skills, experience and knowledge to meet the
+                expectations and requirements of the assignment. You would
+                accept an offer for this assignment without hesitation.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={4}
+              />
+              <Box sx={{ ml: 2 }}>
+                <strong>Strong option</strong>, interested and qualified. This
+                is an assignment that you are enthusiastic about and capable of
+                doing well. You have most of the skills, experience and
+                knowledge needed for the assignment, or you are willing to learn
+                them quickly. You would accept an offer for this assignment.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={3}
+              />
+              <Box sx={{ ml: 2 }}>
+                <strong>Good option</strong>, somewhat interested and qualified.
+                This is an assignment that you are curious about and competent
+                in doing. You have some of the skills, experience and knowledge
+                required for the assignment, or you are open to acquiring them.
+                You would consider an offer for this assignment if options with
+                higher preference are not available.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={2}
+              />
+              <Box sx={{ ml: 2 }}>
+                <strong>Weak option</strong>, not very interested or qualified.
+                This is an assignment that you are indifferent about or unsure
+                of your ability to do well. You have few of the skills,
+                experience and knowledge necessary for the assignment, or you
+                are reluctant to learn them. You would likely decline an offer
+                for this assignment unless there are no better options
+                available.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={1}
+              />
+              <Box sx={{ ml: 2 }}>
+                <strong>Not an option</strong>, not interested at all, will not
+                accept an offer for it. This is an assignment that you are not
+                interested in or confident in your ability to do well. You have
+                none of the skills, experience or knowledge relevant for the
+                assignment, or you are opposed to learning them. You would
+                reject an offer for this assignment regardless of the situation.
+              </Box>
+            </li>
+          </ul>
+        </details>
       </Alert>
       <DatagridTable
         columns={columns}
