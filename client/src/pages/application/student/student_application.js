@@ -171,11 +171,19 @@ const StudentApplication = () => {
       </FormGroup>
       <h3>Course Preferences</h3>
       <Alert severity="info">
-        Note that this list is provided to gather your general interests. There
-        is no guarantee that all these courses will hire TAs, and there is no
-        guarantee we will be able to provide you with your first choices. so you
-        are strongly encouraged to list as many courses as possible, preferably
-        including all courses you qualify for.
+        <p>
+          Note that this list is provided to gather your general interests.
+          There is no guarantee that all these courses will hire TAs, and there
+          is no guarantee we will be able to provide you with your first
+          choices. so you are strongly encouraged to list as many courses as
+          possible, preferably including all courses you qualify for.
+        </p>
+        <ul>
+          <li>
+            <renderGridCellRatingInput readonly="true" value="1" /> Not
+            Interested
+          </li>
+        </ul>
       </Alert>
       <DatagridTable
         columns={columns}
