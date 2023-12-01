@@ -184,7 +184,7 @@ const StudentApplication = () => {
         onEditStop={null}
         processRowUpdate={updateRow}
         rows={appRows ?? []}
-        rowHeight={60}
+        rowHeight={40}
       />
 
       <p></p>
