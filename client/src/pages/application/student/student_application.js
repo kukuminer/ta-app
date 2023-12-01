@@ -14,7 +14,9 @@ import DatagridTable from "../../components/datagrid/datagrid_table";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { GridColDef } from "@mui/x-data-grid";
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
-import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
+import renderGridCellRatingInput, {
+  GridCellRatingInput,
+} from "../../components/datagrid/render_rating_input";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
@@ -180,8 +182,7 @@ const StudentApplication = () => {
         </p>
         <ul>
           <li>
-            <renderGridCellRatingInput readonly="true" value="1" /> Not
-            Interested
+            <GridCellRatingInput readonly={true} value={1} /> Not Interested
           </li>
         </ul>
       </Alert>
