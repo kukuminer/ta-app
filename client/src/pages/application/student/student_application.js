@@ -8,15 +8,16 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Rating,
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { GridColDef } from "@mui/x-data-grid";
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
-import renderGridCellRatingInput, {
-  GridCellRatingInput,
-} from "../../components/datagrid/render_rating_input";
+import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
+import CircleIcon from "@mui/icons-material/Circle";
+import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
@@ -182,7 +183,13 @@ const StudentApplication = () => {
         </p>
         <ul>
           <li>
-            <GridCellRatingInput readonly={true} value={1} /> Not Interested
+            <Rating
+              icon={<CircleIcon />}
+              emptyIcon={<CircleOutlinedIcon />}
+              readonly={true}
+              value={1}
+            />
+            <span>Not Interested</span>
           </li>
         </ul>
       </Alert>
