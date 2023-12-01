@@ -70,7 +70,7 @@ module.exports = function ({ app, db, pgp }) {
                 if (!code) return { 'status': 'fail', 'data': 'No such course code' }
                 const term = await t.oneOrNone('SELECT id FROM term WHERE term=$3', row)
                 if (!term) return { 'status': 'fail', 'data': 'No such term' }
-                const instructor = await t.oneOrNone("SELECT id FROM users WHERE username=$4 AND usertype='instructor'", row)
+                const instructor = await t.oneOrNone("SELECT id FROM users WHERE username=$4 AND usertype IN ('instructor', 'admin')", row)
                 if (!instructor) return { 'status': 'fail', 'data': 'No such instructor' }
 
                 const dbQuery = `
@@ -80,7 +80,7 @@ module.exports = function ({ app, db, pgp }) {
                     WHERE course.code = $1
                     AND term.term = $3
                     AND users.username = $4
-                    AND users.usertype = 'instructor'
+                    AND users.usertype IN ('instructor', 'admin')
                     ON CONFLICT DO NOTHING
                     RETURNING 'success' as status, 'Success' as data
                     `
