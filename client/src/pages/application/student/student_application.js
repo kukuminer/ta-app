@@ -181,17 +181,90 @@ const StudentApplication = () => {
           choices. so you are strongly encouraged to list as many courses as
           possible, preferably including all courses you qualify for.
         </p>
-        <ul>
-          <li>
-            <Rating
-              icon={<CircleIcon />}
-              emptyIcon={<CircleOutlinedIcon />}
-              readonly={true}
-              value={1}
-            />
-            <span>Not Interested</span>
-          </li>
-        </ul>
+        <details>
+          <summary>Legend for Interest and Qualification columns</summary>
+          <ul>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={5}
+              />
+              <Box sx={{ ml: 2 }}>
+                Preferred option, very interested and qualified. This is the
+                assignment that you are most excited about and confident in your
+                ability to perform well. You have the relevant skills,
+                experience and knowledge to meet the expectations and
+                requirements of the assignment. You would accept an offer for
+                this assignment without hesitation.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={4}
+              />
+              <Box sx={{ ml: 2 }}>
+                Strong option, interested and qualified. This is an assignment
+                that you are enthusiastic about and capable of doing well. You
+                have most of the skills, experience and knowledge needed for the
+                assignment, or you are willing to learn them quickly. You would
+                accept an offer for this assignment.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={3}
+              />
+              <Box sx={{ ml: 2 }}>
+                Good option, somewhat interested and qualified. This is an
+                assignment that you are curious about and competent in doing.
+                You have some of the skills, experience and knowledge required
+                for the assignment, or you are open to acquiring them. You would
+                consider an offer for this assignment if options with higher
+                preference are not available.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={2}
+              />
+              <Box sx={{ ml: 2 }}>
+                Weak option, not very interested or qualified. This is an
+                assignment that you are indifferent about or unsure of your
+                ability to do well. You have few of the skills, experience and
+                knowledge necessary for the assignment, or you are reluctant to
+                learn them. You would likely decline an offer for this
+                assignment unless there are no better options available.
+              </Box>
+            </li>
+            <li>
+              <Rating
+                icon={<CircleIcon />}
+                emptyIcon={<CircleOutlinedIcon />}
+                readonly={true}
+                value={1}
+              />
+              <Box sx={{ ml: 2 }}>
+                Not an option, not interested at all, will not accept an offer
+                for it. This is an assignment that you are not interested in or
+                confident in your ability to do well. You have none of the
+                skills, experience or knowledge relevant for the assignment, or
+                you are opposed to learning them. You would reject an offer for
+                this assignment regardless of the situation.
+              </Box>
+            </li>
+          </ul>
+        </details>
       </Alert>
       <DatagridTable
         columns={columns}
