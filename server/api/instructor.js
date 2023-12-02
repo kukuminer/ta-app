@@ -68,6 +68,7 @@ module.exports = function ({ app, db, pgp }) {
     WHERE section.id = $1
     AND profid IN (SELECT id FROM users WHERE username = $2)
     AND termapplication.submitted is true
+    AND termapplication.availability > 0
     ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
         `;
     db.any(dbQuery, [sectionId, id])

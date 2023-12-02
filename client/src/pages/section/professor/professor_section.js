@@ -36,7 +36,7 @@ const columns = [
   },
   {
     field: "availability",
-    headerName: "Availability (quarter loads)",
+    headerName: "Availability (QL)",
     width: 150,
     headerClassName: "section-table-header",
   },
