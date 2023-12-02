@@ -1,13 +1,14 @@
-import { Rating } from "@mui/material";
+import { Rating, Tooltip } from "@mui/material";
 import { useGridApiContext } from "@mui/x-data-grid";
 import { useCallback, useState } from "react";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 
-export function GridCellRatingInput({ id, value, field, readonly }) {
+function GridCellRatingInput({ id, value, field, readonly }) {
   const apiRef = useGridApiContext();
 
   const [val, setVal] = useState(value);
+  const [tooltipValue, setTooltipValue] = useState(value);
 
   const handleEvent = useCallback(
     async (params, event, details) => {
@@ -46,16 +47,27 @@ export function GridCellRatingInput({ id, value, field, readonly }) {
     );
   }
 
+  const labels = {
+    1: "Not interested/qualified",
+    2: "Weak option",
+    3: "Good option",
+    4: "Strong option",
+    5: "Top choice",
+  };
+
   return (
     <>
-      <Rating
-        value={val ?? 1}
-        onChange={handleChange}
-        onClick={handleChange}
-        icon={<CircleIcon />}
-        emptyIcon={<CircleOutlinedIcon />}
-        readOnly={readonly}
-      />
+      <Tooltip title={tooltipValue}>
+        <Rating
+          value={val ?? 2}
+          onChange={handleChange}
+          onChangeActive={(event, value) => setTooltipValue(labels[value])}
+          onClick={handleChange}
+          icon={<CircleIcon />}
+          emptyIcon={<CircleOutlinedIcon />}
+          readOnly={readonly}
+        />
+      </Tooltip>
     </>
   );
 }

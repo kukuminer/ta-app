@@ -67,9 +67,6 @@ const columns = [
     renderEditCell: renderGridCellRatingInput,
   },
 ];
-// const rows = [
-//     { codename: '2030', course: 'intro oop', description: 'desc', interest: 3, qualification: 3 },
-// ]
 
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({});
@@ -178,7 +175,7 @@ const StudentApplication = () => {
           choices. so you are strongly encouraged to list as many courses as
           possible, preferably including all courses you qualify for.
         </p>
-        <details>
+        <details open>
           <summary>Legend for Interest and Qualification columns</summary>
           <ul>
             <li>
@@ -224,7 +221,7 @@ const StudentApplication = () => {
                 This is an assignment that you are curious about and competent
                 in doing. You have some of the skills, experience and knowledge
                 required for the assignment, or you are open to acquiring them.
-                You would consider an offer for this assignment if options with
+                You would accept an offer for this assignment if options with
                 higher preference are not available.
               </Box>
             </li>
@@ -240,9 +237,8 @@ const StudentApplication = () => {
                 This is an assignment that you are indifferent about or unsure
                 of your ability to do well. You have few of the skills,
                 experience and knowledge necessary for the assignment, or you
-                are reluctant to learn them. You would likely decline an offer
-                for this assignment unless there are no better options
-                available.
+                are reluctant to learn them. You would accept an offer for this
+                assignment provided there are no better options available.
               </Box>
             </li>
             <li>
@@ -258,7 +254,10 @@ const StudentApplication = () => {
                 interested in or confident in your ability to do well. You have
                 none of the skills, experience or knowledge relevant for the
                 assignment, or you are opposed to learning them. You would
-                reject an offer for this assignment regardless of the situation.
+                reject an offer for this assignment regardless of the situation.{" "}
+                <em>Unit 1 applicants</em>: note that choosing this option may
+                affect your funding if none of the other courses you are
+                qualified have availability.
               </Box>
             </li>
           </ul>
