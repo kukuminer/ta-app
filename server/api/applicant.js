@@ -172,9 +172,11 @@ module.exports = function ({ app, db, pgp }) {
   app.post("/api/applicant/application", (req, res) => {
     const r = req.body;
 
-    r.interest = Math.max(Math.min(MAX_RATING, r.interest), MIN_RATING) ?? 2;
-    r.qualification =
-      Math.max(Math.min(MAX_RATING, r.qualification), MIN_RATING) ?? 2;
+    r.interest = Math.max(Math.min(MAX_RATING, r.interest ?? 2), MIN_RATING);
+    r.qualification = Math.max(
+      Math.min(MAX_RATING, r.qualification ?? 2),
+      MIN_RATING
+    );
     const userId = res.locals.userid;
     const dbQuery = `
     INSERT INTO application(applicant, course, term, interest, qualification) 
