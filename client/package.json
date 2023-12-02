@@ -6,7 +6,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@mui/icons-material": "^5.14.15",
+    "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.19",
     "@mui/x-data-grid": "^6.16.1",
     "@testing-library/jest-dom": "^5.16.5",
