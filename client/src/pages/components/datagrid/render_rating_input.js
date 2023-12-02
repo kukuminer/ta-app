@@ -54,6 +54,7 @@ function GridCellRatingInput({ id, value, field, readonly }) {
     4: "Strong option",
     5: "Preferred option",
   };
+  setTooltipValue(labels[val ?? 2]);
 
   return (
     <>
