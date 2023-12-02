@@ -10,7 +10,6 @@ import {
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
-import { GridColDef } from "@mui/x-data-grid";
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -67,9 +66,6 @@ const columns = [
     renderEditCell: renderGridCellRatingInput,
   },
 ];
-// const rows = [
-//     { codename: '2030', course: 'intro oop', description: 'desc', interest: 3, qualification: 3 },
-// ]
 
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({});
@@ -112,8 +108,8 @@ const StudentApplication = () => {
     const body = {
       course: newRow.code,
       term: params.term,
-      interest: newRow.interest ?? 1,
-      qualification: newRow.qualification ?? 1,
+      interest: newRow.interest ?? 2,
+      qualification: newRow.qualification ?? 2,
     };
     axios.post(POST_COURSE_APPS, body);
     return newRow;
@@ -178,14 +174,14 @@ const StudentApplication = () => {
           choices. so you are strongly encouraged to list as many courses as
           possible, preferably including all courses you qualify for.
         </p>
-        <details>
+        <details open>
           <summary>Legend for Interest and Qualification columns</summary>
           <ul>
             <li>
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={5}
               />
               <Box sx={{ ml: 2 }}>
@@ -201,7 +197,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={4}
               />
               <Box sx={{ ml: 2 }}>
@@ -216,7 +212,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={3}
               />
               <Box sx={{ ml: 2 }}>
@@ -224,7 +220,7 @@ const StudentApplication = () => {
                 This is an assignment that you are curious about and competent
                 in doing. You have some of the skills, experience and knowledge
                 required for the assignment, or you are open to acquiring them.
-                You would consider an offer for this assignment if options with
+                You would accept an offer for this assignment if options with
                 higher preference are not available.
               </Box>
             </li>
@@ -232,7 +228,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={2}
               />
               <Box sx={{ ml: 2 }}>
@@ -240,16 +236,15 @@ const StudentApplication = () => {
                 This is an assignment that you are indifferent about or unsure
                 of your ability to do well. You have few of the skills,
                 experience and knowledge necessary for the assignment, or you
-                are reluctant to learn them. You would likely decline an offer
-                for this assignment unless there are no better options
-                available.
+                are reluctant to learn them. You would accept an offer for this
+                assignment provided there are no better options available.
               </Box>
             </li>
             <li>
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={1}
               />
               <Box sx={{ ml: 2 }}>
@@ -258,7 +253,10 @@ const StudentApplication = () => {
                 interested in or confident in your ability to do well. You have
                 none of the skills, experience or knowledge relevant for the
                 assignment, or you are opposed to learning them. You would
-                reject an offer for this assignment regardless of the situation.
+                reject an offer for this assignment regardless of the situation.{" "}
+                <em>Unit 1 applicants</em>: note that choosing this option may
+                affect your funding if none of the other courses you are
+                qualified have availability.
               </Box>
             </li>
           </ul>
