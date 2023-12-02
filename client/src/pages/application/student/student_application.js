@@ -109,8 +109,8 @@ const StudentApplication = () => {
     const body = {
       course: newRow.code,
       term: params.term,
-      interest: newRow.interest ?? 1,
-      qualification: newRow.qualification ?? 1,
+      interest: newRow.interest ?? 2,
+      qualification: newRow.qualification ?? 2,
     };
     axios.post(POST_COURSE_APPS, body);
     return newRow;
