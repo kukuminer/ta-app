@@ -57,13 +57,13 @@ module.exports = function ({ app, db, pgp }) {
         termapplication.explanation
     FROM
         section
-        INNER JOIN termapplication ON application.term = section.term
+        INNER JOIN termapplication ON termapplication.term = section.term
+        INNER JOIN users ON termapplication.applicant=users.id
+        INNER JOIN applicant ON applicant.id=users.id
         LEFT JOIN application ON (
             application.applicant = termapplication.applicant AND
             application.term = termapplication.term AND
             application.course = section.course)
-        INNER JOIN users ON termapplication.applicant=users.id
-        INNER JOIN applicant ON applicant.id=users.id
         LEFT JOIN assignment ON application.applicant = assignment.applicant AND section.id = assignment.section
     WHERE section.id = $1
     AND profid IN (SELECT id FROM users WHERE username = $2)
