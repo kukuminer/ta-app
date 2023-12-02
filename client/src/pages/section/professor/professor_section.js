@@ -156,51 +156,25 @@ const ProfessorSection = () => {
           <details open>
             <summary>Legend for Interest and Qualification columns</summary>
             <ul>
-              <li>
-                <Rating
-                  icon={<CircleIcon />}
-                  emptyIcon={<CircleOutlinedIcon />}
-                  readOnly
-                  value={5}
-                />
-                <Box sx={{ ml: 2 }}>Preferred option</Box>
-              </li>
-              <li>
-                <Rating
-                  icon={<CircleIcon />}
-                  emptyIcon={<CircleOutlinedIcon />}
-                  readOnly
-                  value={4}
-                />
-                <Box sx={{ ml: 2 }}>Strong option</Box>
-              </li>
-              <li>
-                <Rating
-                  icon={<CircleIcon />}
-                  emptyIcon={<CircleOutlinedIcon />}
-                  readOnly
-                  value={3}
-                />
-                <Box sx={{ ml: 2 }}>Good option</Box>
-              </li>
-              <li>
-                <Rating
-                  icon={<CircleIcon />}
-                  emptyIcon={<CircleOutlinedIcon />}
-                  readOnly
-                  value={2}
-                />
-                <Box sx={{ ml: 2 }}>Weak option</Box>
-              </li>
-              <li>
-                <Rating
-                  icon={<CircleIcon />}
-                  emptyIcon={<CircleOutlinedIcon />}
-                  readOnly
-                  value={1}
-                />
-                <Box sx={{ ml: 2 }}>Not an option</Box>
-              </li>
+              {[
+                [5, "Preferred Option"],
+                [4, "Strong Option"],
+                [3, "Good Option"],
+                [2, "Weak Option"],
+                [1, "Not an Option"],
+              ].map(([val, label]) => (
+                <li>
+                  <Box sx={{ display: "flex" }}>
+                    <Rating
+                      icon={<CircleIcon />}
+                      emptyIcon={<CircleOutlinedIcon />}
+                      readOnly
+                      value={val}
+                    />
+                    <Box sx={{ ml: 2 }}>{label}</Box>
+                  </Box>
+                </li>
+              ))}
             </ul>
           </details>
         </Alert>
