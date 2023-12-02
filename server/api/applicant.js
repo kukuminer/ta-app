@@ -172,6 +172,8 @@ module.exports = function ({ app, db, pgp }) {
   app.post("/api/applicant/application", (req, res) => {
     const r = req.body;
 
+    console.log({ r });
+
     r.interest = Math.max(Math.min(MAX_RATING, r.interest ?? 2), MIN_RATING);
     r.qualification = Math.max(
       Math.min(MAX_RATING, r.qualification ?? 2),
