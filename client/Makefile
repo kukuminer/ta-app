@@ -1,5 +1,5 @@
 all: start
-start: build
+start:
 	cd build && npm run deploy
 build:
 	npm run build

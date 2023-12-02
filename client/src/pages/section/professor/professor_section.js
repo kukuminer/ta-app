@@ -216,6 +216,7 @@ const ProfessorSection = () => {
                 loading={!tableData}
                 onEditStop={onEditStop}
                 processRowUpdate={processRowUpdate}
+                rowHeight={40}
               />
             </div>
           ))}
