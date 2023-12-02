@@ -10,7 +10,6 @@ import {
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
-import { GridColDef } from "@mui/x-data-grid";
 import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -182,7 +181,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={5}
               />
               <Box sx={{ ml: 2 }}>
@@ -198,7 +197,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={4}
               />
               <Box sx={{ ml: 2 }}>
@@ -213,7 +212,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly="true"
+                readOnly
                 value={3}
               />
               <Box sx={{ ml: 2 }}>
@@ -229,7 +228,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={2}
               />
               <Box sx={{ ml: 2 }}>
@@ -245,7 +244,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readOnly
                 value={1}
               />
               <Box sx={{ ml: 2 }}>
