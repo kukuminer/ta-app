@@ -52,7 +52,7 @@ function GridCellRatingInput({ id, value, field, readonly }) {
     2: "Weak option",
     3: "Good option",
     4: "Strong option",
-    5: "Top choice",
+    5: "Preferred option",
   };
 
   return (

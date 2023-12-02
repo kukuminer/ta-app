@@ -213,7 +213,7 @@ const StudentApplication = () => {
               <Rating
                 icon={<CircleIcon />}
                 emptyIcon={<CircleOutlinedIcon />}
-                readonly={true}
+                readonly="true"
                 value={3}
               />
               <Box sx={{ ml: 2 }}>
