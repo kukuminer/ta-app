@@ -177,88 +177,82 @@ const StudentApplication = () => {
         <details open>
           <summary>Legend for Interest and Qualification columns</summary>
           <ul>
-            <li>
-              <Rating
-                icon={<CircleIcon />}
-                emptyIcon={<CircleOutlinedIcon />}
-                readOnly
-                value={5}
-              />
-              <Box sx={{ ml: 2 }}>
-                <strong>Preferred option</strong>, very interested and
-                qualified. This is the assignment that you are most excited
-                about and confident in your ability to perform well. You have
-                the relevant skills, experience and knowledge to meet the
-                expectations and requirements of the assignment. You would
-                accept an offer for this assignment without hesitation.
-              </Box>
-            </li>
-            <li>
-              <Rating
-                icon={<CircleIcon />}
-                emptyIcon={<CircleOutlinedIcon />}
-                readOnly
-                value={4}
-              />
-              <Box sx={{ ml: 2 }}>
-                <strong>Strong option</strong>, interested and qualified. This
-                is an assignment that you are enthusiastic about and capable of
-                doing well. You have most of the skills, experience and
-                knowledge needed for the assignment, or you are willing to learn
-                them quickly. You would accept an offer for this assignment.
-              </Box>
-            </li>
-            <li>
-              <Rating
-                icon={<CircleIcon />}
-                emptyIcon={<CircleOutlinedIcon />}
-                readOnly
-                value={3}
-              />
-              <Box sx={{ ml: 2 }}>
-                <strong>Good option</strong>, somewhat interested and qualified.
-                This is an assignment that you are curious about and competent
-                in doing. You have some of the skills, experience and knowledge
-                required for the assignment, or you are open to acquiring them.
-                You would accept an offer for this assignment if options with
-                higher preference are not available.
-              </Box>
-            </li>
-            <li>
-              <Rating
-                icon={<CircleIcon />}
-                emptyIcon={<CircleOutlinedIcon />}
-                readOnly
-                value={2}
-              />
-              <Box sx={{ ml: 2 }}>
-                <strong>Weak option</strong>, not very interested or qualified.
-                This is an assignment that you are indifferent about or unsure
-                of your ability to do well. You have few of the skills,
-                experience and knowledge necessary for the assignment, or you
-                are reluctant to learn them. You would accept an offer for this
-                assignment provided there are no better options available.
-              </Box>
-            </li>
-            <li>
-              <Rating
-                icon={<CircleIcon />}
-                emptyIcon={<CircleOutlinedIcon />}
-                readOnly
-                value={1}
-              />
-              <Box sx={{ ml: 2 }}>
-                <strong>Not an option</strong>, not interested at all, will not
-                accept an offer for it. This is an assignment that you are not
-                interested in or confident in your ability to do well. You have
-                none of the skills, experience or knowledge relevant for the
-                assignment, or you are opposed to learning them. You would
-                reject an offer for this assignment regardless of the situation.{" "}
-                <em>Unit 1 applicants</em>: note that choosing this option may
-                affect your funding if none of the other courses you are
-                qualified have availability.
-              </Box>
-            </li>
+            {[
+              [
+                5,
+                <>
+                  {" "}
+                  <strong>Preferred option</strong>, very interested and
+                  qualified. This is the assignment that you are most excited
+                  about and confident in your ability to perform well. You have
+                  the relevant skills, experience and knowledge to meet the
+                  expectations and requirements of the assignment. You would
+                  accept an offer for this assignment without hesitation.
+                </>,
+              ],
+              [
+                4,
+                <>
+                  <strong>Strong option</strong>, interested and qualified. This
+                  is an assignment that you are enthusiastic about and capable
+                  of doing well. You have most of the skills, experience and
+                  knowledge needed for the assignment, or you are willing to
+                  learn them quickly. You would accept an offer for this
+                  assignment.
+                </>,
+              ],
+              [
+                3,
+                <>
+                  <strong>Good option</strong>, somewhat interested and
+                  qualified. This is an assignment that you are curious about
+                  and competent in doing. You have some of the skills,
+                  experience and knowledge required for the assignment, or you
+                  are open to acquiring them. You would accept an offer for this
+                  assignment if options with higher preference are not
+                  available.
+                </>,
+              ],
+              [
+                2,
+                <>
+                  <strong>Weak option</strong>, not very interested or
+                  qualified. This is an assignment that you are indifferent
+                  about or unsure of your ability to do well. You have few of
+                  the skills, experience and knowledge necessary for the
+                  assignment, or you are reluctant to learn them. You would
+                  accept an offer for this assignment provided there are no
+                  better options available.
+                </>,
+              ],
+              [
+                1,
+                <>
+                  <strong>Not an option</strong>, not interested at all, will
+                  not accept an offer for it. This is an assignment that you are
+                  not interested in or confident in your ability to do well. You
+                  have none of the skills, experience or knowledge relevant for
+                  the assignment, or you are opposed to learning them. You would
+                  reject an offer for this assignment regardless of the
+                  situation.
+                  <em>Unit 1 applicants</em>: note that choosing this option may
+                  affect your funding if none of the other courses you are
+                  qualified have availability.
+                </>,
+              ],
+            ].map(([val, label]) => (
+              <li>
+                <Box sx={{ display: "flex" }}>
+                  <Rating
+                    icon={<CircleIcon />}
+                    emptyIcon={<CircleOutlinedIcon />}
+                    readOnly
+                    value={val}
+                  />
+                  <Box sx={{ ml: 2 }}>{label}</Box>
+                </Box>
+              </li>
+            ))}
           </ul>
         </details>
       </Alert>

@@ -57,7 +57,7 @@ function GridCellRatingInput({ id, value, field, readonly }) {
 
   return (
     <>
-      <Tooltip title={tooltipValue}>
+      <Tooltip title={tooltipValue ?? labels[val]}>
         <Rating
           value={val ?? 2}
           onChange={handleChange}

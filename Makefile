@@ -7,11 +7,15 @@ start: pull
 		select-layout even-horizontal
 	tmux attach -t ta-app
 start-client:
-	$(MAKE) -C client start
+	while sleep 1; do $(MAKE) -C client start ; done
+build-client:
+	$(MAKE) -C client build
 start-server:
 	$(MAKE) -C server start
 start-db:
 	cd ../pg && bin/pg_ctl -D data/ -l pg.log start
+backup-db:
+	cd ../pg && bin/pg_dump taapp > backup_$(shell date +'%Y%m%d%H%M%S').sql
 
 psql:
 	-$(MAKE) start-db
