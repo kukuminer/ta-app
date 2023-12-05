@@ -90,7 +90,7 @@ module.exports = function ({ app, db, pgp }) {
                     AND term.term = $3
                     AND users.username = $4
                     AND users.usertype IN ('instructor', 'admin')
-                    ON CONFLICT DO UPDATE SET
+                    ON CONFLICT (course, letter, term) DO UPDATE SET
                     profid = EXCLUDED.profid
                     RETURNING 'success' as status, 'Success' as data
                     `;
