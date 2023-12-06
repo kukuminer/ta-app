@@ -139,12 +139,13 @@ const ProfessorSection = () => {
       <div className="section">
         <Alert severity="info">
           <p>
-            Note that this list is provided to gather your general interests.
-            Assignments will take into account your preferences, but rules set
-            by the University and the collective agreement, such as seniority
-            and right of first refusal, may take precedence in assignment
-            decisions. You are strongly encouraged to make notes on as many
-            applicants as possible.
+            Note that this list is provided to gather your feedback on
+            applicants. Assignments will take into account your preferences, but
+            rules set by the University and the collective agreement, such as
+            seniority and right of first refusal, may take precedence in
+            assignment decisions. You are strongly encouraged to make notes on
+            as many qualified applicants as you see fit, even if they are not
+            tagged as requested.
           </p>
           <p>
             Please be cognisant that information provided here may be subject to
@@ -153,6 +154,31 @@ const ProfessorSection = () => {
             contact the TA assignment coordinator directly, so that appropriate
             action may be considered.
           </p>
+          <p>You may list applicants as:</p>
+          <ul>
+            <li>
+              <strong>Critical</strong>: these are applicants that are
+              intimately involved in the development of the course material or
+              logistics, and for which the course delivery would be severely
+              hindered without that TA. A note explaining the reason for this
+              preference is required. Please use with moderation.
+            </li>
+            <li>
+              <strong>Requested</strong>: these are applicants that you would
+              like to have assigned to your course, with high confidence.
+            </li>
+            <li>
+              <strong>Acceptable</strong>: these are applicants that would be
+              acceptable if the requested TAs are not available.
+            </li>
+            <li>
+              <strong>No preference</strong>: this rating is for applicants that
+              don't provide information for you to consider a request. They may
+              still be assigned to the course in case of rules of seniority,
+              right of first refusal or funding requirements, but will not be
+              assigned if a better option is available and suitable.
+            </li>
+          </ul>
           <details open>
             <summary>Legend for Interest and Qualification columns</summary>
             <ul>
