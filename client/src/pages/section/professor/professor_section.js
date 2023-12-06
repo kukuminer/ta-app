@@ -139,7 +139,7 @@ const ProfessorSection = () => {
       <div className="section">
         <Alert severity="info">
           <p>
-            Note that this list is provided to gather your feedback on
+            Note that this list is provided to gather your preferences on
             applicants. Assignments will take into account your preferences, but
             rules set by the University and the collective agreement, such as
             seniority and right of first refusal, may take precedence in
