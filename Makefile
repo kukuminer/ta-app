@@ -15,7 +15,8 @@ start-server:
 start-db:
 	cd ../pg && bin/pg_ctl -D data/ -l pg.log start
 backup-db:
-	cd ../pg && bin/pg_dump taapp > backup_$(shell date +'%Y%m%d%H%M%S').sql
+	mkdir -p ../pg/backups/$(shell date +'%Y')
+	cd ../pg && bin/pg_dump taapp -U taapp > backups/$(shell date +'%Y/%Y%m%d%H%M%S').sql
 
 psql:
 	-$(MAKE) start-db
