@@ -198,3 +198,10 @@ nov 20:
 
 nov 27:
 - any changes to schema should be in a new file 
+
+Dec 11:
+- export upgrade (eventually)
+- instructor view should see each course only once, instead of each section
+- replace assignment table with (instructor, applicant, course)
+- add info button on instructor view to show other instructor notes on a particular applicant
+-- disable button if theres no notes
