@@ -13,6 +13,12 @@ async function process(req, nav) {
     return await req;
   } catch (err) {
     console.log(err);
-    nav("/404");
+    switch (err?.request?.status) {
+      case 403:
+        nav("/403");
+        break;
+      default:
+        nav("/404");
+    }
   }
 }
