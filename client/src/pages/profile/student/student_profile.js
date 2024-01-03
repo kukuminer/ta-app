@@ -27,26 +27,6 @@ const DEFAULT_VALS = {
 };
 
 const StudentProfile = ({ state, updateState }) => {
-  // const [state, setState] = React.useState({
-  //     studentNum: '',
-  //     employeeId: '',
-  //     pool: '',
-  // })
-
-  // React.useEffect(() => {
-  //     const url = GET_URL + getUser()
-  //     axios.get(url)
-  //         .then((res) => {
-  //             const r = res.data
-  //             if (r) {
-  //                 for (const [key, val] of Object.entries(r)) {
-  //                     state[key] = val
-  //                 }
-  //                 updateState(state)
-  //             }
-  //         })
-  // }, [state, updateState])
-
   useEffect(() => {
     const fetchData = async () => {
       // const fetchedState = {}
