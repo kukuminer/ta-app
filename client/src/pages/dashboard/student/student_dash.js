@@ -1,6 +1,5 @@
 import React from "react";
 import { wget } from "../../requestWrapper";
-// import getUser from "../../../getUser";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileView from "./profile_view";
 import DatagridTable from "../../components/datagrid/datagrid_table";
@@ -62,7 +61,6 @@ const StudentDash = () => {
   React.useEffect(() => {
     const url = "/api/applicant/applications/available/";
     async function fetchTable() {
-      //   const res = await axios.get(url);
       const res = await wget(nav, url);
       console.log(res);
       setPastTable(res?.data);
