@@ -1,6 +1,5 @@
 import getUser from "../../../getUser";
 import { useEffect } from "react";
-import axios from "axios";
 import {
   FormControl,
   InputLabel,
@@ -8,6 +7,8 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { wget } from "../../requestWrapper";
+import { useNavigate } from "react-router-dom";
 
 const GET_URL = "/api/applicant/"; // /userId
 const POOL_OPTIONS = [
@@ -27,12 +28,14 @@ const DEFAULT_VALS = {
 };
 
 const StudentProfile = ({ state, updateState }) => {
+  const nav = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       // const fetchedState = {}
       const url = GET_URL + getUser();
       try {
-        const res = await axios.get(url);
+        const res = await wget(nav, url);
         console.log(res.data);
 
         updateState({
@@ -49,7 +52,7 @@ const StudentProfile = ({ state, updateState }) => {
     if (!state.studentfetched) {
       fetchData();
     }
-  }, [state, updateState]);
+  }, [state, updateState, nav]);
 
   function handleChange(event) {
     var newState = structuredClone(state);
