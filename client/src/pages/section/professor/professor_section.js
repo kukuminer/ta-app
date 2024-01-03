@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GridRowEditStopReasons } from "@mui/x-data-grid";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import renderGridCellSelectInput from "../../components/datagrid/render_select_input";
@@ -10,6 +10,7 @@ import renderGridCellRatingInput from "../../components/datagrid/render_rating_i
 import { Alert, Box, Rating } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
+import { wget } from "../../requestWrapper";
 
 const GET_URL = "/api/instructor/";
 const POST_URL = "/api/instructor/assignment";
@@ -92,11 +93,12 @@ const columns = [
 const ProfessorSection = () => {
   const { sectionId } = useParams();
   const [tableData, setTableData] = useState(null);
+  const nav = useNavigate();
   // const [rowSelectionModel, setRowSelectionModel] = useState([])
 
   useEffect(() => {
     const url = GET_URL + sectionId;
-    axios.get(url).then((res) => {
+    wget(nav, url).then((res) => {
       var dataObj = {};
       res.data.forEach((element, idx) => {
         element.pref = element.pref ?? "no preference";
@@ -107,7 +109,7 @@ const ProfessorSection = () => {
       });
       setTableData(dataObj);
     });
-  }, [sectionId]);
+  }, [sectionId, nav]);
 
   const onEditStop = useCallback((params, event, details) => {
     if (params.reason === GridRowEditStopReasons.enterKeyDown) {
