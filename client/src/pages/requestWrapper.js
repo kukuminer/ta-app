@@ -17,6 +17,8 @@ async function process(req, nav) {
       case 403:
         nav("/403");
         break;
+      case 500:
+        break;
       default:
         nav("/404");
     }
