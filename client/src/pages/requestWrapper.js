@@ -20,7 +20,8 @@ async function process(req, nav) {
       case 500:
         break;
       default:
-        nav("/404");
+        //nav("/404");
+        break;
     }
   }
 }
