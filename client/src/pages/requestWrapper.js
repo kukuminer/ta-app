@@ -15,7 +15,8 @@ async function process(req, nav) {
     console.log(err);
     switch (err?.request?.status) {
       case 403:
-        nav("/403");
+        window.location.reload();
+        // nav(0); // This line does the same as window.location.reload()
         break;
       case 500:
         break;
