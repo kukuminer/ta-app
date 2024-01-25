@@ -24,5 +24,7 @@ async function process(req, nav) {
         //nav("/404");
         break;
     }
+    throw err;
+    // return err.response;
   }
 }
