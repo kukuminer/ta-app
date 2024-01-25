@@ -19,12 +19,11 @@ async function process(req, nav) {
         // nav(0); // This line does the same as window.location.reload()
         break;
       case 500:
-        break;
+        throw err;
       default:
         //nav("/404");
-        break;
+        throw err;
     }
-    throw err;
     // return err.response;
   }
 }
