@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -14,6 +14,7 @@ import renderGridCellRatingInput from "../../components/datagrid/render_rating_i
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import { wget, wpost } from "../../requestWrapper";
+import ErrorAlert from "../../components/error_alert";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
@@ -70,6 +71,7 @@ const columns = [
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({});
   const [appRows, setAppRows] = useState([]);
+  const [alertVisible, setAlertVisible] = useState(true);
   const params = useParams();
   const nav = useNavigate();
 
@@ -112,7 +114,12 @@ const StudentApplication = () => {
       interest: newRow.interest ?? 2,
       qualification: newRow.qualification ?? 2,
     };
-    wpost(nav, POST_COURSE_APPS, body);
+    try {
+      wpost(nav, POST_COURSE_APPS, body);
+    } catch (err) {
+      setAlertVisible(true);
+      console.log(err);
+    }
     return newRow;
   }
 
@@ -127,6 +134,11 @@ const StudentApplication = () => {
 
   return (
     <div className="application">
+      <ErrorAlert
+        visible={alertVisible}
+        message={"There was an error saving your changes"}
+        onClose={useCallback(() => setAlertVisible(false), [])}
+      />
       <h2>Teaching Assistant Application for {termApp?.termname}</h2>
       <p>
         Your changes are saved automatically. Unsubmitting will withdraw your
