@@ -22,6 +22,7 @@ async function process(req, nav) {
       //   throw err;
       default:
         //nav("/404");
+        console.log("throwing err from requestWrapper", err);
         throw err;
     }
     // return err.response;
