@@ -11,7 +11,8 @@ export default function ErrorAlertSub() {
     setAlert({ title: title, msg: msg });
   };
 
-  var alertSub = PubSub.subscribe(alertSubName, alertFunc);
+  // If you will want to unsub, use var token = the following line
+  PubSub.subscribe(alertSubName, alertFunc);
 
   return (
     <>
