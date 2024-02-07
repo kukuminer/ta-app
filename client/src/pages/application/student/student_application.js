@@ -71,7 +71,7 @@ const columns = [
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({});
   const [appRows, setAppRows] = useState([]);
-  const [alertVisible, setAlertVisible] = useState(true);
+  const [alertVisible, setAlertVisible] = useState(false);
   const params = useParams();
   const nav = useNavigate();
 
@@ -115,10 +115,12 @@ const StudentApplication = () => {
       qualification: newRow.qualification ?? 2,
     };
     try {
-      wpost(nav, POST_COURSE_APPS, body);
+      console.log("doing await post");
+      await wpost(nav, POST_COURSE_APPS, body);
     } catch (err) {
-      setAlertVisible(true);
-      console.log(err);
+      // setAlertVisible(true);
+      console.log(err, oldRow);
+      return oldRow;
     }
     return newRow;
   }

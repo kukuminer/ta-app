@@ -57,12 +57,6 @@ export default function DatagridTable({
     setCellModesModel(newModel);
   }, []);
 
-  // const processRowUpdate = React.useCallback(async (newRow) => {
-  //     console.log(newRow)
-  //     const response = await onEditStop(newRow)
-  //     return newRow
-  // }, [])
-
   return (
     <div className="section-application-table">
       <DataGrid
@@ -88,6 +82,9 @@ export default function DatagridTable({
           },
           "& .MuiDataGrid-row:nth-child(even)": {
             backgroundColor: "rgba(0, 0, 0, 0.1)",
+          },
+          "& .MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
+            outline: "none !important",
           },
         }}
       />
