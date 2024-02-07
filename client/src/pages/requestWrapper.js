@@ -1,4 +1,6 @@
 import axios from "axios";
+import { PubSub } from "pubsub-js";
+import { alertSubName } from "./components/error_alert_sub";
 
 export async function wget(nav, url) {
   return await process(axios.get(url), nav);
@@ -12,7 +14,10 @@ async function process(req, nav) {
   try {
     return await req;
   } catch (err) {
-    console.log(err);
+    PubSub.publish(alertSubName, {
+      title: "Warning",
+      msg: "There was an error: " + err?.response?.data?.detail,
+    });
     switch (err?.request?.status) {
       case 403:
         window.location.reload();

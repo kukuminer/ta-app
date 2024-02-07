@@ -11,10 +11,12 @@ import Section from "./pages/section/section";
 import Application from "./pages/application/application";
 import NotFound from "./pages/404";
 import Forbidden from "./pages/403";
+import ErrorAlertSub from "./pages/components/error_alert_sub";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
+    <ErrorAlertSub />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />

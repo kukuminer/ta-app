@@ -80,6 +80,9 @@ export default function DatagridTable({
           "& .MuiDataGrid-row.Mui-hovered": {
             backgroundColor: "inherit",
           },
+          "& .MuiDataGrid-row:hover": {
+            backgroundColor: "inherit",
+          },
           "& .MuiDataGrid-row:nth-child(even)": {
             backgroundColor: "rgba(0, 0, 0, 0.1)",
           },
