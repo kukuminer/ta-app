@@ -1,17 +1,17 @@
 import React from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./header.css";
+import { wget } from "../requestWrapper";
 
 const Header = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = React.useState(null);
 
   React.useEffect(() => {
-    axios.get("/api/userdata").then((res) => {
+    wget(navigate, "/api/userdata").then((res) => {
       setUserData(res.data);
     });
-  }, []);
+  }, [navigate]);
 
   const logoutHandler = () => {
     localStorage.removeItem("userId");

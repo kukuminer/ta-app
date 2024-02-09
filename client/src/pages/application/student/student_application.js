@@ -1,6 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Alert,
   Box,
@@ -14,6 +13,7 @@ import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
+import { wget, wpost } from "../../requestWrapper";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
@@ -71,12 +71,13 @@ const StudentApplication = () => {
   const [termApp, setTermApp] = useState({});
   const [appRows, setAppRows] = useState([]);
   const params = useParams();
+  const nav = useNavigate();
 
   useEffect(() => {
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
       const url = GET_TERM_APP2;
-      const res = await axios.get(url);
+      const res = await wget(nav, url);
       const data = res.data.filter((el) => {
         return parseInt(el.term) === parseInt(params.term);
       });
@@ -84,12 +85,12 @@ const StudentApplication = () => {
     }
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
-      const res = await axios.get(url);
+      const res = await wget(nav, url);
       setAppRows(res.data);
     }
     fetchTerm();
     fetchApps();
-  }, [params]);
+  }, [params, nav]);
 
   function handleChange(event) {
     // Checkboxes use "checked" instead of "value" field in event.target
@@ -111,18 +112,25 @@ const StudentApplication = () => {
       interest: newRow.interest ?? 2,
       qualification: newRow.qualification ?? 2,
     };
-    axios.post(POST_COURSE_APPS, body);
+    try {
+      console.log("doing await post");
+      await wpost(nav, POST_COURSE_APPS, body);
+    } catch (err) {
+      // setAlertVisible(true);
+      console.log(err, oldRow);
+      return oldRow;
+    }
     return newRow;
   }
 
   useEffect(() => {
     const postData = setTimeout(() => {
       if (!!termApp && Object.keys(termApp).length !== 0) {
-        axios.post(POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
+        wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(postData);
-  }, [termApp]);
+  }, [termApp, nav]);
 
   return (
     <div className="application">
