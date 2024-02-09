@@ -12,6 +12,14 @@ DROP TYPE IF EXISTS usertype CASCADE;
 
 CREATE TYPE usertype AS ENUM ('admin', 'instructor', 'applicant');
 
+CREATE TABLE migrations (
+    id serial NOT NULL,
+    file text NOT NULL,
+
+    UNIQUE (file),
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,
     firstname varchar(100) NOT NULL,
