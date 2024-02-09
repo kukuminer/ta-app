@@ -113,11 +113,8 @@ const StudentApplication = () => {
       qualification: newRow.qualification ?? 2,
     };
     try {
-      console.log("doing await post");
       await wpost(nav, POST_COURSE_APPS, body);
     } catch (err) {
-      // setAlertVisible(true);
-      console.log(err, oldRow);
       return oldRow;
     }
     return newRow;
