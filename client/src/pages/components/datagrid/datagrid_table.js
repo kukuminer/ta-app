@@ -83,7 +83,7 @@ export default function DatagridTable({
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "inherit",
           },
-          "& .MuiDataGrid-row:nth-child(even)": {
+          "& .MuiDataGrid-row:nth-of-type(even)": {
             backgroundColor: "rgba(0, 0, 0, 0.1)",
           },
           "& .MuiDataGrid-root .MuiDataGrid-cell:focus-within": {

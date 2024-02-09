@@ -154,6 +154,7 @@ const StudentApplication = () => {
             },
           }}
           sx={{ marginRight: "10px" }}
+          FormHelperTextProps={{ component: "div" }}
           helperText={
             <div>
               <p>
@@ -189,7 +190,6 @@ const StudentApplication = () => {
               [
                 5,
                 <>
-                  {" "}
                   <strong>Preferred option</strong>, very interested and
                   qualified. This is the assignment that you are most excited
                   about and confident in your ability to perform well. You have
@@ -249,7 +249,7 @@ const StudentApplication = () => {
                 </>,
               ],
             ].map(([val, label]) => (
-              <li>
+              <li key={val}>
                 <Box sx={{ display: "flex" }}>
                   <Rating
                     icon={<CircleIcon />}
@@ -274,7 +274,7 @@ const StudentApplication = () => {
         rowHeight={40}
       />
 
-      <p></p>
+      <p />
       <TextField
         value={termApp?.explanation ?? ""}
         onChange={handleChange}
