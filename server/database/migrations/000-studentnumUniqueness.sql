@@ -1,0 +1,1 @@
+ALTER TABLE applicant DROP CONSTRAINT IF EXISTS applicant_studentnum_key;
