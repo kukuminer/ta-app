@@ -146,6 +146,7 @@ const StudentApplication = () => {
             },
           }}
           sx={{ marginRight: "10px" }}
+          FormHelperTextProps={{ component: "div" }}
           helperText={
             <div>
               <p>
@@ -265,7 +266,7 @@ const StudentApplication = () => {
         rowHeight={40}
       />
 
-      <p></p>
+      <p />
       <TextField
         value={termApp?.explanation ?? ""}
         onChange={handleChange}
