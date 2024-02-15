@@ -21,6 +21,10 @@ const db = pgp({
   password: DB_PASS,
 });
 
+require("./runMigrations")({ db, pgp });
+// import migrate from "./runMigrations.js";
+// await migrate({ db, pgp });
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,9 +34,9 @@ require("./api/applicant")({ app, db, pgp });
 require("./api/instructor")({ app, db, pgp });
 require("./api/admin")({ app, db, pgp });
 
-db.any("SELECT now()", [])
+db.one("SELECT now()", [])
   .then((data) => {
-    console.log("SQL Connection established at ", data);
+    console.log("SQL Connection established at", data?.now);
   })
   .catch((error) => {
     console.log("SQL ERROR:\n", error);
