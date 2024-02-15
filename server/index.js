@@ -1,15 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-// const getUser = require('./getUser.js').getUser;
-// const Async = require("async");
 /**
- * TODO: ADD ENV FOR GET USER
- * req.get("PYork-User") COMPLETE
- * TODO: nohup to run (or multi tab)
- * ps ux to see processes
- * kill PID to kill processes COMPLETE
- *
  * NOTE: In most of the endpoints, "id" actually refers to the username
  */
 const PORT = process.env.PORT || 3001;
@@ -105,7 +97,7 @@ app.post("/api/user/update", (req, res) => {
  * Gets usertype from userId
  */
 app.get("/api/userdata", (req, res) => {
-  id = res.locals.userid;
+  const id = res.locals.userid;
   // SELECT usertype FROM users WHERE id = $1
   db.oneOrNone("SELECT username, usertype FROM users WHERE username = $1", [id])
     .then((data) => {
