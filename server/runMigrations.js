@@ -1,5 +1,3 @@
-function readFile(e) {}
-
 const BASE_PATH = "./database/migrations/";
 
 module.exports = async function ({ db, pgp }) {
