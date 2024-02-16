@@ -1,9 +1,9 @@
 const BASE_PATH = "./database/migrations/";
+const fs = require("fs");
 
 module.exports = async function ({ db, pgp }) {
   console.log("Checking migrations...");
 
-  const fs = require("fs");
   const files = fs.readdirSync(BASE_PATH);
   files.sort();
   // console.log(files);
@@ -21,6 +21,7 @@ module.exports = async function ({ db, pgp }) {
     );
   }
 
+  // If you ever add files to /migrations, remove this if and just run the loop
   if (activeMigs?.length !== files.length) {
     for (item of files) {
       if (!activeMigs?.includes(item)) {
