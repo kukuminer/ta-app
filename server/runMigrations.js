@@ -1,10 +1,12 @@
 const BASE_PATH = "./database/migrations/";
-const fs = require("fs");
+// const fs = require("fs");
+import { readdirSync, readFileSync } from "fs";
 
-module.exports = async function ({ db, pgp }) {
+export default async function runMigrations({ db, pgp }) {
+  // module.exports = async function ({ db, pgp }) {
   console.log("Checking migrations...");
 
-  const files = fs.readdirSync(BASE_PATH);
+  const files = readdirSync(BASE_PATH);
   files.sort();
   // console.log(files);
   var activeMigs;
@@ -21,12 +23,13 @@ module.exports = async function ({ db, pgp }) {
     );
   }
 
-  // If you ever add files to /migrations, remove this if and just run the loop
+  var skippedMigs = [];
+  // If you ever add other non-migration files to /migrations, remove this if and just run the loop
   if (activeMigs?.length !== files.length) {
-    for (item of files) {
+    for (const item of files) {
       if (!activeMigs?.includes(item)) {
         console.log("Running migration:", item);
-        const mig = fs.readFileSync(BASE_PATH + item, { encoding: "utf-8" });
+        const mig = readFileSync(BASE_PATH + item, { encoding: "utf-8" });
         try {
           await db.tx(async (t) => {
             await t.none(mig);
@@ -35,6 +38,7 @@ module.exports = async function ({ db, pgp }) {
             ]);
           });
         } catch (err) {
+          skippedMigs.push(item);
           console.log("ERROR WITH MIGRATIONS:", err);
           console.log("SKIPPED MIGRATION: ", item);
         }
@@ -43,7 +47,13 @@ module.exports = async function ({ db, pgp }) {
       // console.log(mig);
     }
     console.log("Done migrations!");
+    if (skippedMigs.length > 0) {
+      console.log("SKIPPED", skippedMigs.length, "MIGRATIONS");
+      for (const item of skippedMigs) {
+        console.log("SKIPPED: ", item);
+      }
+    }
   } else {
     console.log("All migrations present!");
   }
-};
+}
