@@ -1,6 +1,7 @@
-const async = require("async");
+// const async = require("async");
+import async from "async";
 
-module.exports = function ({ app, db, pgp }) {
+export function admin({ app, db, pgp }) {
   /**
    * ADMIN ENDPOINT
    * Get all db table names
@@ -335,4 +336,4 @@ module.exports = function ({ app, db, pgp }) {
   //             res.status(400).send(error)
   //         })
   // })
-};
+}

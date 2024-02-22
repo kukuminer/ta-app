@@ -43,6 +43,8 @@ applicant({ app, db, pgp });
 import { instructor } from "./api/instructor.js";
 instructor({ app, db, pgp });
 // require("./api/admin")({ app, db, pgp });
+import { admin } from "./api/admin.js";
+admin({ app, db, pgp });
 
 db.one("SELECT now()", [])
   .then((data) => {

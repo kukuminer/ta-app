@@ -214,7 +214,7 @@ function applicant({ app, db, pgp }) {
     r.submitted = r.submitted === null ? false : r.submitted;
 
     const userId = res.locals.userid;
-    dbQuery = `
+    const dbQuery = `
     INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ((SELECT id FROM users WHERE username=$1), 
         $2, $3, $4, $5, $6, $7, $8)
