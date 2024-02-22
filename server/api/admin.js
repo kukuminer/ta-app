@@ -77,7 +77,8 @@ export function admin({ app, db, pgp }) {
           );
           if (!term) return { status: "fail", data: "No such term" };
           const instructor = await t.oneOrNone(
-            "SELECT id FROM users WHERE username=$4 AND usertype IN ('instructor', 'admin')",
+            // "SELECT id FROM users WHERE username=$4 AND usertype IN ('instructor', 'admin')",
+            "SELECT id FROM users WHERE username=$4 AND users.id IN (SELECT id FROM instructor)",
             row
           );
           if (!instructor)
