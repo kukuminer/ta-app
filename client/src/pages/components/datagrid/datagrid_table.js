@@ -9,7 +9,7 @@ export default function DatagridTable({
   idVarName,
   processRowUpdate,
   rowHeight = 120,
-  initialState = {},
+  initialState = {}, // This is used for default sort, etc
 }) {
   const [cellModesModel, setCellModesModel] = React.useState({});
 
