@@ -63,6 +63,11 @@ const TermWizard = () => {
         processRowUpdate={null}
         rows={tableRows ?? []}
         rowHeight={40}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: "id", sort: "desc" }],
+          },
+        }}
       />
     </>
   );
