@@ -3,6 +3,22 @@ const async = require("async");
 module.exports = function ({ app, db, pgp }) {
   /**
    * ADMIN ENDPOINT
+   * Gets all term table info
+   */
+  app.get("/api/admin/terms", (req, res) => {
+    const dbQuery = "SELECT * FROM term";
+    db.many(dbQuery)
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((error) => {
+        console.log("error fetching term data from DB:", error);
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * ADMIN ENDPOINT
    * Get all db table names
    */
   app.get("/api/admin/tables", (req, res) => {
@@ -17,7 +33,7 @@ module.exports = function ({ app, db, pgp }) {
       })
       .catch((error) => {
         console.log("error fetching table list from DB:", error);
-        res.status(400).send(error);
+        res.status(500).send(error);
       });
   });
 
