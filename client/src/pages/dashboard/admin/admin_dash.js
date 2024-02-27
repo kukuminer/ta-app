@@ -38,7 +38,7 @@ const AdminDash = () => {
         <Tab value={1} label="Generic Import" />
         <Tab value={2} label="ROFR Import" />
         <Tab value={3} label="Section Import" />
-        <Tab value={4} label="Term Wizard" />
+        <Tab value={4} label="Term Config" />
         <Tab value={5} label="Export" />
       </Tabs>
       {PANELS[value]}
