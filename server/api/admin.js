@@ -19,6 +19,28 @@ module.exports = function ({ app, db, pgp }) {
 
   /**
    * ADMIN ENDPOINT
+   * Upsert to term table. 1 value at a time.
+   */
+  app.post("/api/admin/term", (req, res) => {
+    const body = req.body;
+    console.log(body);
+    const dbQuery = `
+    INSERT INTO term (term, visible)
+    VALUES ($1, $2)
+    ON CONFLICT (term) DO UPDATE SET
+    visible = EXCLUDED.visible
+    RETURNING 'success' as status, 'Success' as data
+    `;
+    db.oneOrNone(dbQuery, [body.term, body.visible])
+      .then((data) => res.status(200).json(data))
+      .catch((error) => {
+        console.log("error posting term to DB:", error);
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * ADMIN ENDPOINT
    * Get all db table names
    */
   app.get("/api/admin/tables", (req, res) => {
