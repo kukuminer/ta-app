@@ -87,6 +87,7 @@ const StudentApplication = () => {
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
+      console.log(res.data);
       setAppRows(res.data);
     }
     fetchTerm();

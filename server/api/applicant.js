@@ -150,7 +150,29 @@ module.exports = function ({ app, db, pgp }) {
     ON application.course = course.id
     ORDER BY course.code
     `;
-    db.any(dbQuery, [userId, term])
+    const dbPrev = `
+    SELECT * FROM application JOIN users
+    ON applicant=users.id 
+    WHERE username=$1
+    AND term<$2
+    ORDER BY term DESC LIMIT 1
+    `;
+    db.tx(async (t) => {
+      const orig = await t.any(dbQuery, [userId, term]);
+      console.log("orig", orig);
+      for (item of orig) {
+        if (item?.interest === null && item?.qualification === null) {
+          console.log("null item!");
+          console.log(item);
+          const prev = await t.oneOrNone(dbPrev, [userId, term]);
+          console.log("prev", prev);
+          item.interest = prev?.interest;
+          item.qualification = prev?.qualification;
+        }
+      }
+      console.log("new orig", orig);
+      return orig;
+    })
       .then((data) => {
         res.json(data);
       })
@@ -161,6 +183,31 @@ module.exports = function ({ app, db, pgp }) {
         );
         res.status(500).send(error);
       });
+
+    // db.any(dbQuery, [userId, term]).then((data) => {
+    //   console.log("orig", data);
+    //   // If result contains nulls, check previous terms and try posting them, then return them
+    //   for (item of data) {
+    //     if (item?.interest === null && item?.qualification === null) {
+    //       db.oneOrNone(
+    //         `
+    //         SELECT * FROM application JOIN users
+    //         ON applicant=users.id
+    //         WHERE username=$1
+    //         AND term<$2
+    //         ORDER BY term DESC LIMIT 1
+    //         `,
+    //         [userId, term]
+    //       ).then((oldApp) => {
+    //         console.log(oldApp);
+    //         data.interest = oldApp?.interest;
+    //         data.qualification = oldApp?.qualification;
+    //       });
+    //     }
+    //   }
+    //   console.log("new", data);
+    //   res.json(data);
+    // });
   });
 
   MAX_RATING = 5;

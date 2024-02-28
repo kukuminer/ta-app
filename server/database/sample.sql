@@ -31,11 +31,13 @@ INSERT INTO section(course, letter, term, profid) VALUES
 ('1', 'A', 2, '2'), 
 ('1', 'B', 2, '4'),
 ('1', 'Z', 3, '2'), 
+('1', 'A', 4, '2'),
 ('2', 'A', 2, '2'),
 ('2', 'B', 2, '4'),
 ('3', 'C', 2, '4'),
 ('4', 'A', 3, '4'),
-('5', 'Z', 4, '4');
+('5', 'Z', 4, '4')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
 ('3', 2, 4, true, 'i want to TA', true, true, false),
