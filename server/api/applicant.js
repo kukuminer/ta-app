@@ -171,6 +171,7 @@ module.exports = function ({ app, db, pgp }) {
    */
   app.post("/api/applicant/application", (req, res) => {
     const r = req.body;
+    console.log(r);
 
     r.interest = Math.max(Math.min(MAX_RATING, r.interest ?? 2), MIN_RATING);
     r.qualification = Math.max(
@@ -207,42 +208,72 @@ module.exports = function ({ app, db, pgp }) {
    */
   app.post("/api/applicant/termapplication", (req, res) => {
     const r = req.body;
+    db.tx(async (t) => {
+      // Pull forward termapplication
+      const prev = await t.oneOrNone(
+        `
+        SELECT * 
+        FROM termapplication 
+        JOIN users 
+        ON users.id=applicant 
+        WHERE username=$1
+        ORDER BY term DESC
+        LIMIT 1
+        `,
+        [res.locals.userid]
+      );
+      const current = await t.oneOrNone(
+        `
+        SELECT *
+        FROM termapplication
+        JOIN users
+        ON users.id=applicant
+        WHERE username=$1
+        AND term=$2
+        `,
+        [res.locals.userid, r.term]
+      );
+      if (prev && !current) {
+        r.availability = prev.availability;
+        r.explanation = prev.explanation;
+      }
 
-    // Data validation
-    r.availability = Math.max(Math.min(4, r.availability), 0);
-    r.explanation = r.explanation?.substring(0, 1000) ?? "";
-    r.submitted = r.submitted === null ? false : r.submitted;
+      // Data validation
+      r.availability = Math.max(Math.min(4, r.availability), 0);
+      r.explanation = r.explanation?.substring(0, 1000) ?? "";
+      r.submitted = r.submitted === null ? false : r.submitted;
 
-    const userId = res.locals.userid;
-    dbQuery = `
-    INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
-    VALUES ((SELECT id FROM users WHERE username=$1), 
+      const userId = res.locals.userid;
+      dbQuery = `
+        INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
+        VALUES ((SELECT id FROM users WHERE username=$1), 
         $2, $3, $4, $5, $6, $7, $8)
-    ON CONFLICT (applicant, term)
-    DO UPDATE SET submitted=$3, availability=$4,
-    approval=$5, explanation=$6, incanada=$7, wantstoteach=$8
-    WHERE termapplication.applicant=(SELECT id FROM users WHERE username=$1)
-    AND termapplication.term=$2
-    RETURNING submitted, availability, approval, explanation, incanada, wantstoteach
-    `;
-    db.any(dbQuery, [
-      userId,
-      r.term,
-      r.submitted,
-      r.availability,
-      r.approval,
-      r.explanation,
-      r.incanada,
-      r.wantstoteach,
-    ])
-      .then((data) => {
-        if (data.length !== 1)
-          throw new Error("Could not add termapplication to DB");
-        res.json(data);
-      })
-      .catch((error) => {
-        console.log("db termapplication upsert error: ", error);
-        res.status(400).send(error);
-      });
+        ON CONFLICT (applicant, term)
+        DO UPDATE SET submitted=$3, availability=$4,
+        approval=$5, explanation=$6, incanada=$7, wantstoteach=$8
+        WHERE termapplication.applicant=(SELECT id FROM users WHERE username=$1)
+        AND termapplication.term=$2
+        RETURNING submitted, availability, approval, explanation, incanada, wantstoteach
+        `;
+      t.any(dbQuery, [
+        userId,
+        r.term,
+        r.submitted,
+        r.availability,
+        r.approval,
+        r.explanation,
+        r.incanada,
+        r.wantstoteach,
+      ])
+        .then((data) => {
+          if (data.length !== 1)
+            throw new Error("Could not add termapplication to DB");
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("db termapplication upsert error: ", error);
+          res.status(400).send(error);
+        });
+    });
   });
 };
