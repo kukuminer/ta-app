@@ -234,8 +234,6 @@ module.exports = function ({ app, db, pgp }) {
         `,
         [res.locals.userid, r.term]
       );
-      console.log(current);
-      console.log(prev);
       if (prev && !current) {
         r.availability = prev.availability;
         r.explanation = prev.explanation;
