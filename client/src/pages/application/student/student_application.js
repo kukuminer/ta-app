@@ -124,13 +124,9 @@ const StudentApplication = () => {
   useEffect(() => {
     const postData = setTimeout(async () => {
       if (!!termApp && Object.keys(termApp).length !== 0) {
-        console.log(termApp);
         await wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
-        if (!termApp?.availability && !termApp.explanation) {
-          console.log("stuff is blank!");
-          setFlip((old) => {
-            return !old;
-          });
+        if (termApp?.availability === null && termApp?.explanation === null) {
+          setFlip(true);
         }
       }
     }, DEBOUNCE_MS);

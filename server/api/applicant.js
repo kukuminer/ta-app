@@ -217,10 +217,11 @@ module.exports = function ({ app, db, pgp }) {
         JOIN users 
         ON users.id=applicant 
         WHERE username=$1
+        AND term<$2
         ORDER BY term DESC
         LIMIT 1
         `,
-        [res.locals.userid]
+        [res.locals.userid, r.term]
       );
       const current = await t.oneOrNone(
         `
@@ -233,6 +234,8 @@ module.exports = function ({ app, db, pgp }) {
         `,
         [res.locals.userid, r.term]
       );
+      console.log(current);
+      console.log(prev);
       if (prev && !current) {
         r.availability = prev.availability;
         r.explanation = prev.explanation;
