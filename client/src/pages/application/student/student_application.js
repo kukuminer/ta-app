@@ -70,6 +70,7 @@ const columns = [
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({});
   const [appRows, setAppRows] = useState([]);
+  const [flip, setFlip] = useState(false);
   const params = useParams();
   const nav = useNavigate();
 
@@ -90,7 +91,7 @@ const StudentApplication = () => {
     }
     fetchTerm();
     fetchApps();
-  }, [params, nav]);
+  }, [params, nav, flip]);
 
   function handleChange(event) {
     // Checkboxes use "checked" instead of "value" field in event.target
@@ -121,13 +122,20 @@ const StudentApplication = () => {
   }
 
   useEffect(() => {
-    const postData = setTimeout(() => {
+    const postData = setTimeout(async () => {
       if (!!termApp && Object.keys(termApp).length !== 0) {
-        wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
+        console.log(termApp);
+        await wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
+        if (!termApp?.availability && !termApp.explanation) {
+          console.log("stuff is blank!");
+          setFlip((old) => {
+            return !old;
+          });
+        }
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(postData);
-  }, [termApp, nav]);
+  }, [termApp, nav, setFlip]);
 
   return (
     <div className="application">
