@@ -163,7 +163,7 @@ module.exports = function ({ app, db, pgp }) {
    * Gets existing applications if they exist
    * For populating the application page with courses
    */
-  app.get("/api/applicant/applications/:term/", (req, res) => {
+  app.get("/api/applicant/applications/:term", (req, res) => {
     const userId = res.locals.userid;
     const term = req.params.term;
     const dbQuery = `
@@ -186,6 +186,33 @@ module.exports = function ({ app, db, pgp }) {
           "error retrieving application info on courses from db for term:",
           term
         );
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * Gets the most recent application for a user for the given term and course
+   */
+  app.get("/api/applicant/application/recent/:term", (req, res) => {
+    const userId = res.locals.userid;
+    const term = req.params.term;
+    const dbQuery = `
+      SELECT DISTINCT ON (course) course, interest, qualification
+      FROM application JOIN users
+      ON applicant=users.id 
+      WHERE username=$1
+      AND term<$2
+      ORDER BY course, term DESC;
+    `;
+    db.any(dbQuery, [userId, term])
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((error) => {
+        console.log(
+          "error retrieving recent course application details from db"
+        );
+        console.log(error);
         res.status(500).send(error);
       });
   });

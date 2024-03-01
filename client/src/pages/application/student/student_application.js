@@ -19,6 +19,7 @@ import { wget, wpost } from "../../requestWrapper";
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const GET_RECENT_TERM_APP = "/api/applicant/termapplication/recent/";
+const GET_RECENT_COURSE_APPS = "/api/applicant/application/recent/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
 
@@ -87,6 +88,7 @@ const StudentApplication = () => {
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
+      console.log(res.data);
       setAppRows(res.data);
     }
     fetchTerm();
@@ -138,6 +140,9 @@ const StudentApplication = () => {
 
   async function pullCoursePrefs() {
     console.log(appRows);
+    const url = GET_RECENT_COURSE_APPS + params.term;
+    const res = await wget(nav, url);
+    console.log(res.data);
   }
 
   useEffect(() => {
