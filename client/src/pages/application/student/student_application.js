@@ -18,6 +18,7 @@ import { wget, wpost } from "../../requestWrapper";
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
+const GET_RECENT_TERM_APP = "/api/applicant/termapplication/recent/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
 
@@ -120,6 +121,18 @@ const StudentApplication = () => {
     return newRow;
   }
 
+  async function pullAvail() {
+    console.log(termApp);
+    const url = GET_RECENT_TERM_APP + params.term;
+    console.log(url);
+    const res = await wget(nav, url);
+    console.log(res.data);
+  }
+
+  async function pullCoursePrefs() {
+    console.log(appRows);
+  }
+
   useEffect(() => {
     const postData = setTimeout(() => {
       if (!!termApp && Object.keys(termApp).length !== 0) {
@@ -136,6 +149,17 @@ const StudentApplication = () => {
         Your changes are saved automatically. Unsubmitting will withdraw your
         application.
       </p>
+      <h3>Push forward old applications</h3>
+      <p>
+        If you have previous applications, you can bring those details to this
+        one. <strong>Any existing changes will be overwritten!</strong>
+      </p>
+      <Button variant="contained" onClick={pullAvail}>
+        Availability and experience
+      </Button>
+      <Button variant="contained" color="secondary" onClick={pullCoursePrefs}>
+        Course preferences
+      </Button>
       <h3>Availability</h3>
       <FormGroup>
         <TextField

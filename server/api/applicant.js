@@ -127,6 +127,33 @@ module.exports = function ({ app, db, pgp }) {
       })
       .catch((error) => {
         console.log("error retrieving termapplication details from db");
+        console.log(error);
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * Gets the single termapplication that is most recent but BEFORE :term
+   */
+  app.get("/api/applicant/termapplication/recent/:term", (req, res) => {
+    const userId = res.locals.userid;
+    const term = req.params.term;
+    const dbQuery = `
+      SELECT availability, explanation
+      FROM termapplication
+      JOIN users ON applicant=users.id
+      WHERE username=$1
+      AND term<$2
+      ORDER BY term DESC
+      LIMIT 1
+    `;
+    db.oneOrNone(dbQuery, [userId, term])
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((error) => {
+        console.log("error retrieving recent termapplication details from db");
+        console.log(error);
         res.status(500).send(error);
       });
   });
