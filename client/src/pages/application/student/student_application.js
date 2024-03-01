@@ -83,6 +83,7 @@ const StudentApplication = () => {
       const data = res.data.filter((el) => {
         return parseInt(el.term) === parseInt(params.term);
       });
+      // if(data === null) {data = await pullAvail()}
       setTermApp(data[0]);
     }
     async function fetchApps() {
