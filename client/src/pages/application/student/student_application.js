@@ -122,11 +122,18 @@ const StudentApplication = () => {
   }
 
   async function pullAvail() {
-    console.log(termApp);
+    // console.log(termApp);
     const url = GET_RECENT_TERM_APP + params.term;
-    console.log(url);
+    // console.log(url);
     const res = await wget(nav, url);
-    console.log(res.data);
+    // console.log(res.data);
+    setTermApp((old) => {
+      return {
+        ...old,
+        availability: res.data?.availability,
+        explanation: res.data?.explanation,
+      };
+    });
   }
 
   async function pullCoursePrefs() {
