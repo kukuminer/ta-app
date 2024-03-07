@@ -84,6 +84,7 @@ const StudentApplication = () => {
         return parseInt(el.term) === parseInt(params.term);
       });
       // if(data === null) {data = await pullAvail()}
+      console.log(data[0]);
       setTermApp(data[0]);
     }
     async function fetchApps() {
@@ -125,18 +126,20 @@ const StudentApplication = () => {
   }
 
   async function pullAvail() {
-    // console.log(termApp);
-    const url = GET_RECENT_TERM_APP + params.term;
-    // console.log(url);
-    const res = await wget(nav, url);
-    // console.log(res.data);
-    setTermApp((old) => {
-      return {
-        ...old,
-        availability: res.data?.availability,
-        explanation: res.data?.explanation,
-      };
-    });
+    if (termApp?.availability === null && termApp?.explanation === null) {
+      // console.log(termApp);
+      const url = GET_RECENT_TERM_APP + params.term;
+      // console.log(url);
+      const res = await wget(nav, url);
+      // console.log(res.data);
+      setTermApp((old) => {
+        return {
+          ...old,
+          availability: res.data?.availability,
+          explanation: res.data?.explanation,
+        };
+      });
+    }
   }
 
   async function pullCoursePrefs() {
@@ -144,6 +147,16 @@ const StudentApplication = () => {
     const url = GET_RECENT_COURSE_APPS + params.term;
     const res = await wget(nav, url);
     console.log(res.data);
+    var courseMap = {};
+    res.data.forEach((entry) => {
+      courseMap[entry.course] = {
+        interest: entry.interest,
+        qualification: entry.qualification,
+      };
+    });
+    console.log(courseMap);
+    for (const item of appRows) {
+    }
   }
 
   useEffect(() => {
