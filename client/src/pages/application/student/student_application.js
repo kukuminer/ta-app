@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -108,22 +108,25 @@ const StudentApplication = () => {
     });
   }
 
-  async function updateRow(newRow, oldRow) {
-    if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow;
+  const updateRow = useCallback(
+    async (newRow, oldRow) => {
+      if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow;
 
-    const body = {
-      course: newRow.code,
-      term: params.term,
-      interest: newRow.interest ?? 2,
-      qualification: newRow.qualification ?? 2,
-    };
-    try {
-      await wpost(nav, POST_COURSE_APPS, body);
-    } catch (err) {
-      return oldRow;
-    }
-    return newRow;
-  }
+      const body = {
+        course: newRow.code,
+        term: params.term,
+        interest: newRow.interest ?? 2,
+        qualification: newRow.qualification ?? 2,
+      };
+      try {
+        await wpost(nav, POST_COURSE_APPS, body);
+      } catch (err) {
+        return oldRow;
+      }
+      return newRow;
+    },
+    [nav, params]
+  );
 
   async function pullAvail() {
     if (termApp?.availability === null && termApp?.explanation === null) {
