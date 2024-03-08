@@ -163,6 +163,80 @@ function applicant({ app, db, pgp }) {
       });
   });
 
+  /**
+   * Post to magically pull forward this applicants
+   * most recent application details from previous
+   * terms
+   */
+  app.post("/api/applicant/term/new", (req, res) => {
+    const userId = res.locals.userid;
+    const r = req.body;
+    console.log(r);
+    if (!r?.availability && !r?.explanation) {
+      console.log("a new one!");
+      db.tx(async (t) => {
+        const termAppQuery = `
+        SELECT availability, explanation
+        FROM termapplication
+        JOIN users ON applicant=users.id
+        WHERE username=$1
+        AND term<$2
+        ORDER BY term DESC
+        LIMIT 1`;
+        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+        console.log(termApp);
+
+        const coursesQuery = `
+        SELECT DISTINCT ON (course) course, interest, qualification
+        FROM application JOIN users
+        ON applicant=users.id 
+        WHERE username=$1
+        AND term<$2
+        ORDER BY course, term DESC;
+        `;
+        const courses = await t.any(coursesQuery, [userId, r.term]);
+        console.log(courses);
+      });
+    }
+  });
+
+  /**
+   * Post to magically pull forward this applicants
+   * most recent application details from previous
+   * terms
+   */
+  app.post("/api/applicant/term/new", (req, res) => {
+    const userId = res.locals.userid;
+    const r = req.body;
+    console.log(r);
+    if (!r?.availability && !r?.explanation) {
+      console.log("a new one!");
+      db.tx(async (t) => {
+        const termAppQuery = `
+        SELECT availability, explanation
+        FROM termapplication
+        JOIN users ON applicant=users.id
+        WHERE username=$1
+        AND term<$2
+        ORDER BY term DESC
+        LIMIT 1`;
+        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+        console.log(termApp);
+
+        const coursesQuery = `
+        SELECT DISTINCT ON (course) course, interest, qualification
+        FROM application JOIN users
+        ON applicant=users.id 
+        WHERE username=$1
+        AND term<$2
+        ORDER BY course, term DESC;
+        `;
+        const courses = await t.any(coursesQuery, [userId, r.term]);
+        console.log(courses);
+      });
+    }
+  });
+
   const MAX_RATING = 5;
   const MIN_RATING = 1;
   /**
