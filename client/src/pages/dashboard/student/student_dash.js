@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { wget } from "../../requestWrapper";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileView from "./profile_view";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import { GridColDef } from "@mui/x-data-grid";
+
+const GET_TERM_APPS = "/api/applicant/applications/available/";
 
 const columns: GridColDef = [
   {
@@ -49,20 +51,31 @@ const columns: GridColDef = [
     hideable: false,
     disableColumnMenu: true,
     renderCell: (p) => {
-      return <Link to={"/application/" + p.id}>Apply</Link>;
+      return (
+        <Link
+          to={"/application/" + p.id}
+          onClick={() => {
+            if (p.row?.explanation === null && p.row?.availability === null) {
+              console.log("new!");
+              console.log(p.row);
+            }
+          }}
+        >
+          Apply
+        </Link>
+      );
     },
   },
 ];
 
 const StudentDash = () => {
-  const [pastTable, setPastTable] = React.useState(null);
+  const [pastTable, setPastTable] = useState(null);
   const nav = useNavigate();
 
-  React.useEffect(() => {
-    const url = "/api/applicant/applications/available/";
+  useEffect(() => {
     async function fetchTable() {
-      const res = await wget(nav, url);
-      console.log(res);
+      const res = await wget(nav, GET_TERM_APPS);
+      // console.log(res);
       setPastTable(res?.data);
     }
     fetchTable();
