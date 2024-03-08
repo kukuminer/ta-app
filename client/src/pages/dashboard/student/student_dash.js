@@ -62,7 +62,7 @@ const StudentDash = () => {
     const url = "/api/applicant/applications/available/";
     async function fetchTable() {
       const res = await wget(nav, url);
-      console.log(res);
+      // console.log(res);
       setPastTable(res?.data);
     }
     fetchTable();

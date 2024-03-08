@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -86,16 +86,17 @@ const StudentApplication = () => {
       // if(data === null) {data = await pullAvail()}
       console.log(data[0]);
       setTermApp(data[0]);
+      pullAvail.current();
     }
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
-      console.log(res.data);
+      // console.log(res.data);
       setAppRows(res.data);
+      pullCoursePrefs.current();
     }
-    fetchTerm();
-    fetchApps();
-  }, [params, nav]);
+    fetchTerm().then(() => fetchApps());
+  }, [nav, params]);
 
   function handleChange(event) {
     // Checkboxes use "checked" instead of "value" field in event.target
@@ -128,8 +129,11 @@ const StudentApplication = () => {
     [nav, params]
   );
 
-  async function pullAvail() {
+  const pullAvail = useRef(async () => {
+    console.log("pulling...");
+    console.log(structuredClone(termApp));
     if (termApp?.availability === null && termApp?.explanation === null) {
+      console.log("pulling!");
       // console.log(termApp);
       const url = GET_RECENT_TERM_APP + params.term;
       // console.log(url);
@@ -143,13 +147,12 @@ const StudentApplication = () => {
         };
       });
     }
-  }
+  });
 
-  async function pullCoursePrefs() {
-    console.log(appRows);
+  const pullCoursePrefs = useRef(async () => {
     const url = GET_RECENT_COURSE_APPS + params.term;
     const res = await wget(nav, url);
-    console.log(res.data);
+    // console.log(res.data);
     var courseMap = {};
     res.data.forEach((entry) => {
       courseMap[entry.course] = {
@@ -157,10 +160,22 @@ const StudentApplication = () => {
         qualification: entry.qualification,
       };
     });
-    console.log(courseMap);
-    for (const item of appRows) {
-    }
-  }
+    // console.log(courseMap);
+    setAppRows((old) => {
+      // console.log(old);
+      var newRows = structuredClone(old);
+      for (const [idx, row] of Object.entries(newRows)) {
+        // console.log(structuredClone(row));
+        row.interest = courseMap[row.code]?.interest ?? row.interest;
+        row.qualification =
+          courseMap[row.code]?.qualification ?? row.qualification;
+        // console.log(row);
+        updateRow(row, old[idx]);
+      }
+      return newRows;
+    });
+    // setAppRows(newRows);
+  });
 
   useEffect(() => {
     const postData = setTimeout(() => {
@@ -178,7 +193,7 @@ const StudentApplication = () => {
         Your changes are saved automatically. Unsubmitting will withdraw your
         application.
       </p>
-      <h3>Push forward old applications</h3>
+      {/*      <h3>Push forward old applications</h3>
       <p>
         If you have previous applications, you can bring those details to this
         one. <strong>Any existing changes will be overwritten!</strong>
@@ -188,7 +203,7 @@ const StudentApplication = () => {
       </Button>
       <Button variant="contained" color="secondary" onClick={pullCoursePrefs}>
         Course preferences
-      </Button>
+  </Button>*/}
       <h3>Availability</h3>
       <FormGroup>
         <TextField
