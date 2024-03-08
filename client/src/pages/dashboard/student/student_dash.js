@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { wget } from "../../requestWrapper";
+import { wget, wpost } from "../../requestWrapper";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileView from "./profile_view";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import { GridColDef } from "@mui/x-data-grid";
 
 const GET_TERM_APPS = "/api/applicant/applications/available/";
+const POST_NEW_TERM = "/api/applicant/term/new/";
 
 const columns: GridColDef = [
   {
@@ -58,6 +59,7 @@ const columns: GridColDef = [
             if (p.row?.explanation === null && p.row?.availability === null) {
               console.log("new!");
               console.log(p.row);
+              wpost(null, POST_NEW_TERM, p.row);
             }
           }}
         >
