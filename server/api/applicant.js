@@ -176,7 +176,7 @@ function applicant({ app, db, pgp }) {
       console.log("a new one!");
       db.tx(async (t) => {
         const termAppQuery = `
-        SELECT availability, explanation
+        SELECT applicant, $2 AS term, availability, explanation
         FROM termapplication
         JOIN users ON applicant=users.id
         WHERE username=$1
@@ -187,7 +187,7 @@ function applicant({ app, db, pgp }) {
         console.log(termApp);
 
         const coursesQuery = `
-        SELECT DISTINCT ON (course) course, interest, qualification
+        SELECT DISTINCT ON (course) applicant, course, $2 AS term, interest, qualification
         FROM application JOIN users
         ON applicant=users.id 
         WHERE username=$1
@@ -196,6 +196,25 @@ function applicant({ app, db, pgp }) {
         `;
         const courses = await t.any(coursesQuery, [userId, r.term]);
         console.log(courses);
+
+        if (!!termApp) {
+          const termAppInsert = pgp.helpers.insert(
+            termApp,
+            null,
+            "termapplication"
+          );
+          // console.log(termAppInsert);
+          t.none(termAppInsert);
+        }
+        if (!!courses && courses.length > 0) {
+          const coursesInsert = pgp.helpers.insert(
+            courses,
+            Object.keys(courses[0]),
+            "application"
+          );
+          // console.log(coursesInsert);
+          t.none(coursesInsert);
+        }
       });
     }
   });
