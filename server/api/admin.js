@@ -4,6 +4,44 @@ import async from "async";
 export function admin({ app, db, pgp }) {
   /**
    * ADMIN ENDPOINT
+   * Gets all term table info
+   */
+  app.get("/api/admin/terms", (req, res) => {
+    const dbQuery = "SELECT * FROM term";
+    db.many(dbQuery)
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((error) => {
+        console.log("error fetching term data from DB:", error);
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * ADMIN ENDPOINT
+   * Upsert to term table. 1 value at a time.
+   */
+  app.post("/api/admin/term", (req, res) => {
+    const body = req.body;
+    console.log(body);
+    const dbQuery = `
+    INSERT INTO term (term, visible)
+    VALUES ($1, $2)
+    ON CONFLICT (term) DO UPDATE SET
+    visible = EXCLUDED.visible
+    RETURNING 'success' as status, 'Success' as data
+    `;
+    db.oneOrNone(dbQuery, [body.term, body.visible])
+      .then((data) => res.status(200).json(data))
+      .catch((error) => {
+        console.log("error posting term to DB:", error);
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * ADMIN ENDPOINT
    * Get all db table names
    */
   app.get("/api/admin/tables", (req, res) => {
@@ -18,7 +56,7 @@ export function admin({ app, db, pgp }) {
       })
       .catch((error) => {
         console.log("error fetching table list from DB:", error);
-        res.status(400).send(error);
+        res.status(500).send(error);
       });
   });
 
