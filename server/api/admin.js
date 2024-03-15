@@ -1,6 +1,7 @@
-const async = require("async");
+// const async = require("async");
+import async from "async";
 
-module.exports = function ({ app, db, pgp }) {
+export function admin({ app, db, pgp }) {
   /**
    * ADMIN ENDPOINT
    * Get all db table names
@@ -76,7 +77,8 @@ module.exports = function ({ app, db, pgp }) {
           );
           if (!term) return { status: "fail", data: "No such term" };
           const instructor = await t.oneOrNone(
-            "SELECT id FROM users WHERE username=$4 AND usertype IN ('instructor', 'admin')",
+            // "SELECT id FROM users WHERE username=$4 AND usertype IN ('instructor', 'admin')",
+            "SELECT users.id FROM users JOIN instructor ON instructor.id = users.id WHERE username=$4",
             row
           );
           if (!instructor)
@@ -335,4 +337,4 @@ module.exports = function ({ app, db, pgp }) {
   //             res.status(400).send(error)
   //         })
   // })
-};
+}

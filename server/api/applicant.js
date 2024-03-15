@@ -1,4 +1,4 @@
-module.exports = function ({ app, db, pgp }) {
+function applicant({ app, db, pgp }) {
   // Gets applicant info from applicant table
   app.get("/api/applicant/:userId", (req, res) => {
     const id = res.locals.userid;
@@ -163,8 +163,8 @@ module.exports = function ({ app, db, pgp }) {
       });
   });
 
-  MAX_RATING = 5;
-  MIN_RATING = 1;
+  const MAX_RATING = 5;
+  const MIN_RATING = 1;
   /**
    * Posts applicant changes to specific course applications
    * The request is safe because of DB restrictions
@@ -214,7 +214,7 @@ module.exports = function ({ app, db, pgp }) {
     r.submitted = r.submitted === null ? false : r.submitted;
 
     const userId = res.locals.userid;
-    dbQuery = `
+    const dbQuery = `
     INSERT INTO termapplication(applicant, term, submitted, availability, approval, explanation, incanada, wantstoteach)
     VALUES ((SELECT id FROM users WHERE username=$1), 
         $2, $3, $4, $5, $6, $7, $8)
@@ -245,4 +245,5 @@ module.exports = function ({ app, db, pgp }) {
         res.status(400).send(error);
       });
   });
-};
+}
+export { applicant };
