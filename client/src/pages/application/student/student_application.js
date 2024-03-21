@@ -14,6 +14,7 @@ import renderGridCellRatingInput from "../../components/datagrid/render_rating_i
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import { wget, wpost } from "../../requestWrapper";
+import NotFound from "../../404";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
@@ -129,6 +130,9 @@ const StudentApplication = () => {
     return () => clearTimeout(postData);
   }, [termApp, nav]);
 
+  // return !termApp ? (
+  //   <NotFound />
+  // ) :
   return (
     <div className="application">
       <h2>Teaching Assistant Application for {termApp?.termname}</h2>
