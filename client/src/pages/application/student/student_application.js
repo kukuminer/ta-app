@@ -21,6 +21,7 @@ const GET_TERM_APP2 = "/api/applicant/applications/available/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
+const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
 const MAX_AVAILABILITY = 4;
 const MIN_AVAILABILITY = 0;
@@ -75,6 +76,11 @@ const StudentApplication = () => {
   const nav = useNavigate();
 
   useEffect(() => {
+    async function checkNewTerm() {
+      const url = CHECK_NEW_TERM;
+      const res = await wpost(nav, url, { term: params.term });
+      console.log(res);
+    }
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
       const url = GET_TERM_APP2;
@@ -89,6 +95,7 @@ const StudentApplication = () => {
       const res = await wget(nav, url);
       setAppRows(res.data);
     }
+    checkNewTerm();
     fetchTerm();
     fetchApps();
   }, [params, nav]);
