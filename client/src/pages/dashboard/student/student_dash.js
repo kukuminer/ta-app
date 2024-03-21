@@ -55,13 +55,13 @@ const columns: GridColDef = [
       return (
         <Link
           to={"/application/" + p.id}
-          onClick={() => {
-            if (p.row?.explanation === null && p.row?.availability === null) {
-              console.log("new!");
-              console.log(p.row);
-              wpost(null, POST_NEW_TERM, p.row);
-            }
-          }}
+          // onClick={() => {
+          //   if (p.row?.explanation === null && p.row?.availability === null) {
+          //     console.log("new!");
+          //     console.log(p.row);
+          //     wpost(null, POST_NEW_TERM, p.row);
+          //   }
+          // }}
         >
           Apply
         </Link>
