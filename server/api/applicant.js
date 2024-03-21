@@ -90,7 +90,13 @@ function applicant({ app, db, pgp }) {
     ON term.id = termapplication.term
     WHERE term.visible = true
     */
-  app.get("/api/applicant/applications/available", (req, res) => {
+  app.get("/api/applicant/applications/available", async (req, res) => {
+    const ret = await getAvailableApplications(req, res);
+    res.json(ret);
+  });
+
+  // Gets all the applications that are available for this user
+  const getAvailableApplications = async (req, res) => {
     const userId = res.locals.userid;
     const dbQuery = `
     SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
@@ -100,15 +106,21 @@ function applicant({ app, db, pgp }) {
     WHERE term.visible = true
     `;
     // AND section.term NOT IN (SELECT term FROM termapplication)
-    db.any(dbQuery, userId)
-      .then((data) => {
-        res.json(data);
-      })
-      .catch((error) => {
-        console.log("error retrieving available applications from db");
-        res.status(500).send(error);
-      });
-  });
+    try {
+      return await db.any(dbQuery, userId);
+    } catch (error) {
+      console.log("error retrieving available applications from db");
+      return error;
+    }
+    //   .then((data) => {
+    //     res.json(data);
+    //     return data;
+    //   })
+    //   .catch((error) => {
+    //     res.status(500).send(error);
+    //   });
+    // return null;
+  };
 
   app.get("/api/applicant/termapplication/:term", (req, res) => {
     const userId = res.locals.userid;
@@ -168,12 +180,20 @@ function applicant({ app, db, pgp }) {
    * most recent application details from previous
    * terms
    */
-  app.post("/api/applicant/term/new", (req, res) => {
+  app.post("/api/applicant/term/new", async (req, res) => {
     const userId = res.locals.userid;
     const r = req.body;
-    console.log(r);
-    if (!r?.availability && !r?.explanation) {
-      console.log("a new one!");
+    // console.log(r);
+    const termApps = await getAvailableApplications(req, res);
+    // console.log(termApps);
+
+    const termApp = termApps.filter((el) => {
+      return parseInt(el.term) === parseInt(r.term);
+    })?.[0];
+
+    // console.log(termApp);
+    if (termApp?.availability === null && termApp?.explanation === null) {
+      // console.log("a new one!");
       db.tx(async (t) => {
         const termAppQuery = `
         SELECT applicant, $2 AS term, availability, explanation
@@ -184,7 +204,7 @@ function applicant({ app, db, pgp }) {
         ORDER BY term DESC
         LIMIT 1`;
         const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
-        console.log(termApp);
+        // console.log(termApp);
 
         const coursesQuery = `
         SELECT DISTINCT ON (course) applicant, course, $2 AS term, interest, qualification
@@ -195,7 +215,7 @@ function applicant({ app, db, pgp }) {
         ORDER BY course, term DESC;
         `;
         const courses = await t.any(coursesQuery, [userId, r.term]);
-        console.log(courses);
+        // console.log(courses);
 
         if (!!termApp) {
           const termAppInsert = pgp.helpers.insert(
@@ -228,6 +248,7 @@ function applicant({ app, db, pgp }) {
     const userId = res.locals.userid;
     const r = req.body;
     console.log(r);
+    const newterm = r?.term;
     if (!r?.availability && !r?.explanation) {
       console.log("a new one!");
       db.tx(async (t) => {
