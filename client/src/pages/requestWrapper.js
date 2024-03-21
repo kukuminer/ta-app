@@ -10,7 +10,7 @@ export async function wpost(nav, url, obj) {
   return await process(axios.post(url, obj), nav);
 }
 
-async function process(req, nav) {
+async function process(req, nav = null) {
   try {
     return await req;
   } catch (err) {

@@ -14,12 +14,14 @@ import renderGridCellRatingInput from "../../components/datagrid/render_rating_i
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import { wget, wpost } from "../../requestWrapper";
+import NotFound from "../../404";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
+const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
 const MAX_AVAILABILITY = 4;
 const MIN_AVAILABILITY = 0;
@@ -74,6 +76,11 @@ const StudentApplication = () => {
   const nav = useNavigate();
 
   useEffect(() => {
+    async function checkNewTerm() {
+      const url = CHECK_NEW_TERM;
+      const res = await wpost(nav, url, { term: params.term });
+      console.log(res);
+    }
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
       const url = GET_TERM_APP2;
@@ -88,6 +95,7 @@ const StudentApplication = () => {
       const res = await wget(nav, url);
       setAppRows(res.data);
     }
+    checkNewTerm();
     fetchTerm();
     fetchApps();
   }, [params, nav]);
@@ -129,6 +137,9 @@ const StudentApplication = () => {
     return () => clearTimeout(postData);
   }, [termApp, nav]);
 
+  // return !termApp ? (
+  //   <NotFound />
+  // ) :
   return (
     <div className="application">
       <h2>Teaching Assistant Application for {termApp?.termname}</h2>
