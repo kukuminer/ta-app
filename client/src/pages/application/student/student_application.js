@@ -79,7 +79,6 @@ const StudentApplication = () => {
     async function checkNewTerm() {
       const url = CHECK_NEW_TERM;
       const res = await wpost(nav, url, { term: params.term });
-      console.log(res);
     }
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
@@ -88,8 +87,7 @@ const StudentApplication = () => {
       const data = res.data.filter((el) => {
         return parseInt(el.term) === parseInt(params.term);
       });
-      setTermApp({ ...data[0], loading: false });
-      console.log(data[0]);
+      setTermApp(data[0] ? { ...data[0], loading: false } : null);
     }
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
@@ -131,7 +129,7 @@ const StudentApplication = () => {
 
   useEffect(() => {
     const postData = setTimeout(() => {
-      console.log(termApp);
+      // console.log(termApp);
       if (!!termApp && termApp?.loading === false) {
         wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
       }
@@ -139,12 +137,9 @@ const StudentApplication = () => {
     return () => clearTimeout(postData);
   }, [termApp, nav]);
 
-  // return !termApp ? (
-  //   <NotFound />
-  // ) :
-  return termApp === "loading" ? (
+  return termApp?.loading ? (
     <p>Loading...</p>
-  ) : termApp === undefined ? (
+  ) : termApp === null ? (
     <NotFound />
   ) : (
     <div className="application">
