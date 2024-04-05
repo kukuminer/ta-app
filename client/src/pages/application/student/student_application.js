@@ -70,7 +70,7 @@ const columns = [
 ];
 
 const StudentApplication = () => {
-  const [termApp, setTermApp] = useState({});
+  const [termApp, setTermApp] = useState({ loading: true });
   const [appRows, setAppRows] = useState([]);
   const params = useParams();
   const nav = useNavigate();
@@ -88,7 +88,8 @@ const StudentApplication = () => {
       const data = res.data.filter((el) => {
         return parseInt(el.term) === parseInt(params.term);
       });
-      setTermApp(data[0]);
+      setTermApp({ ...data[0], loading: false });
+      console.log(data[0]);
     }
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
@@ -130,7 +131,8 @@ const StudentApplication = () => {
 
   useEffect(() => {
     const postData = setTimeout(() => {
-      if (!!termApp && Object.keys(termApp).length !== 0) {
+      console.log(termApp);
+      if (!!termApp && termApp?.loading === false) {
         wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
       }
     }, DEBOUNCE_MS);
@@ -140,7 +142,11 @@ const StudentApplication = () => {
   // return !termApp ? (
   //   <NotFound />
   // ) :
-  return (
+  return termApp === "loading" ? (
+    <p>Loading...</p>
+  ) : termApp === undefined ? (
+    <NotFound />
+  ) : (
     <div className="application">
       <h2>Teaching Assistant Application for {termApp?.termname}</h2>
       <p>

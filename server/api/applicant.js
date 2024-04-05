@@ -184,17 +184,17 @@ function applicant({ app, db, pgp }) {
     const userId = res.locals.userid;
     const r = req.body;
     // console.log(r);
-    const termApps = await getAvailableApplications(req, res);
-    // console.log(termApps);
+    db.tx(async (t) => {
+      const termApps = await getAvailableApplications(req, res);
+      // console.log(termApps);
 
-    const termApp = termApps.filter((el) => {
-      return parseInt(el.term) === parseInt(r.term);
-    })?.[0];
+      const check = termApps.filter((el) => {
+        return parseInt(el.term) === parseInt(r.term);
+      })?.[0];
 
-    // console.log(termApp);
-    if (termApp?.availability === null && termApp?.explanation === null) {
-      // console.log("a new one!");
-      db.tx(async (t) => {
+      // console.log(termApp);
+      if (check?.availability === null && check?.explanation === null) {
+        // console.log("a new one!");
         const termAppQuery = `
         SELECT applicant, $2 AS term, availability, explanation
         FROM termapplication
@@ -204,7 +204,6 @@ function applicant({ app, db, pgp }) {
         ORDER BY term DESC
         LIMIT 1`;
         const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
-        // console.log(termApp);
 
         const coursesQuery = `
         SELECT DISTINCT ON (course) applicant, course, $2 AS term, interest, qualification
@@ -235,8 +234,17 @@ function applicant({ app, db, pgp }) {
           // console.log(coursesInsert);
           t.none(coursesInsert);
         }
+        return 201;
+      }
+      return 200;
+    })
+      .then((data) => {
+        res.status(200).send();
+      })
+      .catch((error) => {
+        console.log("error pulling new term forward: ", error);
+        res.status(500).send(error);
       });
-    }
   });
 
   /**
@@ -244,38 +252,38 @@ function applicant({ app, db, pgp }) {
    * most recent application details from previous
    * terms
    */
-  app.post("/api/applicant/term/new", (req, res) => {
-    const userId = res.locals.userid;
-    const r = req.body;
-    console.log(r);
-    const newterm = r?.term;
-    if (!r?.availability && !r?.explanation) {
-      console.log("a new one!");
-      db.tx(async (t) => {
-        const termAppQuery = `
-        SELECT availability, explanation
-        FROM termapplication
-        JOIN users ON applicant=users.id
-        WHERE username=$1
-        AND term<$2
-        ORDER BY term DESC
-        LIMIT 1`;
-        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
-        console.log(termApp);
+  // app.post("/api/applicant/term/new", (req, res) => {
+  //   const userId = res.locals.userid;
+  //   const r = req.body;
+  //   console.log(r);
+  //   const newterm = r?.term;
+  //   if (!r?.availability && !r?.explanation) {
+  //     console.log("a new one!");
+  //     db.tx(async (t) => {
+  //       const termAppQuery = `
+  //       SELECT availability, explanation
+  //       FROM termapplication
+  //       JOIN users ON applicant=users.id
+  //       WHERE username=$1
+  //       AND term<$2
+  //       ORDER BY term DESC
+  //       LIMIT 1`;
+  //       const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+  //       console.log(termApp);
 
-        const coursesQuery = `
-        SELECT DISTINCT ON (course) course, interest, qualification
-        FROM application JOIN users
-        ON applicant=users.id 
-        WHERE username=$1
-        AND term<$2
-        ORDER BY course, term DESC;
-        `;
-        const courses = await t.any(coursesQuery, [userId, r.term]);
-        console.log(courses);
-      });
-    }
-  });
+  //       const coursesQuery = `
+  //       SELECT DISTINCT ON (course) course, interest, qualification
+  //       FROM application JOIN users
+  //       ON applicant=users.id
+  //       WHERE username=$1
+  //       AND term<$2
+  //       ORDER BY course, term DESC;
+  //       `;
+  //       const courses = await t.any(coursesQuery, [userId, r.term]);
+  //       console.log(courses);
+  //     });
+  //   }
+  // });
 
   const MAX_RATING = 5;
   const MIN_RATING = 1;

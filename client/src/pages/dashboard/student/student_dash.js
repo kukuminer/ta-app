@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { wget, wpost } from "../../requestWrapper";
+import { wget } from "../../requestWrapper";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileView from "./profile_view";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import { GridColDef } from "@mui/x-data-grid";
 
 const GET_TERM_APPS = "/api/applicant/applications/available/";
-const POST_NEW_TERM = "/api/applicant/term/new/";
 
 const columns: GridColDef = [
   {
