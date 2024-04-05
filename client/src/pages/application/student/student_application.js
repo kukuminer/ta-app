@@ -78,7 +78,7 @@ const StudentApplication = () => {
   useEffect(() => {
     async function checkNewTerm() {
       const url = CHECK_NEW_TERM;
-      const res = await wpost(nav, url, { term: params.term });
+      await wpost(nav, url, { term: params.term });
     }
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
