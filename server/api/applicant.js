@@ -90,7 +90,13 @@ function applicant({ app, db, pgp }) {
     ON term.id = termapplication.term
     WHERE term.visible = true
     */
-  app.get("/api/applicant/applications/available", (req, res) => {
+  app.get("/api/applicant/applications/available", async (req, res) => {
+    const ret = await getAvailableApplications(req, res);
+    res.json(ret);
+  });
+
+  // Gets all the applications that are available for this user
+  async function getAvailableApplications(req, res) {
     const userId = res.locals.userid;
     const dbQuery = `
     SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
@@ -100,15 +106,21 @@ function applicant({ app, db, pgp }) {
     WHERE term.visible = true
     `;
     // AND section.term NOT IN (SELECT term FROM termapplication)
-    db.any(dbQuery, userId)
-      .then((data) => {
-        res.json(data);
-      })
-      .catch((error) => {
-        console.log("error retrieving available applications from db");
-        res.status(500).send(error);
-      });
-  });
+    try {
+      return await db.any(dbQuery, userId);
+    } catch (error) {
+      console.log("error retrieving available applications from db");
+      return error;
+    }
+    //   .then((data) => {
+    //     res.json(data);
+    //     return data;
+    //   })
+    //   .catch((error) => {
+    //     res.status(500).send(error);
+    //   });
+    // return null;
+  }
 
   app.get("/api/applicant/termapplication/:term", (req, res) => {
     const userId = res.locals.userid;
@@ -162,6 +174,116 @@ function applicant({ app, db, pgp }) {
         res.status(500).send(error);
       });
   });
+
+  /**
+   * Post to magically pull forward this applicants
+   * most recent application details from previous
+   * terms
+   */
+  app.post("/api/applicant/term/new", async (req, res) => {
+    const userId = res.locals.userid;
+    const r = req.body;
+    // console.log(r);
+    db.tx(async (t) => {
+      const termApps = await getAvailableApplications(req, res);
+      // console.log(termApps);
+
+      const check = termApps.filter((el) => {
+        return parseInt(el.term) === parseInt(r.term);
+      })?.[0];
+
+      // console.log(termApp);
+      if (check?.availability === null && check?.explanation === null) {
+        // console.log("a new one!");
+        const termAppQuery = `
+        SELECT applicant, $2 AS term, availability, explanation
+        FROM termapplication
+        JOIN users ON applicant=users.id
+        WHERE username=$1
+        AND term<$2
+        ORDER BY term DESC
+        LIMIT 1`;
+        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+
+        const coursesQuery = `
+        SELECT DISTINCT ON (course) applicant, course, $2 AS term, interest, qualification
+        FROM application JOIN users
+        ON applicant=users.id 
+        WHERE username=$1
+        AND term<$2
+        ORDER BY course, term DESC;
+        `;
+        const courses = await t.any(coursesQuery, [userId, r.term]);
+        // console.log(courses);
+
+        if (!!termApp) {
+          const termAppInsert = pgp.helpers.insert(
+            termApp,
+            null,
+            "termapplication"
+          );
+          // console.log(termAppInsert);
+          t.none(termAppInsert);
+        }
+        if (!!courses && courses.length > 0) {
+          const coursesInsert = pgp.helpers.insert(
+            courses,
+            Object.keys(courses[0]),
+            "application"
+          );
+          // console.log(coursesInsert);
+          t.none(coursesInsert);
+        }
+        return 201;
+      }
+      return 200;
+    })
+      .then((data) => {
+        res.status(200).send();
+      })
+      .catch((error) => {
+        console.log("error pulling new term forward: ", error);
+        res.status(500).send(error);
+      });
+  });
+
+  /**
+   * Post to magically pull forward this applicants
+   * most recent application details from previous
+   * terms
+   */
+  // app.post("/api/applicant/term/new", (req, res) => {
+  //   const userId = res.locals.userid;
+  //   const r = req.body;
+  //   console.log(r);
+  //   const newterm = r?.term;
+  //   if (!r?.availability && !r?.explanation) {
+  //     console.log("a new one!");
+  //     db.tx(async (t) => {
+  //       const termAppQuery = `
+  //       SELECT availability, explanation
+  //       FROM termapplication
+  //       JOIN users ON applicant=users.id
+  //       WHERE username=$1
+  //       AND term<$2
+  //       ORDER BY term DESC
+  //       LIMIT 1`;
+  //       const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+  //       console.log(termApp);
+
+  //       const coursesQuery = `
+  //       SELECT DISTINCT ON (course) course, interest, qualification
+  //       FROM application JOIN users
+  //       ON applicant=users.id
+  //       WHERE username=$1
+  //       AND term<$2
+  //       ORDER BY course, term DESC;
+  //       `;
+  //       const courses = await t.any(coursesQuery, [userId, r.term]);
+  //       console.log(courses);
+  //     });
+  //   }
+  // });
 
   const MAX_RATING = 5;
   const MIN_RATING = 1;

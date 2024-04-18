@@ -14,12 +14,14 @@ import renderGridCellRatingInput from "../../components/datagrid/render_rating_i
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import { wget, wpost } from "../../requestWrapper";
+import NotFound from "../../404";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
+const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
 const MAX_AVAILABILITY = 4;
 const MIN_AVAILABILITY = 0;
@@ -68,12 +70,16 @@ const columns = [
 ];
 
 const StudentApplication = () => {
-  const [termApp, setTermApp] = useState({});
+  const [termApp, setTermApp] = useState({ loading: true });
   const [appRows, setAppRows] = useState([]);
   const params = useParams();
   const nav = useNavigate();
 
   useEffect(() => {
+    async function checkNewTerm() {
+      const url = CHECK_NEW_TERM;
+      await wpost(nav, url, { term: params.term });
+    }
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
       const url = GET_TERM_APP2;
@@ -81,13 +87,14 @@ const StudentApplication = () => {
       const data = res.data.filter((el) => {
         return parseInt(el.term) === parseInt(params.term);
       });
-      setTermApp(data[0]);
+      setTermApp(data[0] ? { ...data[0], loading: false } : null);
     }
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
       setAppRows(res.data);
     }
+    checkNewTerm();
     fetchTerm();
     fetchApps();
   }, [params, nav]);
@@ -122,14 +129,19 @@ const StudentApplication = () => {
 
   useEffect(() => {
     const postData = setTimeout(() => {
-      if (!!termApp && Object.keys(termApp).length !== 0) {
+      // console.log(termApp);
+      if (!!termApp && termApp?.loading === false) {
         wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(postData);
   }, [termApp, nav]);
 
-  return (
+  return termApp?.loading ? (
+    <p>Loading...</p>
+  ) : termApp === null ? (
+    <NotFound />
+  ) : (
     <div className="application">
       <h2>Teaching Assistant Application for {termApp?.termname}</h2>
       <p>

@@ -1,37 +1,33 @@
-import React from "react"
-import Header from "../header/header"
-import StudentApplication from "./student/student_application"
-import "./application.css"
+import React from "react";
+import Header from "../header/header";
+import StudentApplication from "./student/student_application";
+import "./application.css";
 
 const components = {
-    'applicant': <StudentApplication />,
-    'professor': null,
-    'admin': null,
-}
+  applicant: <StudentApplication />,
+  professor: null,
+  admin: null,
+};
 
 const Application = () => {
+  const [userType, setUserType] = React.useState(null);
 
-    const [userType, setUserType] = React.useState(null);
+  React.useEffect(() => {
+    fetch("/api/userdata")
+      .then((res) => res.json())
+      .then((data) => {
+        setUserType(data.usertype);
+      });
+  }, []);
 
-    React.useEffect(() => {
-        fetch('/api/userdata')
-            .then((res) => res.json())
-            .then((data) => {
-                setUserType(data.usertype)
-            })
-    }, [])
+  return (
+    <>
+      <Header />
+      <div className="application-page">
+        <div className="main">{components[userType]}</div>
+      </div>
+    </>
+  );
+};
 
-
-    return (
-        <>
-            <Header />
-            <div className="application-page">
-                <div className="main">
-                    {components[userType]}
-                </div>
-            </div>
-        </>
-    )
-}
-
-export default Application
+export default Application;
