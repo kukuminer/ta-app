@@ -96,7 +96,7 @@ function applicant({ app, db, pgp }) {
   });
 
   // Gets all the applications that are available for this user
-  const getAvailableApplications = async (req, res) => {
+  async function getAvailableApplications(req, res) {
     const userId = res.locals.userid;
     const dbQuery = `
     SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
@@ -120,7 +120,7 @@ function applicant({ app, db, pgp }) {
     //     res.status(500).send(error);
     //   });
     // return null;
-  };
+  }
 
   app.get("/api/applicant/termapplication/:term", (req, res) => {
     const userId = res.locals.userid;
