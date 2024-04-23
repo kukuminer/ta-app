@@ -1,6 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Alert,
   Box,
@@ -14,12 +13,15 @@ import renderGridCellTooltip from "../../components/datagrid/render_tooltip";
 import renderGridCellRatingInput from "../../components/datagrid/render_rating_input";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
+import { wget, wpost } from "../../requestWrapper";
+import NotFound from "../../404";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
 const GET_TERM_APP2 = "/api/applicant/applications/available/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
+const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
 const MAX_AVAILABILITY = 4;
 const MIN_AVAILABILITY = 0;
@@ -68,28 +70,34 @@ const columns = [
 ];
 
 const StudentApplication = () => {
-  const [termApp, setTermApp] = useState({});
+  const [termApp, setTermApp] = useState({ loading: true });
   const [appRows, setAppRows] = useState([]);
   const params = useParams();
+  const nav = useNavigate();
 
   useEffect(() => {
+    async function checkNewTerm() {
+      const url = CHECK_NEW_TERM;
+      await wpost(nav, url, { term: params.term });
+    }
     async function fetchTerm() {
       // const url = GET_TERM_APP + params.term
       const url = GET_TERM_APP2;
-      const res = await axios.get(url);
+      const res = await wget(nav, url);
       const data = res.data.filter((el) => {
         return parseInt(el.term) === parseInt(params.term);
       });
-      setTermApp(data[0]);
+      setTermApp(data[0] ? { ...data[0], loading: false } : null);
     }
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
-      const res = await axios.get(url);
+      const res = await wget(nav, url);
       setAppRows(res.data);
     }
+    checkNewTerm();
     fetchTerm();
     fetchApps();
-  }, [params]);
+  }, [params, nav]);
 
   function handleChange(event) {
     // Checkboxes use "checked" instead of "value" field in event.target
@@ -111,20 +119,29 @@ const StudentApplication = () => {
       interest: newRow.interest ?? 2,
       qualification: newRow.qualification ?? 2,
     };
-    axios.post(POST_COURSE_APPS, body);
+    try {
+      await wpost(nav, POST_COURSE_APPS, body);
+    } catch (err) {
+      return oldRow;
+    }
     return newRow;
   }
 
   useEffect(() => {
     const postData = setTimeout(() => {
-      if (!!termApp && Object.keys(termApp).length !== 0) {
-        axios.post(POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
+      // console.log(termApp);
+      if (!!termApp && termApp?.loading === false) {
+        wpost(nav, POST_TERM_APP, termApp); //.then(res => console.log(res.data[0]))
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(postData);
-  }, [termApp]);
+  }, [termApp, nav]);
 
-  return (
+  return termApp?.loading ? (
+    <p>Loading...</p>
+  ) : termApp === null ? (
+    <NotFound />
+  ) : (
     <div className="application">
       <h2>Teaching Assistant Application for {termApp?.termname}</h2>
       <p>
@@ -146,6 +163,7 @@ const StudentApplication = () => {
             },
           }}
           sx={{ marginRight: "10px" }}
+          FormHelperTextProps={{ component: "div" }}
           helperText={
             <div>
               <p>
@@ -181,7 +199,6 @@ const StudentApplication = () => {
               [
                 5,
                 <>
-                  {" "}
                   <strong>Preferred option</strong>, very interested and
                   qualified. This is the assignment that you are most excited
                   about and confident in your ability to perform well. You have
@@ -241,7 +258,7 @@ const StudentApplication = () => {
                 </>,
               ],
             ].map(([val, label]) => (
-              <li>
+              <li key={val}>
                 <Box sx={{ display: "flex" }}>
                   <Rating
                     icon={<CircleIcon />}
@@ -266,7 +283,7 @@ const StudentApplication = () => {
         rowHeight={40}
       />
 
-      <p></p>
+      <p />
       <TextField
         value={termApp?.explanation ?? ""}
         onChange={handleChange}

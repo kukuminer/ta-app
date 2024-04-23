@@ -9,8 +9,23 @@ DROP TABLE IF EXISTS termApplication CASCADE;
 DROP TABLE IF EXISTS rightofrefusal CASCADE;
 DROP TABLE IF EXISTS term CASCADE;
 DROP TYPE IF EXISTS usertype CASCADE;
+DROP TYPE IF EXISTS pool CASCADE;
+
+-- The following lines will dynamically drop ALL TABLES in the db
+-- SELECT 'drop table if exists "' || tablename || '" CASCADE;'
+-- FROM pg_tables
+-- WHERE schemaname = 'public';
+-- \gexec
 
 CREATE TYPE usertype AS ENUM ('admin', 'instructor', 'applicant');
+
+CREATE TABLE migrations (
+    id serial NOT NULL,
+    file text NOT NULL,
+
+    UNIQUE (file),
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE users ( -- user is reserved :(
     id serial NOT NULL,

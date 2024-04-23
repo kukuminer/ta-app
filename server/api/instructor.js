@@ -1,4 +1,5 @@
-module.exports = function ({ app, db, pgp }) {
+export { instructor };
+function instructor({ app, db, pgp }) {
   /**
    * For populating the instructor dashboard
    */
@@ -130,4 +131,4 @@ module.exports = function ({ app, db, pgp }) {
         res.status(500).send(error);
       });
   });
-};
+}

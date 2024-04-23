@@ -1,15 +1,9 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-require("dotenv").config();
-// const getUser = require('./getUser.js').getUser;
-// const Async = require("async");
+import express, { json, urlencoded } from "express";
+import bodyParser from "body-parser";
+// require("dotenv").config();
+import { config } from "dotenv";
+config();
 /**
- * TODO: ADD ENV FOR GET USER
- * req.get("PYork-User") COMPLETE
- * TODO: nohup to run (or multi tab)
- * ps ux to see processes
- * kill PID to kill processes COMPLETE
- *
  * NOTE: In most of the endpoints, "id" actually refers to the username
  */
 const PORT = process.env.PORT || 3001;
@@ -20,7 +14,9 @@ const DB_HOST = process.env.DB_HOST || "host.docker.internal";
 const DB_PORT = process.env.DB_PORT || "5432";
 const DB_NAME = process.env.DB_NAME || "ta_db";
 
-const pgp = require("pg-promise")();
+// const pgp = require("pg-promise")();
+import pgPromise from "pg-promise";
+const pgp = pgPromise();
 const db = pgp({
   host: DB_HOST,
   port: DB_PORT,
@@ -29,18 +25,30 @@ const db = pgp({
   password: DB_PASS,
 });
 
+// require("./runMigrations")({ db, pgp });
+import migrate from "./runMigrations.js";
+await migrate({ db, pgp });
+
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
-require("./middleware/auth")({ app, db, pgp });
-require("./api/applicant")({ app, db, pgp });
-require("./api/instructor")({ app, db, pgp });
-require("./api/admin")({ app, db, pgp });
+// require("./middleware/auth")({ app, db, pgp });
+import { auth } from "./middleware/auth.mjs";
+auth({ app, db, pgp });
+// require("./api/applicant")({ app, db, pgp });
+import { applicant } from "./api/applicant.js";
+applicant({ app, db, pgp });
+// require("./api/instructor")({ app, db, pgp });
+import { instructor } from "./api/instructor.js";
+instructor({ app, db, pgp });
+// require("./api/admin")({ app, db, pgp });
+import { admin } from "./api/admin.js";
+admin({ app, db, pgp });
 
-db.any("SELECT now()", [])
+db.one("SELECT now()", [])
   .then((data) => {
-    console.log("SQL Connection established at ", data);
+    console.log("SQL Connection established at", data?.now);
   })
   .catch((error) => {
     console.log("SQL ERROR:\n", error);
@@ -50,8 +58,8 @@ db.any("SELECT now()", [])
  * Gets all user info for profile page
  */
 app.get("/api/user/:userid", (req, res) => {
-  id = res.locals.userid;
-  dbQuery = `
+  const id = res.locals.userid;
+  const dbQuery = `
     SELECT firstname, lastname, email, usertype, username
     FROM users
     WHERE username = $1
@@ -105,7 +113,7 @@ app.post("/api/user/update", (req, res) => {
  * Gets usertype from userId
  */
 app.get("/api/userdata", (req, res) => {
-  id = res.locals.userid;
+  const id = res.locals.userid;
   // SELECT usertype FROM users WHERE id = $1
   db.oneOrNone("SELECT username, usertype FROM users WHERE username = $1", [id])
     .then((data) => {
