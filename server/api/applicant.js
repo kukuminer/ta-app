@@ -34,29 +34,34 @@ function applicant({ app, db, pgp }) {
     //     SET studentNum=$2, employeeid=$3, pool=$4
     //     WHERE applicant.id=$1
     // `
-    db.any(idQuery, [id]).then((data) => {
-      if (data.length !== 1) throw new Error("Not 1 user found in DB!");
-      const uid = data[0].id;
-      r.id = uid;
+    db.any(idQuery, [id])
+      .then((data) => {
+        if (data.length !== 1) throw new Error("Not 1 user found in DB!");
+        const uid = data[0].id;
+        r.id = uid;
 
-      const colSet = new pgp.helpers.ColumnSet(
-        ["id", "studentnum", "employeeid", "pool"],
-        { table: "applicant" }
-      );
-      const postQuery =
-        pgp.helpers.insert(r, colSet) +
-        ' ON CONFLICT ("id") DO UPDATE SET ' +
-        colSet.assignColumns({ from: "EXCLUDED", skip: "id" });
+        const colSet = new pgp.helpers.ColumnSet(
+          ["id", "studentnum", "employeeid", "pool"],
+          { table: "applicant" }
+        );
+        const postQuery =
+          pgp.helpers.insert(r, colSet) +
+          ' ON CONFLICT ("id") DO UPDATE SET ' +
+          colSet.assignColumns({ from: "EXCLUDED", skip: "id" });
 
-      db.any(postQuery)
-        .then((data) => {
-          res.status(200).send();
-        })
-        .catch((error) => {
-          console.log("error posting to applicant table:", error);
-          res.status(500).send(error);
-        });
-    });
+        db.any(postQuery)
+          .then((data) => {
+            res.status(200).send();
+          })
+          .catch((error) => {
+            console.log("error posting to applicant table:", error);
+            res.status(500).send(error);
+          });
+      })
+      .catch((error) => {
+        console.log("some unknown error with applicant update");
+        res.status(500).send(error);
+      });
   });
 
   /**
@@ -91,8 +96,14 @@ function applicant({ app, db, pgp }) {
     WHERE term.visible = true
     */
   app.get("/api/applicant/applications/available", async (req, res) => {
-    const ret = await getAvailableApplications(req, res);
-    res.json(ret);
+    getAvailableApplications(req, res)
+      .then((ret) => {
+        res.json(ret);
+      })
+      .catch((error) => {
+        console.log("applicant application fetch error");
+        res.status(500).send(error);
+      });
   });
 
   // Gets all the applications that are available for this user

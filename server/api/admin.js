@@ -24,7 +24,6 @@ export function admin({ app, db, pgp }) {
    */
   app.post("/api/admin/term", (req, res) => {
     const body = req.body;
-    console.log(body);
     const dbQuery = `
     INSERT INTO term (term, visible)
     VALUES ($1, $2)
@@ -293,8 +292,6 @@ export function admin({ app, db, pgp }) {
    * This endpoint is for admin to upsert to DB via csv.
    */
   app.post("/api/admin/upsert", (req, res) => {
-    console.log(req.body);
-
     const tableName = new pgp.helpers.TableName(req.body.tableName);
     const rows = req.body.rows;
     const constr = req.body.constraints.split(",");
