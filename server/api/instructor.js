@@ -1,5 +1,7 @@
+import AS from "express-async-handler";
+
 export { instructor };
-function instructor({ app, db, pgp, AS }) {
+function instructor({ app, db, pgp }) {
   /**
    * For populating the instructor dashboard
    */

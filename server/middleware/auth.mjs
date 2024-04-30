@@ -1,9 +1,10 @@
 // const getUser = require("../getUser").getUser;
 import { getUser, init } from "../getUser.mjs";
+import AS from "express-async-handler";
 
 const USERTYPES = ["applicant", "instructor", "admin"];
 
-function auth({ app, db, pgp, AS }) {
+function auth({ app, db, pgp }) {
   init();
   // Set userid
   app.use(

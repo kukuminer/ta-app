@@ -1,7 +1,8 @@
 // const async = require("async");
 import async from "async";
+import AS from "express-async-handler";
 
-export function admin({ app, db, pgp, AS }) {
+export function admin({ app, db, pgp }) {
   /**
    * ADMIN ENDPOINT
    * Gets all term table info

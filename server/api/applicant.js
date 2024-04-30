@@ -1,4 +1,6 @@
-function applicant({ app, db, pgp, AS }) {
+import AS from "express-async-handler";
+
+function applicant({ app, db, pgp }) {
   // Gets applicant info from applicant table
   app.get(
     "/api/applicant/:userId",

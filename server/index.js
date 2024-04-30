@@ -37,16 +37,16 @@ app.use(urlencoded({ extended: true }));
 
 // require("./middleware/auth")({ app, db, pgp });
 import { auth } from "./middleware/auth.mjs";
-auth({ app, db, pgp, AS });
+auth({ app, db, pgp });
 // require("./api/applicant")({ app, db, pgp });
 import { applicant } from "./api/applicant.js";
-applicant({ app, db, pgp, AS });
+applicant({ app, db, pgp });
 // require("./api/instructor")({ app, db, pgp });
 import { instructor } from "./api/instructor.js";
-instructor({ app, db, pgp, AS });
+instructor({ app, db, pgp });
 // require("./api/admin")({ app, db, pgp });
 import { admin } from "./api/admin.js";
-admin({ app, db, pgp, AS });
+admin({ app, db, pgp });
 
 db.one("SELECT now()", [])
   .then((data) => {
