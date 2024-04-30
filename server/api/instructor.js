@@ -1,14 +1,18 @@
+import AS from "express-async-handler";
+
 export { instructor };
 function instructor({ app, db, pgp }) {
   /**
    * For populating the instructor dashboard
    */
-  app.get("/api/instructor/courses", (req, res) => {
-    const id = res.locals.userid;
-    // SELECT id, course, letter, term
-    // FROM section
-    // WHERE profid IN (SELECT id FROM users WHERE username=$1)
-    const dbQuery = `
+  app.get(
+    "/api/instructor/courses",
+    AS(async (req, res) => {
+      const id = res.locals.userid;
+      // SELECT id, course, letter, term
+      // FROM section
+      // WHERE profid IN (SELECT id FROM users WHERE username=$1)
+      const dbQuery = `
     SELECT 
     section.id,
     course.code as course,
@@ -24,25 +28,28 @@ function instructor({ app, db, pgp }) {
     ORDER BY term.term DESC, course.code ASC, section.letter ASC
     `;
 
-    db.any(dbQuery, [id])
-      .then((data) => {
-        res.json(data);
-      })
-      .catch((error) => {
-        console.log("error retrieving prof sections from db");
-        res.status(500).send(error);
-      });
-  });
+      db.any(dbQuery, [id])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("error retrieving prof sections from db");
+          res.status(500).send(error);
+        });
+    })
+  );
 
   /**
    * For populating the professor section view
    */
-  app.get("/api/instructor/:sectionId", (req, res) => {
-    const id = res.locals.userid;
-    // const course = req.params.course
-    // const letter = req.params.letter
-    const sectionId = req.params.sectionId;
-    const dbQuery = `
+  app.get(
+    "/api/instructor/:sectionId",
+    AS(async (req, res) => {
+      const id = res.locals.userid;
+      // const course = req.params.course
+      // const letter = req.params.letter
+      const sectionId = req.params.sectionId;
+      const dbQuery = `
     SELECT 
         section.id as sectionId, 
         users.id as userId, 
@@ -72,21 +79,24 @@ function instructor({ app, db, pgp }) {
     AND termapplication.availability > 0
     ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
         `;
-    db.any(dbQuery, [sectionId, id])
-      .then((data) => {
-        res.json(data);
-      })
-      .catch((error) => {
-        console.log("error retrieving prof section info from db");
-        res.status(500).send(error);
-      });
-  });
+      db.any(dbQuery, [sectionId, id])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("error retrieving prof section info from db");
+          res.status(500).send(error);
+        });
+    })
+  );
 
   /**
    * For updating prof preference and note
    */
-  app.post("/api/instructor/assignment", (req, res) => {
-    /*
+  app.post(
+    "/api/instructor/assignment",
+    AS(async (req, res) => {
+      /*
         INSERT INTO assignment(applicant, section, pref, note)
         VALUES (3, (SELECT id FROM section WHERE profid=2 AND id=1), 1, 'eebe')
         ON CONFLICT (applicant, section)
@@ -95,7 +105,7 @@ function instructor({ app, db, pgp }) {
         AND assignment.section in (SELECT id FROM section WHERE profid=4 AND id=1)
         RETURNING assignment.id
          */
-    const dbQuery = `
+      const dbQuery = `
     INSERT INTO assignment(applicant, section, pref, note)
     VALUES ($1, 
         (SELECT id 
@@ -113,22 +123,23 @@ function instructor({ app, db, pgp }) {
             AND id=$2)
     RETURNING assignment.applicant, assignment.pref, assignment.note
     `;
-    const r = req.body;
-    const userId = res.locals.userid;
-    db.any(dbQuery, [
-      r.studentNum,
-      r.sectionId,
-      r.pref.toLowerCase(),
-      r.note,
-      userId,
-    ])
-      .then((data) => {
-        if (data.length !== 1) throw new Error("Bad auth");
-        res.json(data);
-      })
-      .catch((error) => {
-        console.log("db assignment upsert error: ", error);
-        res.status(500).send(error);
-      });
-  });
+      const r = req.body;
+      const userId = res.locals.userid;
+      db.any(dbQuery, [
+        r.studentNum,
+        r.sectionId,
+        r.pref.toLowerCase(),
+        r.note,
+        userId,
+      ])
+        .then((data) => {
+          if (data.length !== 1) throw new Error("Bad auth");
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("db assignment upsert error: ", error);
+          res.status(500).send(error);
+        });
+    })
+  );
 }
