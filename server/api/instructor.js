@@ -50,35 +50,35 @@ function instructor({ app, db, pgp }) {
       // const letter = req.params.letter
       const sectionId = req.params.sectionId;
       const dbQuery = `
-    SELECT 
-        section.id as sectionId, 
-        users.id as userId, 
-        users.firstname, 
-        users.lastname, 
-        application.grade, 
-        COALESCE(application.interest, 2) AS interest,
-        COALESCE(application.qualification, 2) AS qualification,
-        assignment.pref, 
-        assignment.note, 
-        applicant.pool,
-        termapplication.availability,
-        termapplication.explanation
-    FROM
-        section
-        INNER JOIN termapplication ON termapplication.term = section.term
-        INNER JOIN users ON termapplication.applicant=users.id
-        INNER JOIN applicant ON applicant.id=users.id
-        LEFT JOIN application ON (
-            application.applicant = termapplication.applicant AND
-            application.term = termapplication.term AND
-            application.course = section.course)
-        LEFT JOIN assignment ON application.applicant = assignment.applicant AND section.id = assignment.section
-    WHERE section.id = $1
-    AND profid IN (SELECT id FROM users WHERE username = $2)
-    AND termapplication.submitted is true
-    AND termapplication.availability > 0
-    ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
-        `;
+      SELECT 
+      section.id as sectionId, 
+      users.id as userId, 
+      users.firstname, 
+      users.lastname, 
+      application.grade, 
+      COALESCE(application.interest, 2) AS interest,
+      COALESCE(application.qualification, 2) AS qualification,
+      assignment.pref, 
+      assignment.note, 
+      applicant.pool,
+      termapplication.availability,
+      termapplication.explanation
+  FROM
+      section
+      INNER JOIN termapplication ON termapplication.term = section.term
+      INNER JOIN users ON termapplication.applicant=users.id
+      INNER JOIN applicant ON applicant.id=users.id
+      LEFT JOIN application ON (
+          application.applicant = termapplication.applicant AND
+          application.term = termapplication.term AND
+          application.course = section.course)
+      LEFT JOIN assignment ON users.id = assignment.applicant AND section.id = assignment.section
+  WHERE section.id = $1
+  AND profid IN (SELECT id FROM users WHERE username = $2)
+  AND termapplication.submitted is true
+  AND termapplication.availability > 0
+  ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
+      `;
       db.any(dbQuery, [sectionId, id])
         .then((data) => {
           res.json(data);
