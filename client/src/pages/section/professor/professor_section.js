@@ -104,7 +104,6 @@ const ProfessorSection = () => {
     const url2 = GET_OTHERS_URL + sectionId;
     wget(nav, url).then(async (res) => {
       const prefsNotes = await wget(nav, url2);
-      console.log(prefsNotes);
       var dataObj = {};
       res.data.forEach((element, idx) => {
         element.pref = element.pref ?? "no preference";
@@ -128,7 +127,6 @@ const ProfessorSection = () => {
               "\n\nStudent note: \n"
           )
           .join();
-        console.log(prefix);
         element.explanation = prefix + element.explanation;
         if (!dataObj[element.pool]) dataObj[element.pool] = [];
         dataObj[element.pool].push(element);
