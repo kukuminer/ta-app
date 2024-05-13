@@ -16,6 +16,9 @@ const GET_URL = "/api/instructor/";
 const POST_URL = "/api/instructor/assignment";
 const ORDERED_LIST = ["no preference", "acceptable", "requested", "critical"];
 
+// For getting other instructor notes + pref
+const GET_OTHERS_URL = "/api/instructor/others/";
+
 /** @type {import("@mui/x-data-grid").GridComparatorFn} */
 const sortOrder = (v1, v2) => {
   return ORDERED_LIST.indexOf(v1) - ORDERED_LIST.indexOf(v2);
@@ -98,11 +101,35 @@ const ProfessorSection = () => {
 
   useEffect(() => {
     const url = GET_URL + sectionId;
-    wget(nav, url).then((res) => {
+    const url2 = GET_OTHERS_URL + sectionId;
+    wget(nav, url).then(async (res) => {
+      const prefsNotes = await wget(nav, url2);
+      console.log(prefsNotes);
       var dataObj = {};
       res.data.forEach((element, idx) => {
         element.pref = element.pref ?? "no preference";
         element.note = element.note ?? "";
+        const prefix = prefsNotes.data
+          .filter((e) => {
+            return e.applicant === element.userid;
+          })
+          .map(
+            (e) =>
+              "Section: " +
+              e.letter +
+              "\n" +
+              e.profname +
+              " " +
+              e.proflast +
+              ": " +
+              e.pref +
+              "\nNote: \n" +
+              e.note +
+              "\n\nStudent note: \n"
+          )
+          .join();
+        console.log(prefix);
+        element.explanation = prefix + element.explanation;
         if (!dataObj[element.pool]) dataObj[element.pool] = [];
         dataObj[element.pool].push(element);
         return element;
