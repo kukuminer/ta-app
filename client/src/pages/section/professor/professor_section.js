@@ -136,7 +136,6 @@ const ProfessorSection = () => {
         // element.explanation = <span>{element.explanation}</span>; //prefix + element.explanation;
         element.prefsNotes =
           prefix.length > 0 ? <span>{prefix}</span> : undefined;
-        console.log(element.prefsNotes);
         if (!dataObj[element.pool]) dataObj[element.pool] = [];
         dataObj[element.pool].push(element);
         return element;

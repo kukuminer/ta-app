@@ -17,8 +17,6 @@ function GridCellTooltip({ id, value, field, alwaysDisplay }) {
   const open = Boolean(anchorEl);
   const popoverId = open ? "popover" : undefined;
 
-  // console.log(value);
-  console.log(alwaysDisplay);
   return (
     // <HtmlTooltip title={
     //     <div style={{ whiteSpace: 'pre-line' }}>
