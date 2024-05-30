@@ -3,7 +3,7 @@ import { Button, Popover, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useState } from "react";
 
-function GridCellTooltip({ id, value, field }) {
+function GridCellTooltip({ id, value, field, alwaysDisplay = true }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (e) => {
@@ -25,29 +25,34 @@ function GridCellTooltip({ id, value, field }) {
     // }>
     //     <InfoOutlinedIcon />
     // </HtmlTooltip>
-    <div>
-      <Button
-        aria-describedby={popoverId}
-        variant="contained"
-        onClick={handleClick}
-      >
-        <InfoOutlinedIcon />
-      </Button>
-      <Popover
-        id={popoverId}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-      >
-        <Typography sx={{ p: 2 }} style={{ whiteSpace: "pre-line" }}>
-          {value ?? "No details present"}
-        </Typography>
-      </Popover>
-    </div>
+    alwaysDisplay || value ? (
+      <div>
+        <Button
+          aria-describedby={popoverId}
+          variant="contained"
+          onClick={handleClick}
+          size="small"
+        >
+          <InfoOutlinedIcon />
+        </Button>
+        <Popover
+          id={popoverId}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <Typography sx={{ p: 2 }} style={{ whiteSpace: "pre-line" }}>
+            {value ?? "No details present"}
+          </Typography>
+        </Popover>
+      </div>
+    ) : (
+      <></>
+    )
   );
 }
 
