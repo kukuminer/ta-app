@@ -91,8 +91,7 @@ const columns = [
     field: "prefsNotes",
     headerName: "",
     width: 100,
-    renderCell: (id, value, field) =>
-      renderGridCellTooltip(id, value, field, true),
+    renderCell: (p) => renderGridCellTooltip(p, false),
     headerClassName: "section-table-header",
     sortable: false,
   },

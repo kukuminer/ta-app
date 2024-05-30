@@ -18,7 +18,7 @@ function GridCellTooltip({ id, value, field, alwaysDisplay }) {
   const popoverId = open ? "popover" : undefined;
 
   // console.log(value);
-  // console.log(alwaysDisplay);
+  console.log(alwaysDisplay);
   return (
     // <HtmlTooltip title={
     //     <div style={{ whiteSpace: 'pre-line' }}>
@@ -48,7 +48,7 @@ function GridCellTooltip({ id, value, field, alwaysDisplay }) {
           }}
         >
           <Typography sx={{ p: 2 }} style={{ whiteSpace: "pre-line" }}>
-            {value ?? "No details present"}
+            {value || "No details present"}
           </Typography>
         </Popover>
       </div>
@@ -58,6 +58,6 @@ function GridCellTooltip({ id, value, field, alwaysDisplay }) {
   );
 }
 
-export default function renderGridCellTooltip(params, alwaysDisplay = false) {
+export default function renderGridCellTooltip(params, alwaysDisplay = true) {
   return <GridCellTooltip {...params} alwaysDisplay={alwaysDisplay} />;
 }
