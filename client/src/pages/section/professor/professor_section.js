@@ -87,6 +87,15 @@ const columns = [
     renderCell: renderGridCellTextFieldInput,
     headerClassName: "section-table-header",
   },
+  {
+    field: "prefsNotes",
+    headerName: "",
+    width: 100,
+    renderCell: (id, value, field) =>
+      renderGridCellTooltip(id, value, field, true),
+    headerClassName: "section-table-header",
+    sortable: false,
+  },
 ];
 
 // const loadingRows = [
@@ -123,11 +132,12 @@ const ProfessorSection = () => {
               ": " +
               e.pref +
               "\nNote: \n" +
-              e.note +
-              "\n\nStudent note: \n"
-          )
-          .join();
-        element.explanation = prefix + element.explanation;
+              e.note
+          );
+        // element.explanation = <span>{element.explanation}</span>; //prefix + element.explanation;
+        element.prefsNotes =
+          prefix.length > 0 ? <span>{prefix}</span> : undefined;
+        console.log(element.prefsNotes);
         if (!dataObj[element.pool]) dataObj[element.pool] = [];
         dataObj[element.pool].push(element);
         return element;
@@ -216,7 +226,7 @@ const ProfessorSection = () => {
                 [2, "Weak Option"],
                 [1, "Not an Option"],
               ].map(([val, label]) => (
-                <li>
+                <li key={label}>
                   <Box sx={{ display: "flex" }}>
                     <Rating
                       icon={<CircleIcon />}

@@ -3,7 +3,7 @@ import { Button, Popover, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useState } from "react";
 
-function GridCellTooltip({ id, value, field, alwaysDisplay = true }) {
+function GridCellTooltip({ id, value, field, alwaysDisplay }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (e) => {
@@ -17,6 +17,8 @@ function GridCellTooltip({ id, value, field, alwaysDisplay = true }) {
   const open = Boolean(anchorEl);
   const popoverId = open ? "popover" : undefined;
 
+  // console.log(value);
+  // console.log(alwaysDisplay);
   return (
     // <HtmlTooltip title={
     //     <div style={{ whiteSpace: 'pre-line' }}>
@@ -56,6 +58,6 @@ function GridCellTooltip({ id, value, field, alwaysDisplay = true }) {
   );
 }
 
-export default function renderGridCellTooltip(params) {
-  return <GridCellTooltip {...params} />;
+export default function renderGridCellTooltip(params, alwaysDisplay = false) {
+  return <GridCellTooltip {...params} alwaysDisplay={alwaysDisplay} />;
 }
