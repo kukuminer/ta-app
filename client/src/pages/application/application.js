@@ -24,7 +24,7 @@ const Application = () => {
     <>
       <Header />
       <div className="application-page">
-        <div className="main">{components[userType]}</div>
+        <div className="main">{!!userType && components[userType]}</div>
       </div>
     </>
   );
