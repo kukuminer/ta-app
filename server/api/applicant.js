@@ -340,7 +340,7 @@ function applicant({ app, db, pgp }) {
     INSERT INTO application(applicant, course, term, interest, qualification) 
     VALUES ((SELECT id FROM users WHERE username=$1), 
         $2, $3, $4, $5)
-    ON CONFLICT (applicant, course, term)
+    ON CONFLICT (applicant, course, term, campus)
     DO UPDATE SET interest=$4, qualification=$5
     WHERE application.applicant=(SELECT id FROM users WHERE username=$1)
     AND application.course=$2
