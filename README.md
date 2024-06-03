@@ -2,13 +2,11 @@
 
 Online application and selection platform for teaching assistants
 
-I have deployed the app with the new changes. You can check the commit history for more details.
 I also figured out the "/" redirecting to "/index", although I think it is a workaround:
 Adding DirectoryIndex /profile allows the site to work by overwriting to a default location that I think doesn't actually exist.
 However, I did add a redirect from my app that redirects / to /dashboard, or to /profile if the user is not present in the db yet.
 
-I will make the video today and submit it, and then take a break for the weekend. I can continue working on finishing touches more next week.
-To see the deployed version, do the following:
+To see the deployed version (for YorkU admin access), do the following:
 
 1. run `npm start` in /ta-app/server
 2. run `npm run deploy` in /ta-app/client/build
@@ -24,6 +22,9 @@ TO ACCESS:
 1. ssh project1
 2. bu ta-app
 3. cd
+
+TO OPEN 3 PANE ADMIN VIEW:
+1. make
 
 TO UPDATE REPO:
 
