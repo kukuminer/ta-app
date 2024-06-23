@@ -182,15 +182,19 @@ function applicant({ app, db, pgp }) {
       const userId = res.locals.userid;
       const term = req.params.term;
       const dbQuery = `
-    SELECT course.id as code, code as codename, name, description, grade, interest, qualification
-    FROM 
-    (SELECT * FROM course 
-        WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
-    LEFT JOIN 
-    (SELECT * FROM application 
-        WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
-    ON application.course = course.id
-    ORDER BY course.code
+SELECT course.id as code, code as codename, name, description, grade, interest, qualification, campuses.campus
+FROM 
+(SELECT * FROM course 
+    WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
+LEFT JOIN 
+(SELECT * FROM application 
+    WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
+ON application.course = course.id
+JOIN 
+(SELECT course, campus FROM section 
+    WHERE term=$2) AS campuses
+ON course.id=campuses.course
+ORDER BY course.code
     `;
       db.any(dbQuery, [userId, term])
         .then((data) => {

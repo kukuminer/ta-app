@@ -92,7 +92,9 @@ const StudentApplication = () => {
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
-      setAppRows(res.data);
+      // console.log(Object.groupBy(res.data, ({ campus }) => campus));
+
+      setAppRows(Object.groupBy(res.data, ({ campus }) => campus));
     }
     checkNewTerm();
     fetchTerm();
@@ -273,7 +275,22 @@ const StudentApplication = () => {
           </ul>
         </details>
       </Alert>
-      <DatagridTable
+      {Object.keys(appRows)?.map((key) => (
+        <>
+          {key}
+          <DatagridTable
+            columns={columns}
+            idVarName={"code"}
+            loading={!appRows}
+            onEditStop={null}
+            processRowUpdate={updateRow}
+            rows={appRows[key] ?? []}
+            rowHeight={40}
+          />
+        </>
+      ))}
+      {console.log(appRows)}
+      {/* <DatagridTable
         columns={columns}
         idVarName={"code"}
         loading={!appRows}
@@ -281,7 +298,7 @@ const StudentApplication = () => {
         processRowUpdate={updateRow}
         rows={appRows ?? []}
         rowHeight={40}
-      />
+      /> */}
 
       <p />
       <TextField
