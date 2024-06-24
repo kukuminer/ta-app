@@ -333,6 +333,7 @@ ORDER BY course.code
     "/api/applicant/application",
     AS(async (req, res) => {
       const r = req.body;
+      console.log(r);
 
       r.interest = Math.max(Math.min(MAX_RATING, r.interest ?? 2), MIN_RATING);
       r.qualification = Math.max(
