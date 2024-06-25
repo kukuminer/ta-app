@@ -1,4 +1,6 @@
 -- transaction not needed here because it runs as a tx when loading
+DROP TYPE IF EXISTS campus;
+
 CREATE TYPE campus AS ENUM ('keele', 'glendon', 'markham');
 
 ALTER TABLE section ADD COLUMN campus campus NOT NULL DEFAULT 'keele';
