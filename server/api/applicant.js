@@ -186,14 +186,14 @@ SELECT course.id as code, code as codename, name, description, grade, interest, 
 FROM 
 (SELECT * FROM course 
     WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
-LEFT JOIN 
-(SELECT * FROM application 
-    WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
-ON application.course = course.id
 JOIN 
 (SELECT course, campus FROM section 
     WHERE term=$2) AS campuses
 ON course.id=campuses.course
+LEFT JOIN 
+(SELECT * FROM application 
+    WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
+ON application.course = course.id AND application.campus=campuses.campus
 ORDER BY course.code
     `;
       db.any(dbQuery, [userId, term])
