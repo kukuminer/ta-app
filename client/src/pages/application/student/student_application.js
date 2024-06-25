@@ -92,9 +92,7 @@ const StudentApplication = () => {
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
-      // console.log(Object.groupBy(res.data, ({ campus }) => campus));
 
-      console.log(res.data);
       setAppRows(Object.groupBy(res.data, ({ campus }) => campus));
     }
     checkNewTerm();
@@ -116,7 +114,6 @@ const StudentApplication = () => {
   async function updateRow(newRow, oldRow) {
     if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow;
 
-    console.log(newRow);
     const body = {
       course: newRow.code,
       term: params.term,
@@ -279,8 +276,8 @@ const StudentApplication = () => {
         </details>
       </Alert>
       {Object.keys(appRows)?.map((key) => (
-        <>
-          {key}
+        <div key={key}>
+          <h4>{key.charAt(0).toUpperCase() + key.slice(1)} Campus</h4>
           <DatagridTable
             key={key}
             columns={columns}
@@ -291,9 +288,9 @@ const StudentApplication = () => {
             rows={appRows[key] ?? []}
             rowHeight={40}
           />
-        </>
+        </div>
       ))}
-      {console.log(appRows)}
+      {/* {console.log(appRows)} */}
       {/* <DatagridTable
         columns={columns}
         idVarName={"code"}
