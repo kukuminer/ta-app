@@ -94,6 +94,7 @@ const StudentApplication = () => {
       const res = await wget(nav, url);
       // console.log(Object.groupBy(res.data, ({ campus }) => campus));
 
+      console.log(res.data);
       setAppRows(Object.groupBy(res.data, ({ campus }) => campus));
     }
     checkNewTerm();
@@ -115,11 +116,13 @@ const StudentApplication = () => {
   async function updateRow(newRow, oldRow) {
     if (JSON.stringify(oldRow) === JSON.stringify(newRow)) return newRow;
 
+    console.log(newRow);
     const body = {
       course: newRow.code,
       term: params.term,
       interest: newRow.interest ?? 2,
       qualification: newRow.qualification ?? 2,
+      campus: newRow.campus,
     };
     try {
       await wpost(nav, POST_COURSE_APPS, body);
@@ -279,6 +282,7 @@ const StudentApplication = () => {
         <>
           {key}
           <DatagridTable
+            key={key}
             columns={columns}
             idVarName={"code"}
             loading={!appRows}

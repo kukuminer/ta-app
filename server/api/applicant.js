@@ -342,17 +342,25 @@ ORDER BY course.code
       );
       const userId = res.locals.userid;
       const dbQuery = `
-    INSERT INTO application(applicant, course, term, interest, qualification) 
+    INSERT INTO application(applicant, course, term, interest, qualification, campus) 
     VALUES ((SELECT id FROM users WHERE username=$1), 
-        $2, $3, $4, $5)
+        $2, $3, $4, $5, $6)
     ON CONFLICT (applicant, course, term, campus)
     DO UPDATE SET interest=$4, qualification=$5
     WHERE application.applicant=(SELECT id FROM users WHERE username=$1)
     AND application.course=$2
     AND application.term=$3
+    AND application.campus=$6
     RETURNING application.interest, application.qualification
     `;
-      db.any(dbQuery, [userId, r.course, r.term, r.interest, r.qualification])
+      db.any(dbQuery, [
+        userId,
+        r.course,
+        r.term,
+        r.interest,
+        r.qualification,
+        r.campus,
+      ])
         .then((data) => {
           if (data.length !== 1)
             throw new Error("Could not add application to db");
