@@ -31,7 +31,6 @@ function instructor({ app, db, pgp }) {
 
       db.any(dbQuery, [id])
         .then((data) => {
-          console.log(data);
           res.json(data);
         })
         .catch((error) => {
