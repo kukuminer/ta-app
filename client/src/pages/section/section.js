@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../header/header";
 import ProfessorSection from "./professor/professor_section";
@@ -13,11 +13,10 @@ const components = {
 const Section = () => {
   const { sectionId } = useParams();
 
-  const [userType, setUserType] = React.useState(null);
-  const [course, setCourse] = React.useState(null);
-  const [letter, setLetter] = React.useState(null);
+  const [userType, setUserType] = useState(null);
+  const [secData, setSecData] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("/api/userdata")
       .then((res) => res.json())
       .then((data) => {
@@ -25,12 +24,11 @@ const Section = () => {
       });
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("/api/section/" + sectionId)
       .then((res) => res.json())
       .then((data) => {
-        setCourse(data[0].course);
-        setLetter(data[0].letter);
+        setSecData(data[0]);
       });
   }, [sectionId]);
 
@@ -39,9 +37,14 @@ const Section = () => {
       <Header />
       <div className="section">
         <div className="main">
-          <h1>
-            SECTION {course ?? "Loading.."} {letter}
-          </h1>
+          {secData ? (
+            <h1>
+              SECTION {secData.course} {secData.letter} (
+              {secData.campus.toUpperCase()})
+            </h1>
+          ) : (
+            <h1>Loading...</h1>
+          )}
           {components[userType]}
         </div>
       </div>
