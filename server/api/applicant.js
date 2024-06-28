@@ -221,19 +221,15 @@ ORDER BY course.code
     // console.log(r);
     db.tx(async (t) => {
       // locks the users table
-      console.log("locking");
-      t.none("BEGIN");
       await t.oneOrNone(
         "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
         [userId]
       );
-      console.log("in lock");
       const termApps = await getAvailableApplications(req, res);
 
       const check = termApps.filter((el) => {
         return parseInt(el.term) === parseInt(r.term);
       })?.[0];
-      console.log(check);
 
       // console.log(termApp);
       if (check?.availability === null && check?.explanation === null) {
@@ -265,7 +261,6 @@ ORDER BY course.code
             null,
             "termapplication"
           );
-          console.log(termAppInsert);
           t.none(termAppInsert);
         }
         if (!!courses && courses.length > 0) {
@@ -274,19 +269,14 @@ ORDER BY course.code
             Object.keys(courses[0]),
             "application"
           );
-          console.log(coursesInsert);
           t.none(coursesInsert);
         }
-        console.log("Inserted!!");
         return 201;
       }
-      console.log("committing!");
-      t.none("COMMIT");
       return 200;
     })
       .then((data) => {
-        console.log(data);
-        res.status(200).send();
+        res.status(data).send();
       })
       .catch((error) => {
         console.log("error pulling new term forward: ", error);
