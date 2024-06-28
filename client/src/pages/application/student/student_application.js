@@ -95,9 +95,10 @@ const StudentApplication = () => {
 
       setAppRows(Object.groupBy(res.data, ({ campus }) => campus));
     }
-    checkNewTerm();
-    fetchTerm();
-    fetchApps();
+    checkNewTerm().then(() => {
+      fetchTerm();
+      fetchApps();
+    });
   }, [params, nav]);
 
   function handleChange(event) {
