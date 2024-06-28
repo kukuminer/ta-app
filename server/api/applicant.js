@@ -222,8 +222,15 @@ ORDER BY course.code
       const r = req.body;
       // console.log(r);
       db.tx(async (t) => {
+        // locks the users table
+        console.log("locking");
+        t.none("BEGIN");
+        t.oneOrNone("SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE", [
+          userId,
+        ]);
+        console.log("in lock");
         const termApps = await getAvailableApplications(req, res);
-        // console.log(termApps);
+        console.log(termApps);
 
         const check = termApps.filter((el) => {
           return parseInt(el.term) === parseInt(r.term);
@@ -233,23 +240,23 @@ ORDER BY course.code
         if (check?.availability === null && check?.explanation === null) {
           // console.log("a new one!");
           const termAppQuery = `
-        SELECT applicant, $2 AS term, availability, explanation
-        FROM termapplication
-        JOIN users ON applicant=users.id
-        WHERE username=$1
-        AND term<$2
-        ORDER BY term DESC
-        LIMIT 1`;
+          SELECT applicant, $2 AS term, availability, explanation
+          FROM termapplication
+          JOIN users ON applicant=users.id
+          WHERE username=$1
+          AND term<$2
+          ORDER BY term DESC
+          LIMIT 1`;
           const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
 
           const coursesQuery = `
-        SELECT DISTINCT ON (course) applicant, course, $2 AS term, interest, qualification
-        FROM application JOIN users
-        ON applicant=users.id 
-        WHERE username=$1
-        AND term<$2
-        ORDER BY course, term DESC;
-        `;
+SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
+FROM application JOIN users
+ON applicant=users.id 
+WHERE username=$1
+AND term<$2
+ORDER BY course, campus, term DESC
+          `;
           const courses = await t.any(coursesQuery, [userId, r.term]);
           // console.log(courses);
 
@@ -259,7 +266,7 @@ ORDER BY course.code
               null,
               "termapplication"
             );
-            // console.log(termAppInsert);
+            console.log(termAppInsert);
             t.none(termAppInsert);
           }
           if (!!courses && courses.length > 0) {
@@ -268,14 +275,18 @@ ORDER BY course.code
               Object.keys(courses[0]),
               "application"
             );
-            // console.log(coursesInsert);
+            console.log(coursesInsert);
             t.none(coursesInsert);
           }
+          console.log("Inserted!!");
           return 201;
         }
+        console.log("committing!");
+        t.none("COMMIT");
         return 200;
       })
         .then((data) => {
+          console.log(data);
           res.status(200).send();
         })
         .catch((error) => {
