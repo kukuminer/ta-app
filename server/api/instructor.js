@@ -17,6 +17,7 @@ function instructor({ app, db, pgp }) {
     section.id,
     course.code as course,
     section.letter as letter,
+    section.campus as campus,
     term.term as term,
     term.id as termid,
     section.profid as profid
@@ -58,6 +59,7 @@ function instructor({ app, db, pgp }) {
       application.grade, 
       COALESCE(application.interest, 2) AS interest,
       COALESCE(application.qualification, 2) AS qualification,
+      application.campus,
       assignment.pref, 
       assignment.note, 
       applicant.pool,
@@ -77,6 +79,7 @@ function instructor({ app, db, pgp }) {
   AND profid IN (SELECT id FROM users WHERE username = $2)
   AND termapplication.submitted is true
   AND termapplication.availability > 0
+  AND section.campus = application.campus
   ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
       `;
       db.any(dbQuery, [sectionId, id])

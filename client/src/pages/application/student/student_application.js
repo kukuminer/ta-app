@@ -92,11 +92,13 @@ const StudentApplication = () => {
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
-      setAppRows(res.data);
+
+      setAppRows(Object.groupBy(res.data, ({ campus }) => campus));
     }
-    checkNewTerm();
-    fetchTerm();
-    fetchApps();
+    checkNewTerm().then(() => {
+      fetchTerm();
+      fetchApps();
+    });
   }, [params, nav]);
 
   function handleChange(event) {
@@ -118,6 +120,7 @@ const StudentApplication = () => {
       term: params.term,
       interest: newRow.interest ?? 2,
       qualification: newRow.qualification ?? 2,
+      campus: newRow.campus,
     };
     try {
       await wpost(nav, POST_COURSE_APPS, body);
@@ -273,7 +276,23 @@ const StudentApplication = () => {
           </ul>
         </details>
       </Alert>
-      <DatagridTable
+      {Object.keys(appRows)?.map((key) => (
+        <div key={key}>
+          <h4>{key.charAt(0).toUpperCase() + key.slice(1)} Campus</h4>
+          <DatagridTable
+            key={key}
+            columns={columns}
+            idVarName={"code"}
+            loading={!appRows}
+            onEditStop={null}
+            processRowUpdate={updateRow}
+            rows={appRows[key] ?? []}
+            rowHeight={40}
+          />
+        </div>
+      ))}
+      {/* {console.log(appRows)} */}
+      {/* <DatagridTable
         columns={columns}
         idVarName={"code"}
         loading={!appRows}
@@ -281,7 +300,7 @@ const StudentApplication = () => {
         processRowUpdate={updateRow}
         rows={appRows ?? []}
         rowHeight={40}
-      />
+      /> */}
 
       <p />
       <TextField

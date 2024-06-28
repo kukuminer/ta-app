@@ -207,21 +207,23 @@ const ProfessorSection = () => {
           </details>
         </Alert>
         {tableData &&
-          Object.keys(tableData).map((key, idx) => (
-            <div key={key}>
-              <h2>{key.toUpperCase()} Applicants</h2>
-              <DatagridTable
-                key={key}
-                idVarName={"userid"}
-                rows={tableData[key]}
-                columns={columns}
-                loading={!tableData}
-                onEditStop={onEditStop}
-                processRowUpdate={processRowUpdate}
-                rowHeight={40}
-              />
-            </div>
-          ))}
+          Object.keys(tableData)
+            .sort()
+            .map((key, idx) => (
+              <div key={key}>
+                <h2>{key.toUpperCase()} Applicants</h2>
+                <DatagridTable
+                  key={key}
+                  idVarName={"userid"}
+                  rows={tableData[key]}
+                  columns={columns}
+                  loading={!tableData}
+                  onEditStop={onEditStop}
+                  processRowUpdate={processRowUpdate}
+                  rowHeight={40}
+                />
+              </div>
+            ))}
       </div>
     </>
   );

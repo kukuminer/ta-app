@@ -154,7 +154,7 @@ app.get(
   AS(async (req, res) => {
     const sectionId = req.params.sectionId;
     const dbQuery = `
-        SELECT course.code AS course, letter, term FROM section 
+        SELECT course.code AS course, letter, term, campus FROM section 
         INNER JOIN course ON section.course=course.id
         WHERE section.id = $1
     `;

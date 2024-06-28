@@ -27,28 +27,30 @@ INSERT INTO course (code, name, description) VALUES
 INSERT INTO instructor(id) 
 SELECT (id) FROM users WHERE userType = 'instructor';
 
-INSERT INTO section(course, letter, term, profid) VALUES 
-('1', 'A', 2, '2'), 
-('1', 'B', 2, '4'),
-('1', 'Z', 3, '2'), 
-('2', 'A', 2, '2'),
-('2', 'B', 2, '4'),
-('3', 'C', 2, '4'),
-('4', 'A', 3, '4'),
-('5', 'Z', 4, '4');
+INSERT INTO section(course, letter, term, profid, campus) VALUES 
+('1', 'A', 2, '2', 'Keele'), 
+('1', 'B', 2, '4', 'Keele'),
+('1', 'Z', 3, '2', 'Keele'), 
+('2', 'A', 2, '2', 'Keele'),
+('2', 'B', 2, '4', 'Keele'),
+('3', 'C', 2, '4', 'Keele'),
+('4', 'A', 3, '4', 'Keele'),
+('4', 'B', 3, '4', 'Markham'),
+('5', 'Z', 4, '4', 'Keele'),
+('4', 'B', 4, '4', 'Markham');
 
-INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
-('3', 2, 4, true, 'i want to TA', true, true, false),
-('3', 1, 3, true, 'i wanted to TA', true, true, true),
-('5', 2, 4, true, 'jane want teach', true, true, true),
-('6', 2, 2, true, 'multline\nmultiline\nline 3 \n<b>HELLO</b>', true, true, true);
+-- INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
+-- ('3', 2, 4, true, 'i want to TA', true, true, false),
+-- ('3', 1, 3, true, 'i wanted to TA', true, true, true),
+-- ('5', 2, 4, true, 'jane want teach', true, true, true),
+-- ('6', 2, 2, true, 'multline\nmultiline\nline 3 \n<b>HELLO</b>', true, true, true);
 
-INSERT INTO application(applicant, course, term, interest, qualification) VALUES 
-('3', '1', 2, 3, 3), 
-('3', '2', 2, 3, 2),
-('5', '1', 2, 4, 4),
-('3', '1', 1, 2, 2),
-('6', '1', 2, 2, 2);
+-- INSERT INTO application(applicant, course, term, interest, qualification) VALUES 
+-- ('3', '1', 2, 3, 3), 
+-- ('3', '2', 2, 3, 2),
+-- ('5', '1', 2, 4, 4),
+-- ('3', '1', 1, 2, 2),
+-- ('6', '1', 2, 2, 2);
 
 -- INSERT INTO assignment(applicant, section)
 -- VALUES (3, 1)
