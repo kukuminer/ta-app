@@ -250,12 +250,12 @@ ORDER BY course.code
           const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
 
           const coursesQuery = `
-SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
-FROM application JOIN users
-ON applicant=users.id 
-WHERE username=$1
-AND term<$2
-ORDER BY course, campus, term DESC
+          SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
+          FROM application JOIN users
+          ON applicant=users.id 
+          WHERE username=$1
+          AND term<$2
+          ORDER BY course, campus, term DESC
           `;
           const courses = await t.any(coursesQuery, [userId, r.term]);
           // console.log(courses);
