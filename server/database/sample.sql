@@ -36,7 +36,8 @@ INSERT INTO section(course, letter, term, profid, campus) VALUES
 ('3', 'C', 2, '4', 'Keele'),
 ('4', 'A', 3, '4', 'Keele'),
 ('4', 'B', 3, '4', 'Markham'),
-('5', 'Z', 4, '4', 'Keele');
+('5', 'Z', 4, '4', 'Keele'),
+('4', 'B', 4, '4', 'Markham');
 
 -- INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
 -- ('3', 2, 4, true, 'i want to TA', true, true, false),
