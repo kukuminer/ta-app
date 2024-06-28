@@ -28,15 +28,15 @@ INSERT INTO instructor(id)
 SELECT (id) FROM users WHERE userType = 'instructor';
 
 INSERT INTO section(course, letter, term, profid, campus) VALUES 
-('1', 'A', 2, '2', 'keele'), 
-('1', 'B', 2, '4', 'keele'),
-('1', 'Z', 3, '2', 'keele'), 
-('2', 'A', 2, '2', 'keele'),
-('2', 'B', 2, '4', 'keele'),
-('3', 'C', 2, '4', 'keele'),
-('4', 'A', 3, '4', 'keele'),
-('4', 'B', 3, '4', 'markham'),
-('5', 'Z', 4, '4', 'keele');
+('1', 'A', 2, '2', 'Keele'), 
+('1', 'B', 2, '4', 'Keele'),
+('1', 'Z', 3, '2', 'Keele'), 
+('2', 'A', 2, '2', 'Keele'),
+('2', 'B', 2, '4', 'Keele'),
+('3', 'C', 2, '4', 'Keele'),
+('4', 'A', 3, '4', 'Keele'),
+('4', 'B', 3, '4', 'Markham'),
+('5', 'Z', 4, '4', 'Keele');
 
 -- INSERT INTO termapplication(applicant, term, availability, approval, explanation, incanada, wantstoteach, submitted) VALUES
 -- ('3', 2, 4, true, 'i want to TA', true, true, false),
