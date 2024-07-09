@@ -1,35 +1,35 @@
 .admin-tab-container {
-    margin: 5px;
+  margin: 5px;
 }
 
 .profile-banner-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile-banner-row {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .dashboard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    /* background-color: blue */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* background-color: blue */
 }
 .main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90vw;
 }
 .old-table {
-    width: 80vw;
-    max-width: 1000px;
-    border-radius: 10px;
+  width: 80vw;
+  max-width: 1000px;
+  border-radius: 10px;
 }
 
 /* table {
@@ -38,22 +38,22 @@
 } */
 
 .dash-table {
-    width: 500px;
-    max-width: 500px;
+  min-width: 500px;
+  max-width: 80%;
 }
 
 .admin-table {
-    width: 80vw;
-    margin: 1em;
-    border: 1px solid black;
+  width: 80vw;
+  margin: 1em;
+  border: 1px solid black;
 }
 
 .admin-text {
-    width: 80vw;
-    margin: 0;
-    text-align: left;
+  width: 80vw;
+  margin: 0;
+  text-align: left;
 }
 
 .admin-code {
-    font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }

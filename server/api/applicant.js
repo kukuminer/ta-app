@@ -182,15 +182,19 @@ function applicant({ app, db, pgp }) {
       const userId = res.locals.userid;
       const term = req.params.term;
       const dbQuery = `
-    SELECT course.id as code, code as codename, name, description, grade, interest, qualification
-    FROM 
-    (SELECT * FROM course 
-        WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
-    LEFT JOIN 
-    (SELECT * FROM application 
-        WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
-    ON application.course = course.id
-    ORDER BY course.code
+SELECT course.id as code, code as codename, name, description, grade, interest, qualification, campuses.campus
+FROM 
+(SELECT * FROM course 
+    WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
+JOIN 
+(SELECT course, campus FROM section 
+    WHERE term=$2) AS campuses
+ON course.id=campuses.course
+LEFT JOIN 
+(SELECT * FROM application 
+    WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
+ON application.course = course.id AND application.campus=campuses.campus
+ORDER BY course.code
     `;
       db.any(dbQuery, [userId, term])
         .then((data) => {
@@ -211,75 +215,74 @@ function applicant({ app, db, pgp }) {
    * most recent application details from previous
    * terms
    */
-  app.post(
-    "/api/applicant/term/new",
-    AS(async (req, res) => {
-      const userId = res.locals.userid;
-      const r = req.body;
-      // console.log(r);
-      db.tx(async (t) => {
-        const termApps = await getAvailableApplications(req, res);
-        // console.log(termApps);
+  app.post("/api/applicant/term/new", (req, res) => {
+    const userId = res.locals.userid;
+    const r = req.body;
+    // console.log(r);
+    db.tx(async (t) => {
+      // locks the users table
+      await t.oneOrNone(
+        "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
+        [userId]
+      );
+      const termApps = await getAvailableApplications(req, res);
 
-        const check = termApps.filter((el) => {
-          return parseInt(el.term) === parseInt(r.term);
-        })?.[0];
+      const check = termApps.filter((el) => {
+        return parseInt(el.term) === parseInt(r.term);
+      })?.[0];
 
-        // console.log(termApp);
-        if (check?.availability === null && check?.explanation === null) {
-          // console.log("a new one!");
-          const termAppQuery = `
-        SELECT applicant, $2 AS term, availability, explanation
-        FROM termapplication
-        JOIN users ON applicant=users.id
-        WHERE username=$1
-        AND term<$2
-        ORDER BY term DESC
-        LIMIT 1`;
-          const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+      // console.log(termApp);
+      if (check?.availability === null && check?.explanation === null) {
+        // console.log("a new one!");
+        const termAppQuery = `
+          SELECT applicant, $2 AS term, availability, explanation
+          FROM termapplication
+          JOIN users ON applicant=users.id
+          WHERE username=$1
+          AND term<$2
+          ORDER BY term DESC
+          LIMIT 1`;
+        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
 
-          const coursesQuery = `
-        SELECT DISTINCT ON (course) applicant, course, $2 AS term, interest, qualification
-        FROM application JOIN users
-        ON applicant=users.id 
-        WHERE username=$1
-        AND term<$2
-        ORDER BY course, term DESC;
-        `;
-          const courses = await t.any(coursesQuery, [userId, r.term]);
-          // console.log(courses);
+        const coursesQuery = `
+          SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
+          FROM application JOIN users
+          ON applicant=users.id 
+          WHERE username=$1
+          AND term<$2
+          ORDER BY course, campus, term DESC
+          `;
+        const courses = await t.any(coursesQuery, [userId, r.term]);
+        // console.log(courses);
 
-          if (!!termApp) {
-            const termAppInsert = pgp.helpers.insert(
-              termApp,
-              null,
-              "termapplication"
-            );
-            // console.log(termAppInsert);
-            t.none(termAppInsert);
-          }
-          if (!!courses && courses.length > 0) {
-            const coursesInsert = pgp.helpers.insert(
-              courses,
-              Object.keys(courses[0]),
-              "application"
-            );
-            // console.log(coursesInsert);
-            t.none(coursesInsert);
-          }
-          return 201;
+        if (!!termApp) {
+          const termAppInsert = pgp.helpers.insert(
+            termApp,
+            null,
+            "termapplication"
+          );
+          t.none(termAppInsert);
         }
-        return 200;
-      })
-        .then((data) => {
-          res.status(200).send();
-        })
-        .catch((error) => {
-          console.log("error pulling new term forward: ", error);
-          res.status(500).send(error);
-        });
+        if (!!courses && courses.length > 0) {
+          const coursesInsert = pgp.helpers.insert(
+            courses,
+            Object.keys(courses[0]),
+            "application"
+          );
+          t.none(coursesInsert);
+        }
+        return 201;
+      }
+      return 200;
     })
-  );
+      .then((data) => {
+        res.status(data).send();
+      })
+      .catch((error) => {
+        console.log("error pulling new term forward: ", error);
+        res.status(500).send(error);
+      });
+  });
 
   /**
    * Post to magically pull forward this applicants
@@ -337,17 +340,25 @@ function applicant({ app, db, pgp }) {
       );
       const userId = res.locals.userid;
       const dbQuery = `
-    INSERT INTO application(applicant, course, term, interest, qualification) 
+    INSERT INTO application(applicant, course, term, interest, qualification, campus) 
     VALUES ((SELECT id FROM users WHERE username=$1), 
-        $2, $3, $4, $5)
-    ON CONFLICT (applicant, course, term)
+        $2, $3, $4, $5, $6)
+    ON CONFLICT (applicant, course, term, campus)
     DO UPDATE SET interest=$4, qualification=$5
     WHERE application.applicant=(SELECT id FROM users WHERE username=$1)
     AND application.course=$2
     AND application.term=$3
+    AND application.campus=$6
     RETURNING application.interest, application.qualification
     `;
-      db.any(dbQuery, [userId, r.course, r.term, r.interest, r.qualification])
+      db.any(dbQuery, [
+        userId,
+        r.course,
+        r.term,
+        r.interest,
+        r.qualification,
+        r.campus,
+      ])
         .then((data) => {
           if (data.length !== 1)
             throw new Error("Could not add application to db");

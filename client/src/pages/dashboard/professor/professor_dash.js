@@ -38,6 +38,12 @@ const columns: GridColDef = [
     headerClassName: "section-table-header",
   },
   {
+    field: "campus",
+    headerName: "Campus",
+    width: 100,
+    headerClassName: "section-table-header",
+  },
+  {
     field: "id",
     headerName: "Link",
     width: 100,
