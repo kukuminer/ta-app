@@ -215,36 +215,38 @@ ORDER BY course.code
    * most recent application details from previous
    * terms
    */
-  app.post("/api/applicant/term/new", (req, res) => {
-    const userId = res.locals.userid;
-    const r = req.body;
-    // console.log(r);
-    db.tx(async (t) => {
-      // locks the users table
-      await t.oneOrNone(
-        "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
-        [userId]
-      );
-      const termApps = await getAvailableApplications(req, res);
+  app.post(
+    "/api/applicant/term/new",
+    AS(async (req, res) => {
+      const userId = res.locals.userid;
+      const r = req.body;
+      // console.log(r);
+      db.tx(async (t) => {
+        // locks the users table
+        await t.oneOrNone(
+          "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
+          [userId]
+        );
+        const termApps = await getAvailableApplications(req, res);
 
-      const check = termApps.filter((el) => {
-        return parseInt(el.term) === parseInt(r.term);
-      })?.[0];
+        const check = termApps.filter((el) => {
+          return parseInt(el.term) === parseInt(r.term);
+        })?.[0];
 
-      // console.log(termApp);
-      if (check?.availability === null && check?.explanation === null) {
-        // console.log("a new one!");
-        const termAppQuery = `
+        // console.log(termApp);
+        if (check?.availability === null && check?.explanation === null) {
+          // console.log("a new one!");
+          const termAppQuery = `
           SELECT applicant, $2 AS term, availability, explanation
           FROM termapplication
           JOIN users ON applicant=users.id
           WHERE username=$1
-          AND term<$2
-          ORDER BY term DESC
+          AND termapplication.term<$2
+          ORDER BY termapplication.term DESC
           LIMIT 1`;
-        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+          const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
 
-        const coursesQuery = `
+          const coursesQuery = `
           SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
           FROM application JOIN users
           ON applicant=users.id 
@@ -252,37 +254,38 @@ ORDER BY course.code
           AND term<$2
           ORDER BY course, campus, term DESC
           `;
-        const courses = await t.any(coursesQuery, [userId, r.term]);
-        // console.log(courses);
+          const courses = await t.any(coursesQuery, [userId, r.term]);
+          // console.log(courses);
 
-        if (!!termApp) {
-          const termAppInsert = pgp.helpers.insert(
-            termApp,
-            null,
-            "termapplication"
-          );
-          t.none(termAppInsert);
+          if (!!termApp) {
+            const termAppInsert = pgp.helpers.insert(
+              termApp,
+              null,
+              "termapplication"
+            );
+            t.none(termAppInsert);
+          }
+          if (!!courses && courses.length > 0) {
+            const coursesInsert = pgp.helpers.insert(
+              courses,
+              Object.keys(courses[0]),
+              "application"
+            );
+            t.none(coursesInsert);
+          }
+          return 201;
         }
-        if (!!courses && courses.length > 0) {
-          const coursesInsert = pgp.helpers.insert(
-            courses,
-            Object.keys(courses[0]),
-            "application"
-          );
-          t.none(coursesInsert);
-        }
-        return 201;
-      }
-      return 200;
-    })
-      .then((data) => {
-        res.status(data).send();
+        return 200;
       })
-      .catch((error) => {
-        console.log("error pulling new term forward: ", error);
-        res.status(500).send(error);
-      });
-  });
+        .then((data) => {
+          res.status(data).send();
+        })
+        .catch((error) => {
+          console.log("error pulling new term forward: ", error);
+          res.status(500).send(error);
+        });
+    })
+  );
 
   /**
    * Post to magically pull forward this applicants
