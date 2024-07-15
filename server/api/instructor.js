@@ -93,6 +93,41 @@ function instructor({ app, db, pgp }) {
     })
   );
 
+  app.get(
+    "/api/instructor/others/:sectionId",
+    AS(async (req, res) => {
+      const sectionId = req.params.sectionId;
+      const dbQuery = `SELECT 
+        applicant,
+        pref,
+        note,
+        letter,
+        firstname AS profname,
+        lastname AS proflast
+      FROM assignment 
+      JOIN section ON assignment.section = section.id
+      JOIN course ON section.course = course.id
+      JOIN users ON section.profid = users.id
+      WHERE course.id IN (
+        SELECT course.id FROM section
+        JOIN course ON section.course = course.id
+        WHERE section.id = $1
+      )
+      AND section.term IN (
+        SELECT term FROM section WHERE id = $1
+      )
+      AND section.id <> $1`;
+      db.any(dbQuery, [sectionId])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((err) => {
+          console.log("error retrieving other instructor notes!");
+          res.status(500).send(err);
+        });
+    })
+  );
+
   /**
    * For updating prof preference and note
    */
