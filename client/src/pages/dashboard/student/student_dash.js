@@ -36,7 +36,7 @@ const columns: GridColDef = [
   },
   {
     field: "submitted",
-    headerName: "Application Status",
+    headerName: "Preference Status",
     width: 150,
     headerClassName: "section-table-header",
     hideable: false,
@@ -65,7 +65,7 @@ const columns: GridColDef = [
           //   }
           // }}
         >
-          Apply
+          View
         </Link>
       );
     },
