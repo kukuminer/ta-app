@@ -26,10 +26,13 @@ const columns: GridColDef = [
   },
   {
     field: "availability",
-    headerName: "Availability",
+    headerName: "Availability (Quarter-Loads)",
     width: 100,
     headerClassName: "section-table-header",
     hideable: false,
+    valueFormatter: (v) => {
+      return v.value + " QL";
+    },
   },
   {
     field: "submitted",
