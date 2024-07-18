@@ -25,7 +25,7 @@ const Header = () => {
     <div className="header-container">
       <div className="header">
         <Link to="/dashboard">
-          <h1 className="header-left">TA Application Dashboard</h1>
+          <h1 className="header-left">TA Preferences Dashboard</h1>
         </Link>
         <p>
           {/* This app is currently in testing. No user actions are officially submitted */}
