@@ -146,10 +146,10 @@ const StudentApplication = () => {
     <NotFound />
   ) : (
     <div className="application">
-      <h2>Teaching Assistant Application for {termApp?.termname}</h2>
+      <h2>Teaching Assistant Preferences for {termApp?.termname}</h2>
       <p>
-        Your changes are saved automatically. Unsubmitting will withdraw your
-        application.
+        Your changes are saved automatically. If you unsubmit, your preferences
+        will no longer be considered.
       </p>
       <h3>Availability</h3>
       <FormGroup>
@@ -169,6 +169,12 @@ const StudentApplication = () => {
           FormHelperTextProps={{ component: "div" }}
           helperText={
             <div>
+              {"" + termApp?.availability === "0" && (
+                <Alert severity="error">
+                  If you submit an availability of 0, you will not be assigned
+                  any TA positions this semester!
+                </Alert>
+              )}
               <p>
                 Please provide your availability for the term. A quarter load is
                 33.75 hours over the course of a term. A full load is 135 hours.
@@ -314,6 +320,12 @@ const StudentApplication = () => {
         helperText="Please provide a brief explanation of your relevant experience in the courses you listed above. This will be used to help us assign you to a course. Include any information that is relevant, including TA experience, programming languages, relevant tools, and other experience that applies directly to your suitability for the course."
       />
       <p />
+      {"" + termApp?.availability === "0" && (
+        <Alert severity="warning">
+          Your availability is 0. You will not be assigned any TA roles this
+          semester!
+        </Alert>
+      )}
       <Button
         onClick={() =>
           handleChange({
@@ -325,7 +337,7 @@ const StudentApplication = () => {
         {termApp?.submitted ? "Unsubmit" : "Submit"}
       </Button>
       {termApp?.submitted && (
-        <Alert severity="success">Application is submitted</Alert>
+        <Alert severity="success">Preferences submitted</Alert>
       )}
     </div>
   );
