@@ -5,7 +5,9 @@ import {
   Box,
   Button,
   FormGroup,
+  MenuItem,
   Rating,
+  Select,
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
@@ -23,8 +25,6 @@ const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
 const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
-const MAX_AVAILABILITY = 4;
-const MIN_AVAILABILITY = 0;
 const DEBOUNCE_MS = 400;
 
 /** @type {GridColDef[]} */
@@ -153,7 +153,20 @@ const StudentApplication = () => {
       </p>
       <h3>Availability</h3>
       <FormGroup>
-        <TextField
+        <Select
+          onChange={handleChange}
+          value={termApp?.availability ?? 0}
+          name="availability"
+        >
+          <MenuItem value={0}>0 (not available)</MenuItem>
+          <MenuItem value={1}>1 quarter load (0.25 load, 33.75 hours)</MenuItem>
+          <MenuItem value={2}>2 quarter loads (0.5 load, 67.5 hours)</MenuItem>
+          <MenuItem value={3}>
+            3 quarter loads (0.75 load, 101.25 hours)
+          </MenuItem>
+          <MenuItem value={4}>4 quarter loads (full load, 135 hours)</MenuItem>
+        </Select>
+        {/* <TextField
           value={termApp?.availability ?? 0}
           name="availability"
           onChange={handleChange}
@@ -190,7 +203,7 @@ const StudentApplication = () => {
               </p>
             </div>
           }
-        />
+        /> */}
       </FormGroup>
       <h3>Course Preferences</h3>
       <Alert severity="info">
