@@ -4,8 +4,12 @@ import {
   Alert,
   Box,
   Button,
+  FormControl,
+  FormControlLabel,
   FormGroup,
   MenuItem,
+  Radio,
+  RadioGroup,
   Rating,
   Select,
   TextField,
@@ -72,6 +76,7 @@ const columns = [
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({ loading: true });
   const [appRows, setAppRows] = useState([]);
+  const [displayCupeHint, setDisplayCupeHint] = useState(null);
   const params = useParams();
   const nav = useNavigate();
 
@@ -151,6 +156,60 @@ const StudentApplication = () => {
         Your changes are saved automatically. If you unsubmit, your preferences
         will no longer be considered.
       </p>
+      <h3>Application</h3>
+      <FormControl>
+        {/* <FormLabel id="radio-button-group-label">
+          <h3>Application</h3>
+        </FormLabel> */}
+        <RadioGroup
+          name="radio-submitted-cupe-app"
+          value={displayCupeHint}
+          onChange={(e) => setDisplayCupeHint(e.target.value)}
+        >
+          <FormControlLabel
+            value={0}
+            control={<Radio />}
+            label={
+              <>
+                I have submitted an application at the CUPE jobs web page (
+                <a
+                  href="https://cupejobs.uit.yorku.ca/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  https://cupejobs.uit.yorku.ca/
+                </a>
+                )
+              </>
+            }
+          />
+          <FormControlLabel
+            value={1}
+            control={<Radio />}
+            label={
+              <>
+                I am unable to submit an application at the CUPE jobs web page
+              </>
+            }
+          />
+        </RadioGroup>
+      </FormControl>
+      {"" + displayCupeHint === "1" && (
+        <Alert severity="info">
+          If you are unable to complete the application on the CUPE jobs web
+          page for any reason, please send an email to{" "}
+          <a href="mailto:vinguyen@yorku.ca">vinguyen@yorku.ca</a> with your CV
+          and a filled out appendix F form (
+          <a
+            href="https://3903.cupe.ca/files/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            https://3903.cupe.ca/files/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf
+          </a>
+          )
+        </Alert>
+      )}
       <h3>Availability</h3>
       <FormGroup>
         <Select
@@ -205,6 +264,12 @@ const StudentApplication = () => {
           }
         /> */}
       </FormGroup>
+      {"" + termApp?.availability === "0" && (
+        <Alert severity="error">
+          If you submit an availability of 0, you will not be assigned any TA
+          positions this semester!
+        </Alert>
+      )}
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
