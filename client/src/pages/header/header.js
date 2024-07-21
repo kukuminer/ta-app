@@ -1,22 +1,32 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./header.css";
 import { wget } from "../requestWrapper";
 
+// Import local image file
+import logoImage from "../../images/yorku-logo.jpg";
+
 const Header = () => {
   const navigate = useNavigate();
-  const [userData, setUserData] = React.useState(null);
+  const [userData, setUserData] = useState(null);
 
-  React.useEffect(() => {
-    wget(navigate, "/api/userdata").then((res) => {
-      setUserData(res.data);
-    });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await wget(navigate, "/api/userdata");
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
   }, [navigate]);
 
   const logoutHandler = () => {
     localStorage.removeItem("userId");
-    navigate("/https://passportyork.yorku.ca/ppylogin/ppylogout");
+    navigate("https://passportyork.yorku.ca/ppylogin/ppylogout");
   };
+
   const profileHandler = () => {
     navigate("/profile");
   };
@@ -24,22 +34,30 @@ const Header = () => {
   return (
     <div className="header-container">
       <div className="header">
-        <Link to="/dashboard">
-          <h1 className="header-left">TA Application Dashboard</h1>
+        <Link to="/dashboard" className="header-left">
+          <img src={logoImage} alt="Logo" className="header-logo" />
+          <h1>TA Preferences Dashboard</h1>
         </Link>
-        <p>
+        <p className="header-left">
           {/* This app is currently in testing. No user actions are officially submitted */}
         </p>
-        <p className="header-right">
-          User Id: {userData ? userData?.username : "loading.."}
-          <br />
-          Role: {userData ? userData?.usertype : "loading.."}
-          <br />
-          <button onClick={profileHandler}>Profile</button>
-          <a href="https://passportyork.yorku.ca/ppylogin/ppylogout">
-            <button onClick={logoutHandler}>Logout</button>
-          </a>
-        </p>
+        <div className="header-right">
+          {userData ? (
+            <>
+              <p>
+                User Id: {userData.username}
+                <br />
+                Role: {userData.usertype}
+              </p>
+              <button onClick={profileHandler}>Profile</button>
+              <a href="https://passportyork.yorku.ca/ppylogin/ppylogout">
+                <button onClick={logoutHandler}>Logout</button>
+              </a>
+            </>
+          ) : (
+            <p>Loading user data...</p>
+          )}
+        </div>
       </div>
     </div>
   );
