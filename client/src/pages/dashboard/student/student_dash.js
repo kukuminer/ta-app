@@ -88,7 +88,7 @@ const StudentDash = () => {
   return (
     <>
       <ProfileView />
-      <h1>TA Applications</h1>
+      <h1>Preferences per Term</h1>
       <div className="dash-table">
         <DatagridTable
           columns={columns}
