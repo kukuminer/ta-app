@@ -202,7 +202,7 @@ const StudentApplication = () => {
           and a filled out application form
           <ul>
             <li>
-              Unit 1:{" "}
+              Unit 1 (Graduate students):{" "}
               <a
                 href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf"
                 target="_blank"
@@ -212,7 +212,7 @@ const StudentApplication = () => {
               </a>
             </li>
             <li>
-              Unit 2:{" "}
+              Unit 2 (Anyone else):{" "}
               <a
                 href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf"
                 target="_blank"
