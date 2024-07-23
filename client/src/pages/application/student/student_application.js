@@ -199,15 +199,29 @@ const StudentApplication = () => {
           If you are unable to complete the application on the CUPE jobs web
           page for any reason, please send an email to{" "}
           <a href="mailto:vinguyen@yorku.ca">vinguyen@yorku.ca</a> with your CV
-          and a filled out appendix F form (
-          <a
-            href="https://3903.cupe.ca/files/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            https://3903.cupe.ca/files/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf
-          </a>
-          )
+          and a filled out application form
+          <ul>
+            <li>
+              Unit 1:{" "}
+              <a
+                href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf
+              </a>
+            </li>
+            <li>
+              Unit 2:{" "}
+              <a
+                href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf
+              </a>
+            </li>
+          </ul>
         </Alert>
       )}
       <h3>Availability</h3>
