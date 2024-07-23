@@ -26,14 +26,17 @@ const columns: GridColDef = [
   },
   {
     field: "availability",
-    headerName: "Availability",
+    headerName: "Availability (Quarter-Loads)",
     width: 100,
     headerClassName: "section-table-header",
     hideable: false,
+    valueFormatter: (v) => {
+      return v.value + " QL";
+    },
   },
   {
     field: "submitted",
-    headerName: "Application Status",
+    headerName: "Preference Status",
     width: 150,
     headerClassName: "section-table-header",
     hideable: false,
@@ -62,7 +65,7 @@ const columns: GridColDef = [
           //   }
           // }}
         >
-          Apply
+          View
         </Link>
       );
     },
@@ -85,7 +88,7 @@ const StudentDash = () => {
   return (
     <>
       <ProfileView />
-      <h1>TA Applications</h1>
+      <h1>Preferences per Term</h1>
       <div className="dash-table">
         <DatagridTable
           columns={columns}

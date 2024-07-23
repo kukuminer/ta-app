@@ -16,6 +16,9 @@ const GET_URL = "/api/instructor/";
 const POST_URL = "/api/instructor/assignment";
 const ORDERED_LIST = ["no preference", "acceptable", "requested", "critical"];
 
+// For getting other instructor notes + pref
+const GET_OTHERS_URL = "/api/instructor/others/";
+
 /** @type {import("@mui/x-data-grid").GridComparatorFn} */
 const sortOrder = (v1, v2) => {
   return ORDERED_LIST.indexOf(v1) - ORDERED_LIST.indexOf(v2);
@@ -84,6 +87,14 @@ const columns = [
     renderCell: renderGridCellTextFieldInput,
     headerClassName: "section-table-header",
   },
+  {
+    field: "prefsNotes",
+    headerName: "",
+    width: 100,
+    renderCell: (p) => renderGridCellTooltip(p, false),
+    headerClassName: "section-table-header",
+    sortable: false,
+  },
 ];
 
 // const loadingRows = [
@@ -98,11 +109,33 @@ const ProfessorSection = () => {
 
   useEffect(() => {
     const url = GET_URL + sectionId;
-    wget(nav, url).then((res) => {
+    const url2 = GET_OTHERS_URL + sectionId;
+    wget(nav, url).then(async (res) => {
+      const prefsNotes = await wget(nav, url2);
       var dataObj = {};
       res.data.forEach((element, idx) => {
         element.pref = element.pref ?? "no preference";
         element.note = element.note ?? "";
+        const prefix = prefsNotes.data
+          .filter((e) => {
+            return e.applicant === element.userid;
+          })
+          .map(
+            (e) =>
+              "Section: " +
+              e.letter +
+              "\n" +
+              e.profname +
+              " " +
+              e.proflast +
+              ": " +
+              e.pref +
+              "\nNote: \n" +
+              e.note
+          );
+        // element.explanation = <span>{element.explanation}</span>; //prefix + element.explanation;
+        element.prefsNotes =
+          prefix.length > 0 ? <span>{prefix}</span> : undefined;
         if (!dataObj[element.pool]) dataObj[element.pool] = [];
         dataObj[element.pool].push(element);
         return element;
@@ -191,7 +224,7 @@ const ProfessorSection = () => {
                 [2, "Weak Option"],
                 [1, "Not an Option"],
               ].map(([val, label]) => (
-                <li>
+                <li key={label}>
                   <Box sx={{ display: "flex" }}>
                     <Rating
                       icon={<CircleIcon />}
@@ -207,21 +240,23 @@ const ProfessorSection = () => {
           </details>
         </Alert>
         {tableData &&
-          Object.keys(tableData).map((key, idx) => (
-            <div key={key}>
-              <h2>{key.toUpperCase()} Applicants</h2>
-              <DatagridTable
-                key={key}
-                idVarName={"userid"}
-                rows={tableData[key]}
-                columns={columns}
-                loading={!tableData}
-                onEditStop={onEditStop}
-                processRowUpdate={processRowUpdate}
-                rowHeight={40}
-              />
-            </div>
-          ))}
+          Object.keys(tableData)
+            .sort()
+            .map((key, idx) => (
+              <div key={key}>
+                <h2>{key.toUpperCase()} Applicants</h2>
+                <DatagridTable
+                  key={key}
+                  idVarName={"userid"}
+                  rows={tableData[key]}
+                  columns={columns}
+                  loading={!tableData}
+                  onEditStop={onEditStop}
+                  processRowUpdate={processRowUpdate}
+                  rowHeight={40}
+                />
+              </div>
+            ))}
       </div>
     </>
   );

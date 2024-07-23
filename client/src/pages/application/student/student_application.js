@@ -4,8 +4,14 @@ import {
   Alert,
   Box,
   Button,
+  FormControl,
+  FormControlLabel,
   FormGroup,
+  MenuItem,
+  Radio,
+  RadioGroup,
   Rating,
+  Select,
   TextField,
 } from "@mui/material";
 import DatagridTable from "../../components/datagrid/datagrid_table";
@@ -23,8 +29,6 @@ const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
 const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
-const MAX_AVAILABILITY = 4;
-const MIN_AVAILABILITY = 0;
 const DEBOUNCE_MS = 400;
 
 /** @type {GridColDef[]} */
@@ -72,6 +76,7 @@ const columns = [
 const StudentApplication = () => {
   const [termApp, setTermApp] = useState({ loading: true });
   const [appRows, setAppRows] = useState([]);
+  const [displayCupeHint, setDisplayCupeHint] = useState(null);
   const params = useParams();
   const nav = useNavigate();
 
@@ -92,11 +97,13 @@ const StudentApplication = () => {
     async function fetchApps() {
       const url = GET_COURSE_APPS + params.term;
       const res = await wget(nav, url);
-      setAppRows(res.data);
+
+      setAppRows(Object.groupBy(res.data, ({ campus }) => campus));
     }
-    checkNewTerm();
-    fetchTerm();
-    fetchApps();
+    checkNewTerm().then(() => {
+      fetchTerm();
+      fetchApps();
+    });
   }, [params, nav]);
 
   function handleChange(event) {
@@ -118,6 +125,7 @@ const StudentApplication = () => {
       term: params.term,
       interest: newRow.interest ?? 2,
       qualification: newRow.qualification ?? 2,
+      campus: newRow.campus,
     };
     try {
       await wpost(nav, POST_COURSE_APPS, body);
@@ -143,14 +151,95 @@ const StudentApplication = () => {
     <NotFound />
   ) : (
     <div className="application">
-      <h2>Teaching Assistant Application for {termApp?.termname}</h2>
+      <h2>Teaching Assistant Preferences for {termApp?.termname}</h2>
       <p>
-        Your changes are saved automatically. Unsubmitting will withdraw your
-        application.
+        Your changes are saved automatically. If you unsubmit, your preferences
+        will no longer be considered.
       </p>
+      <h3>Application</h3>
+      <FormControl>
+        {/* <FormLabel id="radio-button-group-label">
+          <h3>Application</h3>
+        </FormLabel> */}
+        <RadioGroup
+          name="radio-submitted-cupe-app"
+          value={displayCupeHint}
+          onChange={(e) => setDisplayCupeHint(e.target.value)}
+        >
+          <FormControlLabel
+            value={0}
+            control={<Radio />}
+            label={
+              <>
+                I have submitted an application at the CUPE jobs web page (
+                <a
+                  href="https://cupejobs.uit.yorku.ca/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  https://cupejobs.uit.yorku.ca/
+                </a>
+                )
+              </>
+            }
+          />
+          <FormControlLabel
+            value={1}
+            control={<Radio />}
+            label={
+              <>
+                I am unable to submit an application at the CUPE jobs web page
+              </>
+            }
+          />
+        </RadioGroup>
+      </FormControl>
+      {"" + displayCupeHint === "1" && (
+        <Alert severity="info">
+          If you are unable to complete the application on the CUPE jobs web
+          page for any reason, please send an email to{" "}
+          <a href="mailto:vinguyen@yorku.ca">vinguyen@yorku.ca</a> with your CV
+          and a filled out application form
+          <ul>
+            <li>
+              Unit 1 (Full-time graduate students):{" "}
+              <a
+                href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf
+              </a>
+            </li>
+            <li>
+              Unit 2 (Anyone else):{" "}
+              <a
+                href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf
+              </a>
+            </li>
+          </ul>
+        </Alert>
+      )}
       <h3>Availability</h3>
       <FormGroup>
-        <TextField
+        <Select
+          onChange={handleChange}
+          value={termApp?.availability ?? 0}
+          name="availability"
+        >
+          <MenuItem value={0}>0 (not available)</MenuItem>
+          <MenuItem value={1}>1 quarter load (0.25 load, 33.75 hours)</MenuItem>
+          <MenuItem value={2}>2 quarter loads (0.5 load, 67.5 hours)</MenuItem>
+          <MenuItem value={3}>
+            3 quarter loads (0.75 load, 101.25 hours)
+          </MenuItem>
+          <MenuItem value={4}>4 quarter loads (full load, 135 hours)</MenuItem>
+        </Select>
+        {/* <TextField
           value={termApp?.availability ?? 0}
           name="availability"
           onChange={handleChange}
@@ -166,6 +255,12 @@ const StudentApplication = () => {
           FormHelperTextProps={{ component: "div" }}
           helperText={
             <div>
+              {"" + termApp?.availability === "0" && (
+                <Alert severity="error">
+                  If you submit an availability of 0, you will not be assigned
+                  any TA positions this semester!
+                </Alert>
+              )}
               <p>
                 Please provide your availability for the term. A quarter load is
                 33.75 hours over the course of a term. A full load is 135 hours.
@@ -181,8 +276,14 @@ const StudentApplication = () => {
               </p>
             </div>
           }
-        />
+        /> */}
       </FormGroup>
+      {"" + termApp?.availability === "0" && (
+        <Alert severity="error">
+          If you submit an availability of 0, you will not be assigned any TA
+          positions this semester!
+        </Alert>
+      )}
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
@@ -273,7 +374,23 @@ const StudentApplication = () => {
           </ul>
         </details>
       </Alert>
-      <DatagridTable
+      {Object.keys(appRows)?.map((key) => (
+        <div key={key}>
+          <h4>{key.charAt(0).toUpperCase() + key.slice(1)} Campus</h4>
+          <DatagridTable
+            key={key}
+            columns={columns}
+            idVarName={"code"}
+            loading={!appRows}
+            onEditStop={null}
+            processRowUpdate={updateRow}
+            rows={appRows[key] ?? []}
+            rowHeight={40}
+          />
+        </div>
+      ))}
+      {/* {console.log(appRows)} */}
+      {/* <DatagridTable
         columns={columns}
         idVarName={"code"}
         loading={!appRows}
@@ -281,7 +398,7 @@ const StudentApplication = () => {
         processRowUpdate={updateRow}
         rows={appRows ?? []}
         rowHeight={40}
-      />
+      /> */}
 
       <p />
       <TextField
@@ -295,6 +412,12 @@ const StudentApplication = () => {
         helperText="Please provide a brief explanation of your relevant experience in the courses you listed above. This will be used to help us assign you to a course. Include any information that is relevant, including TA experience, programming languages, relevant tools, and other experience that applies directly to your suitability for the course."
       />
       <p />
+      {"" + termApp?.availability === "0" && (
+        <Alert severity="warning">
+          Your availability is 0. You will not be assigned any TA roles this
+          semester!
+        </Alert>
+      )}
       <Button
         onClick={() =>
           handleChange({
@@ -306,7 +429,7 @@ const StudentApplication = () => {
         {termApp?.submitted ? "Unsubmit" : "Submit"}
       </Button>
       {termApp?.submitted && (
-        <Alert severity="success">Application is submitted</Alert>
+        <Alert severity="success">Preferences submitted</Alert>
       )}
     </div>
   );

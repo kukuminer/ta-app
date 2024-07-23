@@ -17,6 +17,7 @@ function instructor({ app, db, pgp }) {
     section.id,
     course.code as course,
     section.letter as letter,
+    section.campus as campus,
     term.term as term,
     term.id as termid,
     section.profid as profid
@@ -58,6 +59,7 @@ function instructor({ app, db, pgp }) {
       application.grade, 
       COALESCE(application.interest, 2) AS interest,
       COALESCE(application.qualification, 2) AS qualification,
+      application.campus,
       assignment.pref, 
       assignment.note, 
       applicant.pool,
@@ -77,6 +79,7 @@ function instructor({ app, db, pgp }) {
   AND profid IN (SELECT id FROM users WHERE username = $2)
   AND termapplication.submitted is true
   AND termapplication.availability > 0
+  AND section.campus = application.campus
   ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
       `;
       db.any(dbQuery, [sectionId, id])
@@ -86,6 +89,41 @@ function instructor({ app, db, pgp }) {
         .catch((error) => {
           console.log("error retrieving prof section info from db");
           res.status(500).send(error);
+        });
+    })
+  );
+
+  app.get(
+    "/api/instructor/others/:sectionId",
+    AS(async (req, res) => {
+      const sectionId = req.params.sectionId;
+      const dbQuery = `SELECT 
+        applicant,
+        pref,
+        note,
+        letter,
+        firstname AS profname,
+        lastname AS proflast
+      FROM assignment 
+      JOIN section ON assignment.section = section.id
+      JOIN course ON section.course = course.id
+      JOIN users ON section.profid = users.id
+      WHERE course.id IN (
+        SELECT course.id FROM section
+        JOIN course ON section.course = course.id
+        WHERE section.id = $1
+      )
+      AND section.term IN (
+        SELECT term FROM section WHERE id = $1
+      )
+      AND section.id <> $1`;
+      db.any(dbQuery, [sectionId])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((err) => {
+          console.log("error retrieving other instructor notes!");
+          res.status(500).send(err);
         });
     })
   );
