@@ -65,7 +65,8 @@ INSERT INTO rightofrefusal(applicant, course, term) VALUES
 (3, 3, 2),
 (3, 2, 2);
 
-INSERT INTO applicantfunding()
+INSERT INTO applicantfunding(studentnum, term, funding) 
+SELECT studentnum, 4, studentnum::int8 % 5 FROM applicant;
 
 CREATE VIEW ApplicationView AS 
 SELECT applicant, username, course, code, application.term as termid, 
