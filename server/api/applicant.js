@@ -211,6 +211,102 @@ ORDER BY course.code
   );
 
   /**
+   * Function to get the funding info for a given userid + term combo
+   */
+  async function getFunding(userId, term) {
+    const dbQuery = `SELECT funding FROM applicantfunding 
+    JOIN applicant ON applicantfunding.studentnum=applicant.studentnum
+    JOIN users ON applicant.id=users.id
+    WHERE applicantfunding.studentnum=$1 AND term=$2`;
+    try {
+      const ret = await db.oneOrNone(dbQuery, [userId, term]);
+      return ret;
+    } catch (error) {
+      console.log(
+        "error getting funding info for userId " +
+          userId +
+          " and term " +
+          term +
+          ": ",
+        error
+      );
+      return error;
+    }
+  }
+
+  /**
+   * Function to pull forward any existing application
+   */
+  async function newApplication(req, res) {
+    const userId = res.locals.userid;
+    const r = req.body;
+    // console.log(r);
+    db.tx(async (t) => {
+      // locks the users table
+      await t.oneOrNone(
+        "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
+        [userId]
+      );
+      const termApps = await getAvailableApplications(req, res);
+
+      const check = termApps.filter((el) => {
+        return parseInt(el.term) === parseInt(r.term);
+      })?.[0];
+
+      // console.log(termApp);
+      if (check?.availability === null && check?.explanation === null) {
+        // console.log("a new one!");
+        const termAppQuery = `
+        SELECT applicant, $2 AS term, availability, explanation
+        FROM termapplication
+        JOIN users ON applicant=users.id
+        WHERE username=$1
+        AND termapplication.term<$2
+        ORDER BY termapplication.term DESC
+        LIMIT 1`;
+        const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
+
+        const coursesQuery = `
+        SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
+        FROM application JOIN users
+        ON applicant=users.id 
+        WHERE username=$1
+        AND term<$2
+        ORDER BY course, campus, term DESC
+        `;
+        const courses = await t.any(coursesQuery, [userId, r.term]);
+        // console.log(courses);
+
+        if (!!termApp) {
+          const termAppInsert = pgp.helpers.insert(
+            termApp,
+            null,
+            "termapplication"
+          );
+          t.none(termAppInsert);
+        }
+        if (!!courses && courses.length > 0) {
+          const coursesInsert = pgp.helpers.insert(
+            courses,
+            Object.keys(courses[0]),
+            "application"
+          );
+          t.none(coursesInsert);
+        }
+        return 201;
+      }
+      return 200;
+    })
+      .then((data) => {
+        res.status(data).send();
+      })
+      .catch((error) => {
+        console.log("error pulling new term forward: ", error);
+        res.status(500).send(error);
+      });
+  }
+
+  /**
    * Post to magically pull forward this applicants
    * most recent application details from previous
    * terms
@@ -218,72 +314,7 @@ ORDER BY course.code
   app.post(
     "/api/applicant/term/new",
     AS(async (req, res) => {
-      const userId = res.locals.userid;
-      const r = req.body;
-      // console.log(r);
-      db.tx(async (t) => {
-        // locks the users table
-        await t.oneOrNone(
-          "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
-          [userId]
-        );
-        const termApps = await getAvailableApplications(req, res);
-
-        const check = termApps.filter((el) => {
-          return parseInt(el.term) === parseInt(r.term);
-        })?.[0];
-
-        // console.log(termApp);
-        if (check?.availability === null && check?.explanation === null) {
-          // console.log("a new one!");
-          const termAppQuery = `
-          SELECT applicant, $2 AS term, availability, explanation
-          FROM termapplication
-          JOIN users ON applicant=users.id
-          WHERE username=$1
-          AND termapplication.term<$2
-          ORDER BY termapplication.term DESC
-          LIMIT 1`;
-          const termApp = await t.oneOrNone(termAppQuery, [userId, r.term]);
-
-          const coursesQuery = `
-          SELECT DISTINCT ON (course, campus) applicant, course, $2 AS term, interest, qualification, campus
-          FROM application JOIN users
-          ON applicant=users.id 
-          WHERE username=$1
-          AND term<$2
-          ORDER BY course, campus, term DESC
-          `;
-          const courses = await t.any(coursesQuery, [userId, r.term]);
-          // console.log(courses);
-
-          if (!!termApp) {
-            const termAppInsert = pgp.helpers.insert(
-              termApp,
-              null,
-              "termapplication"
-            );
-            t.none(termAppInsert);
-          }
-          if (!!courses && courses.length > 0) {
-            const coursesInsert = pgp.helpers.insert(
-              courses,
-              Object.keys(courses[0]),
-              "application"
-            );
-            t.none(coursesInsert);
-          }
-          return 201;
-        }
-        return 200;
-      })
-        .then((data) => {
-          res.status(data).send();
-        })
-        .catch((error) => {
-          console.log("error pulling new term forward: ", error);
-          res.status(500).send(error);
-        });
+      newApplication(req, res);
     })
   );
 
