@@ -31,7 +31,7 @@ const columns: GridColDef = [
     headerClassName: "section-table-header",
     hideable: false,
     valueFormatter: (v) => {
-      return v.value + " QL";
+      return v?.value !== null ? v.value + " QL" : "";
     },
   },
   {
