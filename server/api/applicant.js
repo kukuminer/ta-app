@@ -110,11 +110,15 @@ function applicant({ app, db, pgp }) {
     "/api/applicant/applications/available",
     AS(async (req, res) => {
       getAvailableApplications(req, res)
-        .then((ret) => {
+        .then(async (ret) => {
+          for (var a = 0; a < ret.length; a++) {
+            const funding = await getFunding(res.locals.userid, ret[a].term);
+            ret[a] = { ...funding, ...ret[a] };
+          }
           res.json(ret);
         })
         .catch((error) => {
-          console.log("applicant application fetch error");
+          console.log("applicant application fetch error:", error);
           res.status(500).send(error);
         });
     })
@@ -132,7 +136,8 @@ function applicant({ app, db, pgp }) {
     `;
     // AND section.term NOT IN (SELECT term FROM termapplication)
     try {
-      return await db.any(dbQuery, userId);
+      const ret = await db.any(dbQuery, userId);
+      return ret;
     } catch (error) {
       console.log("error retrieving available applications from db");
       return error;
@@ -214,10 +219,11 @@ ORDER BY course.code
    * Function to get the funding info for a given userid + term combo
    */
   async function getFunding(userId, term) {
-    const dbQuery = `SELECT funding FROM applicantfunding 
+    const dbQuery = `
+    SELECT funding FROM applicantfunding 
     JOIN applicant ON applicantfunding.studentnum=applicant.studentnum
     JOIN users ON applicant.id=users.id
-    WHERE applicantfunding.studentnum=$1 AND term=$2`;
+    WHERE users.username=$1 AND term=$2`;
     try {
       const ret = await db.oneOrNone(dbQuery, [userId, term]);
       return ret;
