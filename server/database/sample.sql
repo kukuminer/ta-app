@@ -7,9 +7,10 @@ INSERT INTO users(firstname, lastname, email, usertype, username) VALUES
 ('Unit', 'Two student', 'bing@bong.ca', 'applicant', 'unittwo');
 
 INSERT INTO applicant(id, studentNum, pool)
-SELECT id, id*2, 'unit 1' FROM users WHERE userType = 'applicant';
+SELECT id, REPEAT((id % 10)::varchar(9), 9), 'unit 1' FROM users WHERE userType = 'applicant';
 
 UPDATE applicant SET pool = 'unit 2' WHERE id=6;
+
 
 INSERT INTO term(id, term, visible) VALUES
 (2, 'F23', true),
@@ -63,6 +64,8 @@ INSERT INTO rightofrefusal(applicant, course, term) VALUES
 (5, 2, 3),
 (3, 3, 2),
 (3, 2, 2);
+
+INSERT INTO applicantfunding()
 
 CREATE VIEW ApplicationView AS 
 SELECT applicant, username, course, code, application.term as termid, 
