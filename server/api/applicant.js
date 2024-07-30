@@ -283,6 +283,9 @@ ORDER BY course.code
         const courses = await t.any(coursesQuery, [userId, r.term]);
         // console.log(courses);
 
+        const funding = await getFunding(userId, r.term);
+        if (funding) termApp.availability = funding.funding;
+
         if (!!termApp) {
           const termAppInsert = pgp.helpers.insert(
             termApp,
