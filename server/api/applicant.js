@@ -223,7 +223,7 @@ ORDER BY course.code
     SELECT funding FROM applicantfunding 
     JOIN applicant ON applicantfunding.studentnum=applicant.studentnum
     JOIN users ON applicant.id=users.id
-    WHERE users.username=$1 AND term=$2`;
+    WHERE users.username=$1 AND applicantfunding.term=$2`;
     try {
       const ret = await db.oneOrNone(dbQuery, [userId, term]);
       return ret;
