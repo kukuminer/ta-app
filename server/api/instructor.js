@@ -93,6 +93,9 @@ function instructor({ app, db, pgp }) {
     })
   );
 
+  /**
+   * Gets the notes from other profs
+   */
   app.get(
     "/api/instructor/others/:sectionId",
     AS(async (req, res) => {
