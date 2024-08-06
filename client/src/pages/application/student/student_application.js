@@ -225,9 +225,12 @@ const StudentApplication = () => {
         </Alert>
       )}
       <h3>Availability</h3>
-      {termApp?.funding !== null && (
+      {termApp.hasOwnProperty("funding") && (
         <Alert severity="info">
-          <b>Load required for funding: {termApp?.funding} quarter load{termApp?.funding === 1 ? '' : 's'}</b>
+          <b>
+            Load required for funding: {termApp?.funding} quarter load
+            {termApp?.funding === 1 ? "" : "s"}
+          </b>
           <br />
           {termApp?.funding > 0
             ? `This load is based on information provided by your supervisor. In order
@@ -294,12 +297,13 @@ const StudentApplication = () => {
           }
         /> */}
       </FormGroup>
-      {"" + termApp?.availability === "0" && (
-        <Alert severity="error">
-          If you submit an availability of 0, you will not be assigned any TA
-          positions this semester!
-        </Alert>
-      )}
+      {(!termApp.hasOwnProperty("funding") || termApp.funding > 0) &&
+        "" + termApp?.availability === "0" && (
+          <Alert severity="error">
+            If you submit an availability of 0, you will not be assigned any TA
+            positions this semester!
+          </Alert>
+        )}
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
