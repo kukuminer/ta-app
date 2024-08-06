@@ -227,7 +227,7 @@ const StudentApplication = () => {
       <h3>Availability</h3>
       {termApp?.funding !== null && (
         <Alert severity="info">
-          <b>Expected load: {termApp?.funding} quarter loads</b>
+          <b>Load required for funding: {termApp?.funding} quarter load{termApp?.funding === 1 ? '' : 's'}</b>
           <br />
           {termApp?.funding > 0
             ? `This load is based on information provided by your supervisor. In order
