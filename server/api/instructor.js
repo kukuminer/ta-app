@@ -74,14 +74,14 @@ function instructor({ app, db, pgp }) {
       LEFT JOIN application ON (
           application.applicant = termapplication.applicant AND
           application.term = termapplication.term AND
-          application.course = section.course)
+          application.course = section.course AND
+          application.campus = section.campus)
       LEFT JOIN assignment ON users.id = assignment.applicant AND section.id = assignment.section
       LEFT JOIN unit2seniority ON applicant.employeeid=unit2seniority.employeeid
   WHERE section.id = $1
   AND profid IN (SELECT id FROM users WHERE username = $2)
   AND termapplication.submitted is true
   AND termapplication.availability > 0
-  AND (section.campus = application.campus OR application.campus is null)
       `;
       db.any(dbQuery, [sectionId, id])
         .then((data) => {
