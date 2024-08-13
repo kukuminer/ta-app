@@ -69,9 +69,9 @@ INSERT INTO rightofrefusal(applicant, course, term) VALUES
 INSERT INTO applicantfunding(studentnum, term, funding) 
 SELECT studentnum, 4, studentnum::int8 % 5 FROM applicant;
 
-INSERT INTO unit2seniority(employeeid, seniority)
+INSERT INTO seniority(employeeid, seniority)
 SELECT employeeid, (employeeid::int8 % 5)::float / 4 FROM applicant;
-DELETE FROM unit2seniority WHERE seniority=0;
+DELETE FROM seniority WHERE seniority=0;
 
 CREATE VIEW ApplicationView AS 
 SELECT applicant, username, course, code, application.term as termid, 
