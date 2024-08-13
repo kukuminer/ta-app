@@ -9,6 +9,7 @@ INSERT INTO users(firstname, lastname, email, usertype, username) VALUES
 INSERT INTO applicant(id, studentNum, pool)
 SELECT id, REPEAT((id % 10)::varchar(9), 9), 'unit 1' FROM users WHERE userType = 'applicant';
 
+UPDATE applicant SET employeeid = studentnum;
 UPDATE applicant SET pool = 'unit 2' WHERE id=6;
 
 
@@ -67,6 +68,10 @@ INSERT INTO rightofrefusal(applicant, course, term) VALUES
 
 INSERT INTO applicantfunding(studentnum, term, funding) 
 SELECT studentnum, 4, studentnum::int8 % 5 FROM applicant;
+
+INSERT INTO unit2seniority(employeeid, seniority)
+SELECT employeeid, (employeeid::int8 % 5)::float / 4 FROM applicant;
+DELETE FROM unit2seniority WHERE seniority=0;
 
 CREATE VIEW ApplicationView AS 
 SELECT applicant, username, course, code, application.term as termid, 
