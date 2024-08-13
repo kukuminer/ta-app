@@ -65,7 +65,7 @@ function instructor({ app, db, pgp }) {
       applicant.pool,
       termapplication.availability,
       termapplication.explanation,
-      unit2seniority.seniority
+      seniority.seniority
   FROM
       section
       INNER JOIN termapplication ON termapplication.term = section.term
@@ -77,7 +77,7 @@ function instructor({ app, db, pgp }) {
           application.course = section.course AND
           application.campus = section.campus)
       LEFT JOIN assignment ON users.id = assignment.applicant AND section.id = assignment.section
-      LEFT JOIN unit2seniority ON applicant.employeeid=unit2seniority.employeeid
+      LEFT JOIN seniority ON applicant.employeeid=seniority.employeeid
   WHERE section.id = $1
   AND profid IN (SELECT id FROM users WHERE username = $2)
   AND termapplication.submitted is true
