@@ -82,7 +82,6 @@ function instructor({ app, db, pgp }) {
   AND termapplication.submitted is true
   AND termapplication.availability > 0
   AND (section.campus = application.campus OR application.campus is null)
---  ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
       `;
       db.any(dbQuery, [sectionId, id])
         .then((data) => {
