@@ -96,6 +96,26 @@ function applicant({ app, db, pgp }) {
     })
   );
 
+  app.get(
+    "api/applicant/seniority",
+    AS(async (req, res) => {
+      const userId = res.locals.userid;
+      const dbQuery = `SELECT seniority 
+      FROM seniority 
+      INNER JOIN applicant ON applicant.employeeid = seniority.employeeid
+      INNER JOIN users ON users.id = applicant.id
+      WHERE username=$1`;
+      db.oneOrNone(dbQuery, [userId])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("error retrieving seniority from db");
+          res.status(500).send(error);
+        });
+    })
+  );
+
   /**
      * Gets all the terms that the applicant can or has applied to
      * For populating the applicant dashboard from termapplication table
@@ -462,4 +482,5 @@ ORDER BY course.code
     })
   );
 }
+
 export { applicant };
