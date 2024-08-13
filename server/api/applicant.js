@@ -1,7 +1,28 @@
 import AS from "express-async-handler";
 
 function applicant({ app, db, pgp }) {
+  app.get(
+    "/api/applicant/seniority",
+    AS(async (req, res) => {
+      const userId = res.locals.userid;
+      const dbQuery = `SELECT seniority 
+      FROM seniority 
+      INNER JOIN applicant ON applicant.employeeid = seniority.employeeid
+      INNER JOIN users ON users.id = applicant.id
+      WHERE username=$1`;
+      db.oneOrNone(dbQuery, [userId])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("error retrieving seniority from db");
+          res.status(500).send(error);
+        });
+    })
+  );
+
   // Gets applicant info from applicant table
+  // NOTE: This endpoint will catch ALL /api/applicant/: calls unless they are before this endpoint
   app.get(
     "/api/applicant/:userId",
     AS(async (req, res) => {
@@ -91,26 +112,6 @@ function applicant({ app, db, pgp }) {
         })
         .catch((error) => {
           console.log("error retrieving rightofrefusal details from db");
-          res.status(500).send(error);
-        });
-    })
-  );
-
-  app.get(
-    "api/applicant/seniority",
-    AS(async (req, res) => {
-      const userId = res.locals.userid;
-      const dbQuery = `SELECT seniority 
-      FROM seniority 
-      INNER JOIN applicant ON applicant.employeeid = seniority.employeeid
-      INNER JOIN users ON users.id = applicant.id
-      WHERE username=$1`;
-      db.oneOrNone(dbQuery, [userId])
-        .then((data) => {
-          res.json(data);
-        })
-        .catch((error) => {
-          console.log("error retrieving seniority from db");
           res.status(500).send(error);
         });
     })
