@@ -39,6 +39,13 @@ const columns = [
     headerClassName: "section-table-header",
   },
   {
+    // SPLICE INDEX = 2
+    field: "seniority",
+    headerName: "Seniority",
+    width: 100,
+    headerClassName: "section-table-header",
+  },
+  {
     field: "availability",
     headerName: "Availability (QL)",
     width: 150,
@@ -96,6 +103,7 @@ const columns = [
     sortable: false,
   },
 ];
+const columnsSpliceIndex = columns.findIndex((e) => e.field === "seniority");
 
 // const loadingRows = [
 //     { userid: -1, firstname: 'Loading...' },
@@ -249,11 +257,23 @@ const ProfessorSection = () => {
                   key={key}
                   idVarName={"userid"}
                   rows={tableData[key]}
-                  columns={columns}
+                  columns={
+                    key === "unit 2"
+                      ? columns
+                      : columns.toSpliced(columnsSpliceIndex, 1)
+                  }
                   loading={!tableData}
                   onEditStop={onEditStop}
                   processRowUpdate={processRowUpdate}
                   rowHeight={40}
+                  initialState={{
+                    sorting: {
+                      sortModel:
+                        key === "unit 2"
+                          ? [{ field: "seniority", sort: "desc" }]
+                          : [{ field: "interest", sort: "desc" }],
+                    },
+                  }}
                 />
               </div>
             ))}
