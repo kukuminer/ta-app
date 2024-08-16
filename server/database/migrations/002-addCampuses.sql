@@ -1,6 +1,4 @@
 -- transaction not needed here because it runs as a tx when loading
-DROP TYPE IF EXISTS campus;
-
 DO $$ BEGIN
     CREATE TYPE campus AS ENUM ('Keele', 'Glendon', 'Markham');
 EXCEPTION
