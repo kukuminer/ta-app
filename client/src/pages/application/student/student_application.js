@@ -258,44 +258,6 @@ const StudentApplication = () => {
           </MenuItem>
           <MenuItem value={4}>4 quarter loads (full load, 135 hours)</MenuItem>
         </Select>
-        {/* <TextField
-          value={termApp?.availability ?? 0}
-          name="availability"
-          onChange={handleChange}
-          label="Availability (quarter loads)"
-          type="number"
-          InputProps={{
-            inputProps: {
-              max: MAX_AVAILABILITY,
-              min: MIN_AVAILABILITY,
-            },
-          }}
-          sx={{ marginRight: "10px" }}
-          FormHelperTextProps={{ component: "div" }}
-          helperText={
-            <div>
-              {"" + termApp?.availability === "0" && (
-                <Alert severity="error">
-                  If you submit an availability of 0, you will not be assigned
-                  any TA positions this semester!
-                </Alert>
-              )}
-              <p>
-                Please provide your availability for the term. A quarter load is
-                33.75 hours over the course of a term. A full load is 135 hours.
-                If you are not available for a TA position this coming term,
-                please set the value to zero.
-              </p>
-              <p>
-                <strong>For unit 1 TAs</strong>: selecting a load below your
-                expected funding level, as determined by your supervisor, may
-                affect your funding. If you are unsure what your funding level
-                is, please set this value to 4 and your load will be limited
-                accordingly.
-              </p>
-            </div>
-          }
-        /> */}
       </FormGroup>
       {(!termApp.hasOwnProperty("funding") || termApp.funding > 0) &&
         "" + termApp?.availability === "0" && (
@@ -304,6 +266,37 @@ const StudentApplication = () => {
             positions this semester!
           </Alert>
         )}
+      {/* <h4>In-person availablility</h4> */}
+      <FormControl>
+        <h4>Please select your in person availability for this term:</h4>
+        <RadioGroup
+          name="incanada"
+          value={termApp?.["incanada"]}
+          onChange={handleChange}
+        >
+          <FormControlLabel
+            value={true}
+            control={<Radio />}
+            label={
+              <>
+                I am available for in person activities (labs, tutorials,
+                invigilation, etc.)
+              </>
+            }
+          />
+          <FormControlLabel
+            value={false}
+            control={<Radio />}
+            label={
+              <>
+                I am only available for online activities (grading, Zoom office
+                hours, student forums, etc.)
+              </>
+            }
+          />
+        </RadioGroup>
+      </FormControl>
+
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
@@ -438,6 +431,11 @@ const StudentApplication = () => {
           semester!
         </Alert>
       )}
+      {termApp?.["incanada"] === null && (
+        <Alert severity="error">
+          Missing required field: in person availability
+        </Alert>
+      )}
       <Button
         onClick={() =>
           handleChange({
@@ -445,6 +443,7 @@ const StudentApplication = () => {
           })
         }
         variant="contained"
+        disabled={termApp?.["incanada"] === null}
       >
         {termApp?.submitted ? "Unsubmit" : "Submit"}
       </Button>
