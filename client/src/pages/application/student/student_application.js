@@ -280,7 +280,7 @@ const StudentApplication = () => {
             label={
               <>
                 I am available for in person activities (labs, tutorials,
-                invigilation, etc.)
+                invigilation, etc.).
               </>
             }
           />
@@ -290,7 +290,10 @@ const StudentApplication = () => {
             label={
               <>
                 I am only available for online activities (grading, Zoom office
-                hours, student forums, etc.)
+                hours, student forums, etc.).
+                <br /> I understand that selecting this option may limit the
+                positions I qualify for, and the number of hours I may be
+                assigned.
               </>
             }
           />
