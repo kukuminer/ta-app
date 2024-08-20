@@ -139,7 +139,8 @@ const ProfessorSection = () => {
               ": " +
               e.pref +
               "\nNote: \n" +
-              e.note
+              e.note +
+              "\n"
           );
         // element.explanation = <span>{element.explanation}</span>; //prefix + element.explanation;
         element.prefsNotes =
