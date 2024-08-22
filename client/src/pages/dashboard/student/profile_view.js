@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { wget } from "../../requestWrapper";
 
 const GET_URL = "/api/user/"; // /userId
-const GET_SENIORITY = "/api/applicant/seniority";
 const AUX_GET_URL = {
   applicant: "/api/applicant/",
   professor: null,
@@ -21,7 +20,6 @@ const DATA_MAP_AUX = {
   applicant: {
     studentnum: "Student Number",
     employeeid: "Employee ID",
-    seniority: "Seniority",
     pool: "Applicant pool",
   },
   professor: {},
@@ -38,12 +36,11 @@ const ProfileView = () => {
 
       try {
         const res1 = await wget(nav, url);
-        const seniority = await wget(nav, GET_SENIORITY);
         var auxURL = AUX_GET_URL[res1?.data[0].usertype];
         const res2 = auxURL && (await wget(nav, auxURL + getUser()));
 
         setState((s) => {
-          return { ...s, ...res1?.data[0], ...res2?.data, ...seniority?.data };
+          return { ...s, ...res1?.data[0], ...res2?.data };
         });
       } catch (error) {
         console.log("error fetching in profile banner:", error);
@@ -74,11 +71,11 @@ const ProfileView = () => {
             {state.usertype && (
               <TableRow className="profile-banner-row">
                 {Object.entries(DATA_MAP_AUX[state?.usertype]).map((v) => {
-                  return state[v[0]] ? (
+                  return (
                     <TableCell key={v[0]}>
                       {v[1]}: {state[v[0]]}&emsp;
                     </TableCell>
-                  ) : null;
+                  );
                 })}
               </TableRow>
             )}

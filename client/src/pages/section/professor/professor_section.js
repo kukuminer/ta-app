@@ -39,24 +39,10 @@ const columns = [
     headerClassName: "section-table-header",
   },
   {
-    // SPLICE INDEX = 2
-    field: "seniority",
-    headerName: "Seniority",
-    width: 100,
-    headerClassName: "section-table-header",
-  },
-  {
     field: "availability",
     headerName: "Availability (QL)",
-    width: 100,
+    width: 150,
     headerClassName: "section-table-header",
-  },
-  {
-    field: "incanada",
-    headerName: "In person",
-    width: 100,
-    headerClassName: "section-table-header",
-    renderCell: (p) => <>{p.value ? "Yes" : "No"}</>,
   },
   {
     field: "interest",
@@ -83,7 +69,7 @@ const columns = [
   {
     field: "pref",
     headerName: "Preference",
-    width: 150,
+    width: 180,
     editable: true,
     renderEditCell: renderGridCellSelectInput,
     renderCell: renderGridCellSelectInput,
@@ -110,7 +96,6 @@ const columns = [
     sortable: false,
   },
 ];
-const columnsSpliceIndex = columns.findIndex((e) => e.field === "seniority");
 
 // const loadingRows = [
 //     { userid: -1, firstname: 'Loading...' },
@@ -146,8 +131,7 @@ const ProfessorSection = () => {
               ": " +
               e.pref +
               "\nNote: \n" +
-              e.note +
-              "\n"
+              e.note
           );
         // element.explanation = <span>{element.explanation}</span>; //prefix + element.explanation;
         element.prefsNotes =
@@ -265,23 +249,11 @@ const ProfessorSection = () => {
                   key={key}
                   idVarName={"userid"}
                   rows={tableData[key]}
-                  columns={
-                    key === "unit 2"
-                      ? columns
-                      : columns.toSpliced(columnsSpliceIndex, 1)
-                  }
+                  columns={columns}
                   loading={!tableData}
                   onEditStop={onEditStop}
                   processRowUpdate={processRowUpdate}
                   rowHeight={40}
-                  initialState={{
-                    sorting: {
-                      sortModel:
-                        key === "unit 2"
-                          ? [{ field: "seniority", sort: "desc" }]
-                          : [{ field: "interest", sort: "desc" }],
-                    },
-                  }}
                 />
               </div>
             ))}
