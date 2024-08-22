@@ -64,9 +64,7 @@ function instructor({ app, db, pgp }) {
       assignment.note, 
       applicant.pool,
       termapplication.availability,
-      termapplication.explanation,
-      termapplication.incanada,
-      seniority.seniority
+      termapplication.explanation
   FROM
       section
       INNER JOIN termapplication ON termapplication.term = section.term
@@ -75,14 +73,14 @@ function instructor({ app, db, pgp }) {
       LEFT JOIN application ON (
           application.applicant = termapplication.applicant AND
           application.term = termapplication.term AND
-          application.course = section.course AND
-          application.campus = section.campus)
+          application.course = section.course)
       LEFT JOIN assignment ON users.id = assignment.applicant AND section.id = assignment.section
-      LEFT JOIN seniority ON applicant.employeeid=seniority.employeeid
   WHERE section.id = $1
   AND profid IN (SELECT id FROM users WHERE username = $2)
   AND termapplication.submitted is true
   AND termapplication.availability > 0
+  AND section.campus = application.campus
+  ORDER BY COALESCE(application.interest, 2) DESC, COALESCE(application.qualification, 2) DESC, users.lastname ASC
       `;
       db.any(dbQuery, [sectionId, id])
         .then((data) => {
