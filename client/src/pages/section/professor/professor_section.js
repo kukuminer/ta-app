@@ -48,8 +48,15 @@ const columns = [
   {
     field: "availability",
     headerName: "Availability (QL)",
-    width: 150,
+    width: 100,
     headerClassName: "section-table-header",
+  },
+  {
+    field: "incanada",
+    headerName: "In person",
+    width: 100,
+    headerClassName: "section-table-header",
+    renderCell: (p) => <>{p.value ? "Yes" : "No"}</>,
   },
   {
     field: "interest",
@@ -76,7 +83,7 @@ const columns = [
   {
     field: "pref",
     headerName: "Preference",
-    width: 180,
+    width: 150,
     editable: true,
     renderEditCell: renderGridCellSelectInput,
     renderCell: renderGridCellSelectInput,
@@ -139,7 +146,8 @@ const ProfessorSection = () => {
               ": " +
               e.pref +
               "\nNote: \n" +
-              e.note
+              e.note +
+              "\n"
           );
         // element.explanation = <span>{element.explanation}</span>; //prefix + element.explanation;
         element.prefsNotes =

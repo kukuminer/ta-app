@@ -65,6 +65,7 @@ function instructor({ app, db, pgp }) {
       applicant.pool,
       termapplication.availability,
       termapplication.explanation,
+      termapplication.incanada,
       seniority.seniority
   FROM
       section
