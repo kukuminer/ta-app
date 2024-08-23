@@ -1,5 +1,11 @@
 import * as React from "react";
-import { DataGrid, GridCellModes } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridCellModes,
+  GridToolbarContainer,
+  GridToolbarFilterButton,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
 
 export default function DatagridTable({
   rows,
@@ -69,7 +75,15 @@ export default function DatagridTable({
         onCellClick={handleCellClick}
         onCellEditStop={onEditStop}
         // onRowEditStop={onEditStop}
-        hideFooter
+        // hideFooter
+        slots={{
+          toolbar: () => (
+            <GridToolbarContainer>
+              <GridToolbarFilterButton />
+              <GridToolbarQuickFilter />
+            </GridToolbarContainer>
+          ),
+        }}
         disableRowSelectionOnClick
         processRowUpdate={processRowUpdate}
         onProcessRowUpdateError={(e) => console.log(e)}
