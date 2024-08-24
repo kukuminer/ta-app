@@ -218,12 +218,11 @@ interest,
 qualification, 
 section.campus
 FROM course JOIN section ON course.id=section.course 
-LEFT JOIN (
-    SELECT * FROM application WHERE 
-    applicant IN (SELECT id FROM users WHERE username=$1) AND 
-    term=$2
-) AS application
-ON application.course = course.id AND application.campus=section.campus
+LEFT JOIN application ON (
+    application.applicant IN (SELECT id FROM users WHERE username=$1) AND 
+    application.term=section.term AND
+    application.course = course.id AND
+    application.campus=section.campus)
 WHERE section.term=$2`;
       db.any(dbQuery, [userId, term])
         .then((data) => {
