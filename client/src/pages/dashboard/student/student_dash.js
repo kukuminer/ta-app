@@ -30,6 +30,10 @@ const columns: GridColDef = [
     width: 100,
     headerClassName: "section-table-header",
     hideable: false,
+    renderCell: (v) => {
+      if (v.row.submitted === null) return <></>;
+      else return <>{v.value} QL</>;
+    },
     valueFormatter: (v) => {
       return v?.value != null ? v.value + " QL" : "";
     },
