@@ -132,10 +132,11 @@ function applicant({ app, db, pgp }) {
     AS(async (req, res) => {
       getAvailableApplications(req, res)
         .then(async (ret) => {
-          for (var a = 0; a < ret.length; a++) {
-            const funding = await getFunding(res.locals.userid, ret[a].term);
-            ret[a] = { ...funding, ...ret[a] };
-          }
+          // for (var a = 0; a < ret.length; a++) {
+          //   const funding = await getFunding(res.locals.userid, ret[a].term);
+          //   ret[a] = { ...funding, ...ret[a] };
+          // }
+          // console.log(ret);
           res.json(ret);
         })
         .catch((error) => {
@@ -148,13 +149,48 @@ function applicant({ app, db, pgp }) {
   // Gets all the applications that are available for this user
   async function getAvailableApplications(req, res) {
     const userId = res.locals.userid;
+    // const dbQuery = `
+    // SELECT
+    // term.id AS term,
+    // term.term AS termname,
+    // applicant, submitted,
+    // availability,
+    // approval,
+    // explanation,
+    // incanada,
+    // wantstoteach
+    // FROM term LEFT JOIN
+    // (SELECT * FROM termapplication
+    //   WHERE applicant IN
+    //     (SELECT id FROM users WHERE username=$1)) AS termapplication
+    // ON term.id = termapplication.term
+    // WHERE term.visible = true
+    // `;
     const dbQuery = `
-    SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
-    FROM term LEFT JOIN 
-    (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username=$1)) AS termapplication
-    ON term.id = termapplication.term
-    WHERE term.visible = true
-    `;
+SELECT 
+term.id AS term, 
+term.term AS termname, 
+termapplication.applicant, 
+submitted, 
+COALESCE(termapplication.availability, funding, 0) AS availability,
+approval, 
+explanation, 
+incanada, 
+wantstoteach,
+funding
+FROM term LEFT JOIN 
+termapplication ON ( 
+    applicant IN (SELECT id FROM users WHERE username=$1)
+    AND term.id = termapplication.term
+)
+LEFT JOIN applicant
+ON termapplication.applicant=applicant.id
+LEFT JOIN applicantfunding ON (
+    term.id = applicantfunding.term AND
+    applicant.studentnum = applicantfunding.studentnum
+)
+WHERE term.visible = true
+`;
     // AND section.term NOT IN (SELECT term FROM termapplication)
     try {
       const ret = await db.any(dbQuery, userId);
@@ -163,14 +199,6 @@ function applicant({ app, db, pgp }) {
       console.log("error retrieving available applications from db");
       return error;
     }
-    //   .then((data) => {
-    //     res.json(data);
-    //     return data;
-    //   })
-    //   .catch((error) => {
-    //     res.status(500).send(error);
-    //   });
-    // return null;
   }
 
   app.get(
