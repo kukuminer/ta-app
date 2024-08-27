@@ -288,15 +288,15 @@ WHERE section.term=$2`;
         "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
         [userId]
       );
-      const termApps = await getAvailableApplications(userId);
+      const termApps = await getAvailableApplications(userId, r.term);
 
       const check = termApps.filter((el) => {
         return parseInt(el.term) === parseInt(r.term);
       })?.[0];
 
-      // console.log(termApp);
-      if (check?.availability === null && check?.explanation === null) {
+      if (check?.submitted === null && check?.explanation === null) {
         // console.log("a new one!");
+        // console.log(termApps);
         const termAppQuery = `
         SELECT applicant, $2 AS term, availability, explanation
         FROM termapplication
