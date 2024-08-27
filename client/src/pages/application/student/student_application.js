@@ -23,7 +23,7 @@ import { wget, wpost } from "../../requestWrapper";
 import NotFound from "../../404";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
-const GET_TERM_APP2 = "/api/applicant/applications/available/";
+const GET_TERM_APP2 = "/api/applicant/termapplications/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
@@ -299,7 +299,6 @@ const StudentApplication = () => {
           />
         </RadioGroup>
       </FormControl>
-
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
@@ -415,7 +414,6 @@ const StudentApplication = () => {
         rows={appRows ?? []}
         rowHeight={40}
       /> */}
-
       <p />
       <TextField
         value={termApp?.explanation ?? ""}

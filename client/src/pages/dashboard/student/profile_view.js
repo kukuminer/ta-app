@@ -7,7 +7,7 @@ import { wget } from "../../requestWrapper";
 const GET_URL = "/api/user/"; // /userId
 const GET_SENIORITY = "/api/applicant/seniority";
 const AUX_GET_URL = {
-  applicant: "/api/applicant/",
+  applicant: "/api/applicant/profile",
   professor: null,
   admin: null,
 };

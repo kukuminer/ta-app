@@ -21,10 +21,8 @@ function applicant({ app, db, pgp }) {
     })
   );
 
-  // Gets applicant info from applicant table
-  // NOTE: This endpoint will catch ALL /api/applicant/: calls unless they are before this endpoint
   app.get(
-    "/api/applicant/:userId",
+    "/api/applicant/profile/:userId",
     AS(async (req, res) => {
       const id = res.locals.userid;
       const dbQuery = `
@@ -128,7 +126,7 @@ function applicant({ app, db, pgp }) {
     WHERE term.visible = true
     */
   app.get(
-    "/api/applicant/applications/available",
+    "/api/applicant/termapplications",
     AS(async (req, res) => {
       getAvailableApplications(req, res)
         .then(async (ret) => {
