@@ -128,7 +128,7 @@ function applicant({ app, db, pgp }) {
   app.get(
     "/api/applicant/termapplications",
     AS(async (req, res) => {
-      getAvailableApplications(req, res)
+      getAvailableApplications(res.locals.userid)
         .then(async (ret) => {
           // for (var a = 0; a < ret.length; a++) {
           //   const funding = await getFunding(res.locals.userid, ret[a].term);
@@ -145,25 +145,7 @@ function applicant({ app, db, pgp }) {
   );
 
   // Gets all the applications that are available for this user
-  async function getAvailableApplications(req, res) {
-    const userId = res.locals.userid;
-    // const dbQuery = `
-    // SELECT
-    // term.id AS term,
-    // term.term AS termname,
-    // applicant, submitted,
-    // availability,
-    // approval,
-    // explanation,
-    // incanada,
-    // wantstoteach
-    // FROM term LEFT JOIN
-    // (SELECT * FROM termapplication
-    //   WHERE applicant IN
-    //     (SELECT id FROM users WHERE username=$1)) AS termapplication
-    // ON term.id = termapplication.term
-    // WHERE term.visible = true
-    // `;
+  async function getAvailableApplications(userId, term = null) {
     const dbQuery = `
 SELECT 
 term.id AS term, 
@@ -192,6 +174,9 @@ WHERE term.visible = true
     // AND section.term NOT IN (SELECT term FROM termapplication)
     try {
       const ret = await db.any(dbQuery, userId);
+      if (term !== null) {
+        return ret.filter((i) => "" + i.term === "" + term);
+      }
       return ret;
     } catch (error) {
       console.log("error retrieving available applications from db");
@@ -204,15 +189,16 @@ WHERE term.visible = true
     AS(async (req, res) => {
       const userId = res.locals.userid;
       const term = req.params.term;
-      const dbQuery = `
-        SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term AS termname, term.id AS term
-        FROM termapplication
-        INNER JOIN term 
-        ON term.id = termapplication.term
-        WHERE applicant IN (SELECT id FROM users WHERE username=$1)
-        AND termapplication.term=$2
-        `;
-      db.any(dbQuery, [userId, term])
+      // const dbQuery = `
+      //   SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term AS termname, term.id AS term
+      //   FROM termapplication
+      //   INNER JOIN term
+      //   ON term.id = termapplication.term
+      //   WHERE applicant IN (SELECT id FROM users WHERE username=$1)
+      //   AND termapplication.term=$2
+      //   `;
+      // db.any(dbQuery, [userId, term])
+      getAvailableApplications(userId, term)
         .then((data) => {
           res.json(data);
         })
@@ -296,13 +282,13 @@ WHERE section.term=$2`;
     const userId = res.locals.userid;
     const r = req.body;
     // console.log(r);
-    db.tx(async (t) => {
+    const ret = await db.tx(async (t) => {
       // locks the users table
       await t.oneOrNone(
         "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
         [userId]
       );
-      const termApps = await getAvailableApplications(req, res);
+      const termApps = await getAvailableApplications(userId);
 
       const check = termApps.filter((el) => {
         return parseInt(el.term) === parseInt(r.term);
@@ -354,14 +340,8 @@ WHERE section.term=$2`;
         return 201;
       }
       return 200;
-    })
-      .then((data) => {
-        res.status(data).send();
-      })
-      .catch((error) => {
-        console.log("error pulling new term forward: ", error);
-        res.status(500).send(error);
-      });
+    });
+    return ret;
   }
 
   /**
@@ -372,7 +352,14 @@ WHERE section.term=$2`;
   app.post(
     "/api/applicant/term/new",
     AS(async (req, res) => {
-      newApplication(req, res);
+      try {
+        const stat = await newApplication(req, res);
+        // console.log(stat);
+        res.status(stat).send();
+      } catch (error) {
+        console.log("error pulling new term forward: ", error);
+        res.status(500).send(error);
+      }
     })
   );
 

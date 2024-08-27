@@ -225,25 +225,25 @@ const StudentApplication = () => {
         </Alert>
       )}
       <h3>Availability</h3>
-      {termApp.hasOwnProperty("funding") && (
-        <Alert severity="info">
-          <b>
-            Load required for funding: {termApp?.funding} quarter load
-            {termApp?.funding === 1 ? "" : "s"}
-          </b>
-          <br />
-          {termApp?.funding > 0
-            ? `This load is based on information provided by your supervisor. In order
+      {!Object.is(termApp?.funding, null) /* {termApp?.funding !== null && ( */}
+      <Alert severity="info">
+        <b>
+          Load required for funding: {termApp?.funding} quarter load
+          {termApp?.funding === 1 ? "" : "s"}
+        </b>
+        <br />
+        {termApp?.funding > 0
+          ? `This load is based on information provided by your supervisor. In order
         to obtain full funding for the term, you need to be assigned one or more
         TA positions at this load. If this information does not match your
         records, please get in touch with your supervisor. If your availability
         is lower than this value, you are forfeiting part of your funding.`
-            : `You are not expected to get a TA position for the coming term, either 
+          : `You are not expected to get a TA position for the coming term, either 
         because you have completed your required funding or because your supervisor 
         is covering your funding for the term. If this information does not match 
         your records, please get in touch with your supervisor.`}
-        </Alert>
-      )}
+      </Alert>
+
       <FormGroup>
         <Select
           onChange={handleChange}
@@ -259,13 +259,13 @@ const StudentApplication = () => {
           <MenuItem value={4}>4 quarter loads (full load, 135 hours)</MenuItem>
         </Select>
       </FormGroup>
-      {(!termApp.hasOwnProperty("funding") || termApp.funding > 0) &&
-        "" + termApp?.availability === "0" && (
-          <Alert severity="error">
-            If you submit an availability of 0, you will not be assigned any TA
-            positions this semester!
-          </Alert>
-        )}
+      {/* {console.log(termApp)} */}
+      {"" + termApp?.funding !== "0" && "" + termApp?.availability === "0" && (
+        <Alert severity="error">
+          If you submit an availability of 0, you will not be assigned any TA
+          positions this semester!
+        </Alert>
+      )}
       {/* <h4>In-person availablility</h4> */}
       <FormControl>
         <h4>Please select your in person availability for this term:</h4>
