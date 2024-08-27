@@ -60,7 +60,7 @@ db.one("SELECT now()", [])
  * Gets all user info for profile page
  */
 app.get(
-  "/api/user/:userid",
+  "/api/user/",
   AS(async (req, res) => {
     const id = res.locals.userid;
     const dbQuery = `
