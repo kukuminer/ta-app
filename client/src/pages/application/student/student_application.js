@@ -225,25 +225,25 @@ const StudentApplication = () => {
         </Alert>
       )}
       <h3>Availability</h3>
-      {!Object.is(termApp?.funding, null) /* {termApp?.funding !== null && ( */}
-      <Alert severity="info">
-        <b>
-          Load required for funding: {termApp?.funding} quarter load
-          {termApp?.funding === 1 ? "" : "s"}
-        </b>
-        <br />
-        {termApp?.funding > 0
-          ? `This load is based on information provided by your supervisor. In order
+      {termApp?.funding !== null /* {termApp?.funding !== null && ( */ && (
+        <Alert severity="info">
+          <b>
+            Load required for funding: {termApp?.funding} quarter load
+            {termApp?.funding === 1 ? "" : "s"}
+          </b>
+          <br />
+          {termApp?.funding > 0
+            ? `This load is based on information provided by your supervisor. In order
         to obtain full funding for the term, you need to be assigned one or more
         TA positions at this load. If this information does not match your
         records, please get in touch with your supervisor. If your availability
         is lower than this value, you are forfeiting part of your funding.`
-          : `You are not expected to get a TA position for the coming term, either 
+            : `You are not expected to get a TA position for the coming term, either 
         because you have completed your required funding or because your supervisor 
         is covering your funding for the term. If this information does not match 
         your records, please get in touch with your supervisor.`}
-      </Alert>
-
+        </Alert>
+      )}
       <FormGroup>
         <Select
           onChange={handleChange}
