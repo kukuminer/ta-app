@@ -6,6 +6,11 @@ updates:
       interval: monthly
       time: "06:00"
       timezone: America/Chicago
+    groups:
+      all-patch-minor:
+        update-types:
+          - 'patch'
+          - 'minor'
     open-pull-requests-limit: 99
   - package-ecosystem: npm
     directory: "/server"
@@ -13,4 +18,9 @@ updates:
       interval: monthly
       time: "06:00"
       timezone: America/Chicago
+    groups:
+      all-patch-minor:
+        update-types:
+          - 'patch'
+          - 'minor'
     open-pull-requests-limit: 99

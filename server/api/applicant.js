@@ -1,7 +1,28 @@
 import AS from "express-async-handler";
 
 function applicant({ app, db, pgp }) {
+  app.get(
+    "/api/applicant/seniority",
+    AS(async (req, res) => {
+      const userId = res.locals.userid;
+      const dbQuery = `SELECT seniority 
+      FROM seniority 
+      INNER JOIN applicant ON applicant.employeeid = seniority.employeeid
+      INNER JOIN users ON users.id = applicant.id
+      WHERE username=$1`;
+      db.oneOrNone(dbQuery, [userId])
+        .then((data) => {
+          res.json(data);
+        })
+        .catch((error) => {
+          console.log("error retrieving seniority from db");
+          res.status(500).send(error);
+        });
+    })
+  );
+
   // Gets applicant info from applicant table
+  // NOTE: This endpoint will catch ALL /api/applicant/: calls unless they are before this endpoint
   app.get(
     "/api/applicant/:userId",
     AS(async (req, res) => {
@@ -187,20 +208,22 @@ function applicant({ app, db, pgp }) {
       const userId = res.locals.userid;
       const term = req.params.term;
       const dbQuery = `
-SELECT course.id as code, code as codename, name, description, grade, interest, qualification, campuses.campus
-FROM 
-(SELECT * FROM course 
-    WHERE course.id IN (SELECT course FROM section WHERE term=$2)) AS course
-JOIN 
-(SELECT course, campus FROM section 
-    WHERE term=$2) AS campuses
-ON course.id=campuses.course
-LEFT JOIN 
-(SELECT * FROM application 
-    WHERE applicant IN (SELECT id FROM users WHERE username=$1) AND term=$2) AS application
-ON application.course = course.id AND application.campus=campuses.campus
-ORDER BY course.code
-    `;
+SELECT DISTINCT
+course.id as code, 
+code as codename, 
+name, 
+description, 
+grade, 
+interest, 
+qualification, 
+section.campus
+FROM course JOIN section ON course.id=section.course 
+LEFT JOIN application ON (
+    application.applicant IN (SELECT id FROM users WHERE username=$1) AND 
+    application.term=section.term AND
+    application.course = course.id AND
+    application.campus=section.campus)
+WHERE section.term=$2`;
       db.any(dbQuery, [userId, term])
         .then((data) => {
           res.json(data);
@@ -462,4 +485,5 @@ ORDER BY course.code
     })
   );
 }
+
 export { applicant };
