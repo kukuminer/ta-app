@@ -319,7 +319,7 @@ WHERE section.term=$2`;
         // console.log(courses);
 
         const funding = await getFunding(userId, r.term);
-        if (funding) termApp.availability = funding.funding;
+        if (funding && termApp) termApp.availability = funding.funding;
 
         if (!!termApp) {
           const termAppInsert = pgp.helpers.insert(
