@@ -10,7 +10,7 @@ import {
 import { wget } from "../../requestWrapper";
 import { useNavigate } from "react-router-dom";
 
-const GET_URL = "/api/applicant/"; // /userId
+const GET_URL = "/api/applicant/profile"; // /userId
 const POOL_OPTIONS = [
   <MenuItem key="unit 1" id={"unit 1"} value={"unit 1"}>
     Unit 1 (Full time graduate students at York)
