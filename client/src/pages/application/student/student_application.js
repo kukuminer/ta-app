@@ -225,7 +225,7 @@ const StudentApplication = () => {
         </Alert>
       )}
       <h3>Availability</h3>
-      {termApp?.funding !== null /* {termApp?.funding !== null && ( */ ? (
+      {termApp?.funding !== null ? (
         <Alert severity="info">
           <b>
             Load required for funding: {termApp?.funding} quarter load
@@ -265,13 +265,13 @@ const StudentApplication = () => {
           </Select>
         </FormGroup>
       )}
-      {/* {console.log(termApp)} */}
-      {"" + termApp?.funding !== "0" && "" + termApp?.availability === "0" && (
-        <Alert severity="error">
-          If you submit an availability of 0, you will not be assigned any TA
-          positions this semester!
-        </Alert>
-      )}
+      {Number(termApp?.funding ?? 4) !== 0 &&
+        Number(termApp?.availability ?? 0) === 0 && (
+          <Alert severity="error">
+            If you submit an availability of 0, you will not be assigned any TA
+            positions this semester!
+          </Alert>
+        )}
       {/* <h4>In-person availablility</h4> */}
       <FormControl>
         <h4>Please select your in person availability for this term:</h4>
