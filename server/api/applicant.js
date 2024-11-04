@@ -158,13 +158,12 @@ explanation,
 incanada, 
 wantstoteach,
 funding
-FROM term LEFT JOIN 
-termapplication ON ( 
-    applicant IN (SELECT id FROM users WHERE username=$1)
+FROM term
+LEFT JOIN applicant ON applicant.id IN (SELECT id FROM users WHERE username=$1)
+LEFT JOIN termapplication ON ( 
+    termapplication.applicant=applicant.id
     AND term.id = termapplication.term
 )
-LEFT JOIN applicant
-ON termapplication.applicant=applicant.id
 LEFT JOIN applicantfunding ON (
     term.id = applicantfunding.term AND
     applicant.studentnum = applicantfunding.studentnum
