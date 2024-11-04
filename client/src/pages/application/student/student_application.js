@@ -225,7 +225,7 @@ const StudentApplication = () => {
         </Alert>
       )}
       <h3>Availability</h3>
-      {termApp?.funding !== null /* {termApp?.funding !== null && ( */ && (
+      {termApp?.funding !== null /* {termApp?.funding !== null && ( */ ? (
         <Alert severity="info">
           <b>
             Load required for funding: {termApp?.funding} quarter load
@@ -242,23 +242,29 @@ const StudentApplication = () => {
         is covering your funding for the term. If this information does not match 
         your records, please get in touch with your supervisor.`}
         </Alert>
+      ) : (
+        <FormGroup>
+          <Select
+            onChange={handleChange}
+            value={termApp?.availability ?? 0}
+            name="availability"
+          >
+            <MenuItem value={0}>0 (not available)</MenuItem>
+            <MenuItem value={1}>
+              1 quarter load (0.25 load, 33.75 hours)
+            </MenuItem>
+            <MenuItem value={2}>
+              2 quarter loads (0.5 load, 67.5 hours)
+            </MenuItem>
+            <MenuItem value={3}>
+              3 quarter loads (0.75 load, 101.25 hours)
+            </MenuItem>
+            <MenuItem value={4}>
+              4 quarter loads (full load, 135 hours)
+            </MenuItem>
+          </Select>
+        </FormGroup>
       )}
-      <FormGroup>
-        <Select
-          onChange={handleChange}
-          value={termApp?.availability ?? 0}
-          name="availability"
-          disabled={termApp?.funding == null}
-        >
-          <MenuItem value={0}>0 (not available)</MenuItem>
-          <MenuItem value={1}>1 quarter load (0.25 load, 33.75 hours)</MenuItem>
-          <MenuItem value={2}>2 quarter loads (0.5 load, 67.5 hours)</MenuItem>
-          <MenuItem value={3}>
-            3 quarter loads (0.75 load, 101.25 hours)
-          </MenuItem>
-          <MenuItem value={4}>4 quarter loads (full load, 135 hours)</MenuItem>
-        </Select>
-      </FormGroup>
       {/* {console.log(termApp)} */}
       {"" + termApp?.funding !== "0" && "" + termApp?.availability === "0" && (
         <Alert severity="error">
