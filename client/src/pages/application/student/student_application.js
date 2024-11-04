@@ -236,8 +236,7 @@ const StudentApplication = () => {
             ? `This load is based on information provided by your supervisor. In order
         to obtain full funding for the term, you need to be assigned one or more
         TA positions at this load. If this information does not match your
-        records, please get in touch with your supervisor. If your availability
-        is lower than this value, you are forfeiting part of your funding.`
+        records, please get in touch with your supervisor.`
             : `You are not expected to get a TA position for the coming term, either 
         because you have completed your required funding or because your supervisor 
         is covering your funding for the term. If this information does not match 
@@ -249,6 +248,7 @@ const StudentApplication = () => {
           onChange={handleChange}
           value={termApp?.availability ?? 0}
           name="availability"
+          disabled={termApp?.funding == null}
         >
           <MenuItem value={0}>0 (not available)</MenuItem>
           <MenuItem value={1}>1 quarter load (0.25 load, 33.75 hours)</MenuItem>
