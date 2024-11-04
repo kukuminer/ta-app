@@ -23,7 +23,7 @@ import { wget, wpost } from "../../requestWrapper";
 import NotFound from "../../404";
 
 // const GET_TERM_APP = '/api/applicant/termapplication/'
-const GET_TERM_APP2 = "/api/applicant/applications/available/";
+const GET_TERM_APP2 = "/api/applicant/termapplications/";
 const GET_COURSE_APPS = "/api/applicant/applications/";
 const POST_TERM_APP = "/api/applicant/termapplication/";
 const POST_COURSE_APPS = "/api/applicant/application/";
@@ -225,7 +225,7 @@ const StudentApplication = () => {
         </Alert>
       )}
       <h3>Availability</h3>
-      {termApp.hasOwnProperty("funding") && (
+      {termApp?.funding !== null /* {termApp?.funding !== null && ( */ && (
         <Alert severity="info">
           <b>
             Load required for funding: {termApp?.funding} quarter load
@@ -259,13 +259,13 @@ const StudentApplication = () => {
           <MenuItem value={4}>4 quarter loads (full load, 135 hours)</MenuItem>
         </Select>
       </FormGroup>
-      {(!termApp.hasOwnProperty("funding") || termApp.funding > 0) &&
-        "" + termApp?.availability === "0" && (
-          <Alert severity="error">
-            If you submit an availability of 0, you will not be assigned any TA
-            positions this semester!
-          </Alert>
-        )}
+      {/* {console.log(termApp)} */}
+      {"" + termApp?.funding !== "0" && "" + termApp?.availability === "0" && (
+        <Alert severity="error">
+          If you submit an availability of 0, you will not be assigned any TA
+          positions this semester!
+        </Alert>
+      )}
       {/* <h4>In-person availablility</h4> */}
       <FormControl>
         <h4>Please select your in person availability for this term:</h4>
@@ -299,7 +299,6 @@ const StudentApplication = () => {
           />
         </RadioGroup>
       </FormControl>
-
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
@@ -415,7 +414,6 @@ const StudentApplication = () => {
         rows={appRows ?? []}
         rowHeight={40}
       /> */}
-
       <p />
       <TextField
         value={termApp?.explanation ?? ""}

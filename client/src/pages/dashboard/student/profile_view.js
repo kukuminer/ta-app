@@ -7,7 +7,7 @@ import { wget } from "../../requestWrapper";
 const GET_URL = "/api/user/"; // /userId
 const GET_SENIORITY = "/api/applicant/seniority";
 const AUX_GET_URL = {
-  applicant: "/api/applicant/",
+  applicant: "/api/applicant/profile/",
   professor: null,
   admin: null,
 };
@@ -34,7 +34,7 @@ const ProfileView = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = GET_URL + getUser();
+      const url = GET_URL; // + getUser();
 
       try {
         const res1 = await wget(nav, url);

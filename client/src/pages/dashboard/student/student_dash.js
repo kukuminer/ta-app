@@ -5,7 +5,7 @@ import ProfileView from "./profile_view";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import { GridColDef } from "@mui/x-data-grid";
 
-const GET_TERM_APPS = "/api/applicant/applications/available/";
+const GET_TERM_APPS = "/api/applicant/termapplications/";
 
 const columns: GridColDef = [
   {
@@ -30,6 +30,10 @@ const columns: GridColDef = [
     width: 100,
     headerClassName: "section-table-header",
     hideable: false,
+    renderCell: (v) => {
+      if (v.row.submitted === null) return <></>;
+      else return <>{v.value} QL</>;
+    },
     valueFormatter: (v) => {
       return v?.value != null ? v.value + " QL" : "";
     },

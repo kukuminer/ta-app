@@ -21,10 +21,8 @@ function applicant({ app, db, pgp }) {
     })
   );
 
-  // Gets applicant info from applicant table
-  // NOTE: This endpoint will catch ALL /api/applicant/: calls unless they are before this endpoint
   app.get(
-    "/api/applicant/:userId",
+    "/api/applicant/profile/:userId",
     AS(async (req, res) => {
       const id = res.locals.userid;
       const dbQuery = `
@@ -128,14 +126,15 @@ function applicant({ app, db, pgp }) {
     WHERE term.visible = true
     */
   app.get(
-    "/api/applicant/applications/available",
+    "/api/applicant/termapplications",
     AS(async (req, res) => {
-      getAvailableApplications(req, res)
+      getAvailableApplications(res.locals.userid)
         .then(async (ret) => {
-          for (var a = 0; a < ret.length; a++) {
-            const funding = await getFunding(res.locals.userid, ret[a].term);
-            ret[a] = { ...funding, ...ret[a] };
-          }
+          // for (var a = 0; a < ret.length; a++) {
+          //   const funding = await getFunding(res.locals.userid, ret[a].term);
+          //   ret[a] = { ...funding, ...ret[a] };
+          // }
+          // console.log(ret);
           res.json(ret);
         })
         .catch((error) => {
@@ -146,31 +145,43 @@ function applicant({ app, db, pgp }) {
   );
 
   // Gets all the applications that are available for this user
-  async function getAvailableApplications(req, res) {
-    const userId = res.locals.userid;
+  async function getAvailableApplications(userId, term = null) {
     const dbQuery = `
-    SELECT term.id AS term, term.term AS termname, applicant, submitted, availability, approval, explanation, incanada, wantstoteach
-    FROM term LEFT JOIN 
-    (SELECT * FROM termapplication WHERE applicant IN (SELECT id FROM users WHERE username=$1)) AS termapplication
-    ON term.id = termapplication.term
-    WHERE term.visible = true
-    `;
+SELECT 
+term.id AS term, 
+term.term AS termname, 
+termapplication.applicant, 
+submitted, 
+COALESCE(termapplication.availability, funding, 0) AS availability,
+approval, 
+explanation, 
+incanada, 
+wantstoteach,
+funding
+FROM term LEFT JOIN 
+termapplication ON ( 
+    applicant IN (SELECT id FROM users WHERE username=$1)
+    AND term.id = termapplication.term
+)
+LEFT JOIN applicant
+ON termapplication.applicant=applicant.id
+LEFT JOIN applicantfunding ON (
+    term.id = applicantfunding.term AND
+    applicant.studentnum = applicantfunding.studentnum
+)
+WHERE term.visible = true
+`;
     // AND section.term NOT IN (SELECT term FROM termapplication)
     try {
       const ret = await db.any(dbQuery, userId);
+      if (term !== null) {
+        return ret.filter((i) => "" + i.term === "" + term);
+      }
       return ret;
     } catch (error) {
       console.log("error retrieving available applications from db");
       return error;
     }
-    //   .then((data) => {
-    //     res.json(data);
-    //     return data;
-    //   })
-    //   .catch((error) => {
-    //     res.status(500).send(error);
-    //   });
-    // return null;
   }
 
   app.get(
@@ -178,15 +189,16 @@ function applicant({ app, db, pgp }) {
     AS(async (req, res) => {
       const userId = res.locals.userid;
       const term = req.params.term;
-      const dbQuery = `
-        SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term AS termname, term.id AS term
-        FROM termapplication
-        INNER JOIN term 
-        ON term.id = termapplication.term
-        WHERE applicant IN (SELECT id FROM users WHERE username=$1)
-        AND termapplication.term=$2
-        `;
-      db.any(dbQuery, [userId, term])
+      // const dbQuery = `
+      //   SELECT submitted, availability, approval, explanation, incanada, wantstoteach, term.term AS termname, term.id AS term
+      //   FROM termapplication
+      //   INNER JOIN term
+      //   ON term.id = termapplication.term
+      //   WHERE applicant IN (SELECT id FROM users WHERE username=$1)
+      //   AND termapplication.term=$2
+      //   `;
+      // db.any(dbQuery, [userId, term])
+      getAvailableApplications(userId, term)
         .then((data) => {
           res.json(data);
         })
@@ -270,21 +282,21 @@ WHERE section.term=$2`;
     const userId = res.locals.userid;
     const r = req.body;
     // console.log(r);
-    db.tx(async (t) => {
+    const ret = await db.tx(async (t) => {
       // locks the users table
       await t.oneOrNone(
         "SELECT * FROM users WHERE username=$1 FOR NO KEY UPDATE",
         [userId]
       );
-      const termApps = await getAvailableApplications(req, res);
+      const termApps = await getAvailableApplications(userId, r.term);
 
       const check = termApps.filter((el) => {
         return parseInt(el.term) === parseInt(r.term);
       })?.[0];
 
-      // console.log(termApp);
-      if (check?.availability === null && check?.explanation === null) {
+      if (check?.submitted === null && check?.explanation === null) {
         // console.log("a new one!");
+        // console.log(termApps);
         const termAppQuery = `
         SELECT applicant, $2 AS term, availability, explanation
         FROM termapplication
@@ -307,7 +319,7 @@ WHERE section.term=$2`;
         // console.log(courses);
 
         const funding = await getFunding(userId, r.term);
-        if (funding) termApp.availability = funding.funding;
+        if (funding && termApp) termApp.availability = funding.funding;
 
         if (!!termApp) {
           const termAppInsert = pgp.helpers.insert(
@@ -328,14 +340,8 @@ WHERE section.term=$2`;
         return 201;
       }
       return 200;
-    })
-      .then((data) => {
-        res.status(data).send();
-      })
-      .catch((error) => {
-        console.log("error pulling new term forward: ", error);
-        res.status(500).send(error);
-      });
+    });
+    return ret;
   }
 
   /**
@@ -346,7 +352,14 @@ WHERE section.term=$2`;
   app.post(
     "/api/applicant/term/new",
     AS(async (req, res) => {
-      newApplication(req, res);
+      try {
+        const stat = await newApplication(req, res);
+        // console.log(stat);
+        res.status(stat).send();
+      } catch (error) {
+        console.log("error pulling new term forward: ", error);
+        res.status(500).send(error);
+      }
     })
   );
 
