@@ -27,7 +27,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = GET_URL + getUser();
+	const url = GET_URL; //  + getUser();
       const res = await wget(nav, url);
 
       setState(res.data.length > 0 ? res.data[0] : { usertype: "applicant" });

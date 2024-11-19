@@ -33,7 +33,7 @@ const StudentProfile = ({ state, updateState }) => {
   useEffect(() => {
     const fetchData = async () => {
       // const fetchedState = {}
-      const url = GET_URL + getUser();
+      const url = GET_URL;
       try {
         const res = await wget(nav, url);
         console.log(res.data);
