@@ -22,7 +22,7 @@ function applicant({ app, db, pgp }) {
   );
 
   app.get(
-    "/api/applicant/profile/:userId",
+    "/api/applicant/profile",
     AS(async (req, res) => {
       const id = res.locals.userid;
       const dbQuery = `
