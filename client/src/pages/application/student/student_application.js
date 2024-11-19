@@ -231,6 +231,7 @@ const StudentApplication = () => {
             Load required for funding: {termApp?.funding} quarter load
             {termApp?.funding === 1 ? "" : "s"}
           </b>
+	  <input type="hidden" name="availability" value={termApp?.funding}/>
           <br />
           {termApp?.funding > 0
             ? `This load is based on information provided by your supervisor. In order
