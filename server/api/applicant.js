@@ -234,7 +234,7 @@ LEFT JOIN application ON (
     application.term=section.term AND
     application.course = course.id AND
     application.campus=section.campus)
-WHERE section.term=$2`;
+WHERE section.term=$2 ORDER BY section.campus, course.code`;
       db.any(dbQuery, [userId, term])
         .then((data) => {
           res.json(data);
