@@ -40,7 +40,7 @@ const ProfileView = () => {
         const res1 = await wget(nav, url);
         const seniority = await wget(nav, GET_SENIORITY);
         var auxURL = AUX_GET_URL[res1?.data[0].usertype];
-        const res2 = auxURL && (await wget(nav, auxURL + getUser()));
+        const res2 = auxURL && (await wget(nav, auxURL));
 
         setState((s) => {
           return { ...s, ...res1?.data[0], ...res2?.data, ...seniority?.data };
