@@ -22,19 +22,13 @@ function GridCellSelectInput({ id, value, field }) {
         value: e.target.value,
         row: { ...apiRef.current.getRow(id) },
       },
-      e
+      e,
     );
     // return ret
   };
 
   return (
-    <Select
-      value={value}
-      onChange={handleChange}
-      onClick={handleChange}
-      fullWidth
-      native
-    >
+    <Select value={value} onChange={handleChange} fullWidth native>
       {/* <MenuItem key='unit 1' id={'unit 1'} value={'unit 1'}>Unit 1 (Full time Graduate student at York)</MenuItem>, */}
 
       {/* <MenuItem key={0} value={1} >No preference</MenuItem> */}

@@ -3,15 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^5.15.15",
-    "@mui/material": "^5.15.15",
-    "@mui/x-data-grid": "^6.19.11",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
+    "@mui/x-data-grid": "^9.9.0",
     "axios": "^1.18.1",
     "papaparse": "^5.5.4",
     "pubsub-js": "^1.9.5",
@@ -22,10 +16,11 @@
     "web-vitals": "^3.5.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.0",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^5.2.0",
     "jsdom": "^27.0.1",
-    "vite": "^7.1.7",
-    "vitest": "^3.2.4"
+    "vite": "^7.3.6",
+    "vitest": "^3.2.7"
   },
   "scripts": {
     "start": "vite",

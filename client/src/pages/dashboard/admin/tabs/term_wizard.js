@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const GET_URL = "/api/admin/terms";
 const POST_URL = "/api/admin/term";
 
-/** @type {GridColDef[]} */
+/** @type {import("@mui/x-data-grid").GridColDef[]} */
 const columns = [
   {
     field: "id",
@@ -82,7 +82,9 @@ const TermWizard = () => {
               onChange={(e) => {
                 setVisCheck(!visCheck);
               }}
-              inputProps={{ "aria-label": "controlled" }}
+              slotProps={{
+                input: { "aria-label": "controlled" },
+              }}
             />
           }
         />

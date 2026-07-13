@@ -3,22 +3,22 @@ import { wget } from "../../requestWrapper";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileView from "./profile_view";
 import DatagridTable from "../../components/datagrid/datagrid_table";
-import { GridColDef } from "@mui/x-data-grid";
 
 const GET_TERM_APPS = "/api/applicant/termapplications/";
 
-const columns: GridColDef = [
+/** @type {import("@mui/x-data-grid").GridColDef[]} */
+const columns = [
   {
     field: "term",
     headerName: "Term",
     width: 100,
     headerClassName: "section-table-header",
     hideable: false,
-    valueGetter: (p) => {
-      return { termid: p.row.term, term: p.row.termname };
+    valueGetter: (_value, row) => {
+      return { termid: row.term, term: row.termname };
     },
-    valueFormatter: (p) => {
-      return p.value.term;
+    valueFormatter: (value) => {
+      return value.term;
     },
     sortComparator: (v1, v2) => {
       return v1.termid - v2.termid;
@@ -30,12 +30,12 @@ const columns: GridColDef = [
     width: 100,
     headerClassName: "section-table-header",
     hideable: false,
-    renderCell: (v) => {
-      if (v.row.submitted === null) return <></>;
-      else return <>{v.value} QL</>;
+    renderCell: (params) => {
+      if (params.row.submitted === null) return <></>;
+      else return <>{params.value} QL</>;
     },
-    valueFormatter: (v) => {
-      return v?.value != null ? v.value + " QL" : "";
+    valueFormatter: (value) => {
+      return value != null ? value + " QL" : "";
     },
   },
   {
@@ -45,8 +45,8 @@ const columns: GridColDef = [
     headerClassName: "section-table-header",
     hideable: false,
     flex: 1,
-    valueFormatter: (p) => {
-      return p.value ? "Submitted" : p.value === false ? "Draft" : "Available";
+    valueFormatter: (value) => {
+      return value ? "Submitted" : value === false ? "Draft" : "Available";
     },
   },
   {

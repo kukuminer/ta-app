@@ -11,8 +11,9 @@ function applicant({ app, db, pgp }) {
       INNER JOIN users ON users.id = applicant.id
       WHERE username=$1`;
       db.oneOrNone(dbQuery, [userId])
-        .then((data) => {
-          res.json(data);
+            .then((data) => {
+               // Hiding seniority since it's not up-to-date
+          res.json([]);
         })
         .catch((error) => {
           console.log("error retrieving seniority from db");
@@ -459,7 +460,7 @@ WHERE section.term=$2 ORDER BY section.campus, course.code`;
       const r = req.body;
 
       // Data validation
-      r.availability = Math.max(Math.min(4, r.availability), 0);
+      r.availability = Math.max(r.availability, 0);
       r.explanation = r.explanation?.substring(0, 1000) ?? "";
       r.submitted = r.submitted === null ? false : r.submitted;
 

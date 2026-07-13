@@ -32,8 +32,8 @@ import migrate from "./runMigrations.js";
 await migrate({ db, pgp });
 
 const app = express();
-app.use(json());
-app.use(urlencoded({ extended: true }));
+app.use(json({limit: '5mb'}));
+app.use(urlencoded({ limit: '5mb', extended: true }));
 
 // require("./middleware/auth")({ app, db, pgp });
 import { auth } from "./middleware/auth.mjs";

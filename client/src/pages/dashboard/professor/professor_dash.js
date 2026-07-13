@@ -1,26 +1,27 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GridColDef, GridComparatorFn } from "@mui/x-data-grid";
 import DatagridTable from "../../components/datagrid/datagrid_table";
 import { wget } from "../../requestWrapper";
 
 const GET_URL = "/api/instructor/courses";
 
-const sortOrder: GridComparatorFn = (v1, v2) => {
+/** @type {import("@mui/x-data-grid").GridComparatorFn} */
+const sortOrder = (v1, v2) => {
   return v1.termid - v2.termid;
 };
 
-const columns: GridColDef = [
+/** @type {import("@mui/x-data-grid").GridColDef[]} */
+const columns = [
   {
     field: "term",
     headerName: "Term",
     width: 100,
     headerClassName: "section-table-header",
-    valueGetter: (p) => {
-      return { termid: p.row.termid, term: p.row.term };
+    valueGetter: (_value, row) => {
+      return { termid: row.termid, term: row.term };
     },
-    valueFormatter: (p) => {
-      return p.value.term;
+    valueFormatter: (value) => {
+      return value.term;
     },
     sortComparator: sortOrder,
   },

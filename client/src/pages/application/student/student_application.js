@@ -31,7 +31,7 @@ const CHECK_NEW_TERM = "/api/applicant/term/new/";
 
 const DEBOUNCE_MS = 400;
 
-/** @type {GridColDef[]} */
+/** @type {import("@mui/x-data-grid").GridColDef[]} */
 const columns = [
   {
     field: "codename",
@@ -158,9 +158,6 @@ const StudentApplication = () => {
       </p>
       <h3>Application</h3>
       <FormControl>
-        {/* <FormLabel id="radio-button-group-label">
-          <h3>Application</h3>
-        </FormLabel> */}
         <RadioGroup
           name="radio-submitted-cupe-app"
           value={displayCupeHint}
@@ -199,39 +196,25 @@ const StudentApplication = () => {
           If you are unable to complete the application on the CUPE jobs web
           page for any reason, please send an email to{" "}
           <a href="mailto:vinguyen@yorku.ca">vinguyen@yorku.ca</a> with your CV
-          and a filled out application form
-          <ul>
-            <li>
-              Unit 1 (Full-time graduate students):{" "}
-              <a
-                href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf"
-                target="_blank"
-                rel="noreferrer"
-              >
-                https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-1-revised-Oct-2016_FINAL-3.pdf
-              </a>
-            </li>
-            <li>
-              Unit 2 (Anyone else):{" "}
-              <a
-                href="https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf"
-                target="_blank"
-                rel="noreferrer"
-              >
-                https://3903.cupe.ca/wp-content/blogs.dir/266/2014/06/blanket-app-unit-2-revised-Oct-2016_FINAL-3.pdf
-              </a>
-            </li>
-          </ul>
+          and a filled out application form.{" "}
+          <a
+            href="https://cupe3903.org/useful-forms-and-documents/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Click here
+          </a>{" "}
+          to access the application forms applicable to your case.
         </Alert>
       )}
-      <h3>Availability</h3>
+      <h3>Number of Hours</h3>
       {termApp?.funding !== null ? (
         <Alert severity="info">
           <b>
             Load required for funding: {termApp?.funding} quarter load
             {termApp?.funding === 1 ? "" : "s"}
           </b>
-	  <input type="hidden" name="availability" value={termApp?.funding}/>
+          <input type="hidden" name="availability" value={termApp?.funding} />
           <br />
           {termApp?.funding > 0
             ? `This load is based on information provided by your supervisor. In order
@@ -249,20 +232,25 @@ const StudentApplication = () => {
             onChange={handleChange}
             value={termApp?.availability ?? 0}
             name="availability"
+            helperText="Select the maximum number of hours you are available for over the term."
           >
             <MenuItem value={0}>0 (not available)</MenuItem>
-            <MenuItem value={1}>
-              1 quarter load (0.25 load, 33.75 hours)
-            </MenuItem>
-            <MenuItem value={2}>
-              2 quarter loads (0.5 load, 67.5 hours)
-            </MenuItem>
-            <MenuItem value={3}>
-              3 quarter loads (0.75 load, 101.25 hours)
-            </MenuItem>
-            <MenuItem value={4}>
-              4 quarter loads (full load, 135 hours)
-            </MenuItem>
+            <MenuItem value={1}>0.25 load, 33.75 hours</MenuItem>
+            <MenuItem value={2}>0.5 load, 67.5 hours</MenuItem>
+            <MenuItem value={3}>0.75 load, 101.25 hours</MenuItem>
+            <MenuItem value={4}>1.0 load, 135 hours</MenuItem>
+            <MenuItem value={5}>1.25 load, 168.75 hours</MenuItem>
+            <MenuItem value={6}>1.5 load, 202.5 hours</MenuItem>
+            <MenuItem value={7}>1.75 load, 236.25 hours</MenuItem>
+            <MenuItem value={8}>2.0 load, 270 hours</MenuItem>
+            <MenuItem value={9}>2.25 load, 303.75 hours</MenuItem>
+            <MenuItem value={10}>2.5 load, 337.5 hours</MenuItem>
+            <MenuItem value={11}>2.75 load, 371.25 hours</MenuItem>
+            <MenuItem value={12}>3.0 load, 405 hours</MenuItem>
+            <MenuItem value={13}>3.25 load, 438.75 hours</MenuItem>
+            <MenuItem value={14}>3.5 load, 472.5 hours</MenuItem>
+            <MenuItem value={15}>3.75 load, 506.25 hours</MenuItem>
+            <MenuItem value={16}>4.0 load, 540 hours</MenuItem>
           </Select>
         </FormGroup>
       )}
@@ -273,9 +261,8 @@ const StudentApplication = () => {
             positions this semester!
           </Alert>
         )}
-      {/* <h4>In-person availablility</h4> */}
+      <h3>In-person availability</h3>
       <FormControl>
-        <h4>Please select your in person availability for this term:</h4>
         <RadioGroup
           name="incanada"
           value={termApp?.["incanada"]}
@@ -287,7 +274,8 @@ const StudentApplication = () => {
             label={
               <>
                 I am available for in person activities (labs, tutorials,
-                invigilation, etc.).
+                invigilation, etc.) for all scheduled activities for the
+                courses/sections I have applied for.
               </>
             }
           />
@@ -306,6 +294,31 @@ const StudentApplication = () => {
           />
         </RadioGroup>
       </FormControl>
+      <h3>Experience and Qualifications</h3>
+      <TextField
+        value={termApp?.explanation ?? ""}
+        onChange={handleChange}
+        name="explanation"
+        label="Relevant Experience, Qualification and Availability"
+        fullWidth
+        multiline
+        inputProps={{ maxLength: 1000 }}
+        helperText={
+          <p>
+            Please provide a brief explanation of your relevant experience in
+            the courses you listed above. This will be used to help us assign
+            you to a course. Include any information that is relevant, including
+            TA experience, programming languages, relevant tools, and other
+            experience that applies directly to your suitability for the course.{" "}
+            <strong>DO NOT INCLUDE LINKS</strong> to other resources. Note that
+            we may use search to find applicants with specific qualifications
+            (e.g., "Matlab" or "JUnit"), so you should be explicit about
+            qualification. Also include your availability for activities
+            associated to the courses you are applying for.
+          </p>
+        }
+      />
+      <p />
       <h3>Course Preferences</h3>
       <Alert severity="info">
         <p>
@@ -374,10 +387,8 @@ const StudentApplication = () => {
                   have none of the skills, experience or knowledge relevant for
                   the assignment, or you are opposed to learning them. You would
                   reject an offer for this assignment regardless of the
-                  situation.
-                  <em>Unit 1 applicants</em>: note that choosing this option may
-                  affect your funding if none of the other courses you are
-                  qualified have availability.
+                  situation. Choosing this option may affect your funding if
+                  none of the other courses you are qualified have availability.
                 </>,
               ],
             ].map(([val, label]) => (
@@ -396,42 +407,30 @@ const StudentApplication = () => {
           </ul>
         </details>
       </Alert>
-      {Object.keys(appRows)?.map((key) => (
-        <div key={key}>
-          <h4>{key.charAt(0).toUpperCase() + key.slice(1)} Campus</h4>
-          <DatagridTable
-            key={key}
-            columns={columns}
-            idVarName={"code"}
-            loading={!appRows}
-            onEditStop={null}
-            processRowUpdate={updateRow}
-            rows={appRows[key] ?? []}
-            rowHeight={40}
-          />
-        </div>
-      ))}
-      {/* {console.log(appRows)} */}
-      {/* <DatagridTable
-        columns={columns}
-        idVarName={"code"}
-        loading={!appRows}
-        onEditStop={null}
-        processRowUpdate={updateRow}
-        rows={appRows ?? []}
-        rowHeight={40}
-      /> */}
-      <p />
-      <TextField
-        value={termApp?.explanation ?? ""}
-        onChange={handleChange}
-        name="explanation"
-        label="Relevant Experience"
-        fullWidth
-        multiline
-        inputProps={{ maxLength: 1000 }}
-        helperText="Please provide a brief explanation of your relevant experience in the courses you listed above. This will be used to help us assign you to a course. Include any information that is relevant, including TA experience, programming languages, relevant tools, and other experience that applies directly to your suitability for the course."
-      />
+      {termApp?.funding !== null ? (
+        Object.keys(appRows)?.map((key) => (
+          <div key={key}>
+            <h4>{key.charAt(0).toUpperCase() + key.slice(1)} Campus</h4>
+            <DatagridTable
+              key={key}
+              columns={columns}
+              idVarName={"code"}
+              loading={!appRows}
+              onEditStop={null}
+              processRowUpdate={updateRow}
+              rows={appRows[key] ?? []}
+              rowHeight={40}
+            />
+          </div>
+        ))
+      ) : (
+        <Alert severity="info">
+          TA preferences for applicants without funding information must be
+          provided through the TA application process at CUPE info. Please make
+          sure to include all relevant information in that application or in
+          your CV.
+        </Alert>
+      )}
       <p />
       {"" + termApp?.availability === "0" && (
         <Alert severity="warning">
