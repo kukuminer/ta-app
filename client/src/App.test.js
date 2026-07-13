@@ -1,8 +1,22 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import { afterEach, vi } from "vitest";
+import App from "./App";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+test("renders app shell", () => {
+  vi.spyOn(global, "fetch").mockResolvedValue({
+    json: async () => ({ message: "ok" }),
+  });
+
+  render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>,
+  );
+
+  expect(screen.getByText(/loading/i)).toBeInTheDocument();
 });

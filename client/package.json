@@ -13,28 +13,27 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "axios": "^1.18.1",
-    "http-proxy-middleware": "^2.0.6",
     "papaparse": "^5.5.4",
     "pubsub-js": "^1.9.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
-    "react-scripts": "^5.0.1",
     "serve": "^14.2.5",
     "web-vitals": "^3.5.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "serve -s build"
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.0",
+    "jsdom": "^27.0.1",
+    "vite": "^7.1.7",
+    "vitest": "^3.2.4"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "deploy": "serve -s dist"
   },
   "browserslist": {
     "production": [
