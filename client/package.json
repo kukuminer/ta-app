@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@mui/icons-material": "^9.2.0",
+    "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.2.0",
-    "@mui/x-data-grid": "^9.9.0",
-    "axios": "^1.18.1",
-    "papaparse": "^5.5.4",
+    "@mui/x-data-grid": "^9.12.0",
+    "axios": "^1.20.0",
+    "papaparse": "^5.7.0",
     "pubsub-js": "^1.9.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -16,7 +16,7 @@
     "web-vitals": "^3.5.2"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.3.2",
+    "@testing-library/react": "^16.3.3",
     "@vitejs/plugin-react": "^5.2.0",
     "jsdom": "^27.0.1",
     "vite": "^7.3.6",
